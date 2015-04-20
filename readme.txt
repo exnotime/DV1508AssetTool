@@ -1,1 +1,1 @@
-use createSLN.bat to generate a solution
+use GenerateSolution.bat to generate a solution
