@@ -1,6 +1,7 @@
 #include "ShaderProgram.h"
 #include <sstream>
 #include "utility.h"
+#include <imgui/imgui.h>
 gfx::ShaderProgram::ShaderProgram ( void )
 {
     m_LoadedShaders = false;
@@ -99,7 +100,11 @@ void gfx::ShaderProgram::Apply()
 				{
 					//Logger::Log("Validation of shader program: \"" + m_Filename + "\" failed: " + std::string(log, len - 1), "ShaderProgram", LogSeverity::ERROR_MSG);
 				}
-               assert ( false );
+               //assert ( false );
+				bool opened;
+				ImGui::BeginPopup(&opened);
+				ImGui::Text("Error Validating shader");
+				ImGui::EndPopup();
             }
         }
     }

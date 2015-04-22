@@ -1,5 +1,7 @@
 #include "GraphicsEngine.h"
 #include <imgui/imgui_impl_glfw_gl3.h>
+#include <imgui/imgui.h>
+#include <glm/gtx/transform.hpp>
 #include "MaterialBank.h"
 #include "Material.h"
 gfx::GraphicsEngine::GraphicsEngine(){
@@ -44,7 +46,7 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	float aspectRatio = width / (float)height;
 	m_Camera.GetEditableLens( ).Near = 0.1f;
 	m_Camera.GetEditableLens( ).Far = 100.0f;
-	m_Camera.GetEditableLens( ).VerticalFOV = 0.959931089f; // ( ( 90.0f / ( aspectRatio ) ) / 360.0f ) * 2 * glm::pi<float>( ); // calc FOV as horisontal FOV 90 degrees
+	m_Camera.GetEditableLens( ).VerticalFOV = ( ( 90.0f / ( aspectRatio ) ) / 360.0f ) * 2 * glm::pi<float>( ); // calc FOV as horisontal FOV 90 degrees
 	m_Camera.GetEditableLens( ).WindowHeight = height;
 	m_Camera.GetEditableLens( ).WindowWidth = width;
 	m_Camera.SetPosition(glm::vec3(0.0f));
@@ -63,6 +65,22 @@ void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 	ShaderProgram* prog = g_ShaderBank.GetProgramFromHandle(m_Shader);
 	prog->Apply();
 	prog->SetUniformMat4("g_ViewProj", m_Camera.GetViewProjection());
+	prog->SetUniformVec3("g_Campos", m_Camera.GetPosition());
+	static float metal = 0.001f;
+	static float roughness = 0.001f;
+	glm::vec3 lightDir = glm::vec3(0.5f,-1,0.5f);
+	static float lightangle = 0.0f;
+	ImGui::Begin("Lighting");
+	ImGui::SliderFloat("Roughness", &roughness,0.001f ,1);
+	ImGui::SliderFloat("Metallic", &metal, 0.001f, 1);
+	ImGui::SliderFloat("LightDir", &lightangle, 0, 2 * glm::pi<float>());
+	ImGui::End();
+	prog->SetUniformFloat("g_Roughness", roughness);
+	prog->SetUniformFloat("g_Metallic", metal);
+
+	vec4 temp = vec4(lightDir, 0) * glm::rotate(lightangle, glm::vec3(0, 1, 0));
+	prog->SetUniformVec3("g_LightDir", glm::vec3(temp.x,temp.y,temp.z));
+
 	for(auto& object : drawQueue->GetQueue()){
 		Model model = g_ModelBank.FetchModel(object.Model);
 		prog->SetUniformMat4( "g_World", object.world );
