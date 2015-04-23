@@ -14,9 +14,13 @@ gfx::GraphicsEngine::~GraphicsEngine(){
 }
 
 GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, bool fullscreen ){
+	m_Width = width;
+	m_Height = height;
+	
 	if( !glfwInit( ) )
 		return nullptr;
-
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	if(fullscreen){
 		m_Window = glfwCreateWindow( width, height, "ModelViewer", glfwGetPrimaryMonitor( ), nullptr );
 	}else{
@@ -48,7 +52,7 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	m_Camera.GetEditableLens( ).Far = 100.0f;
 	m_Camera.GetEditableLens( ).VerticalFOV = ( ( 90.0f / ( aspectRatio ) ) / 360.0f ) * 2 * glm::pi<float>( ); // calc FOV as horisontal FOV 90 degrees
 	m_Camera.GetEditableLens( ).WindowHeight = height;
-	m_Camera.GetEditableLens( ).WindowWidth = width;
+	m_Camera.GetEditableLens( ).WindowWidth = width * 0.5f;
 	m_Camera.SetPosition(glm::vec3(0.0f));
 
 	m_Camera.CalculateViewProjection();
@@ -58,6 +62,7 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	return m_Window;
 }
 void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
+	glViewport(0, 0, m_Width * 0.5f, m_Height);
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT );
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
@@ -95,6 +100,7 @@ void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 
 	}
 	glUseProgram( 0 );
+	glViewport(0, 0, m_Width, m_Height);
 }
 
 void gfx::GraphicsEngine::Swap( ){

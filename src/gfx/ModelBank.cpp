@@ -27,7 +27,7 @@ gfx::ModelHandle gfx::ModelBank::LoadModel(const char* filename)
 	}
 	Assimp::Importer loader;
 	Model model;
-	const aiScene* scene = loader.ReadFile( filename, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_GenNormals | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace );
+	const aiScene* scene = loader.ReadFile( filename, aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_GenSmoothNormals | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace );
 	if (scene && scene->HasMeshes()){
 		model.VertexHandle = (int)m_Vertices.size();
 		LoadMeshes(model, scene); //load the geometry

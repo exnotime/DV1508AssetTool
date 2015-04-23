@@ -12,7 +12,7 @@ Game::~Game( )
 }
 
 void Game::Initialize(){
-	m_Model = gfx::g_ModelBank.LoadModel("asset/Bomb/model.obj");
+	m_Model = gfx::g_ModelBank.LoadModel("asset/shy guy/shyguy.dae");
 	m_Pos = glm::vec3(0,-1,-10);
 	m_Scale = 1.0f;
 	m_RotateY = 0.0f;
@@ -30,7 +30,7 @@ void Game::Update(float dt){
 void Game::Render( gfx::RenderQueue* rq ){
 	gfx::RenderObject ro;
 	ro.Model = m_Model;
-	ro.world = glm::translate( m_Pos ) * glm::scale( glm::vec3( m_Scale ) ) * glm::rotate(m_RotateY, glm::vec3(0,1,0));
+	ro.world = glm::translate(m_Pos) * glm::scale(glm::vec3(m_Scale)) * glm::rotate(m_RotateY, glm::vec3(0, 1, 0)) * glm::rotate(1.57f, glm::vec3(1, 0, 0));
 	
 	rq->Enqueue(ro);
 }

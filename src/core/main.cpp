@@ -1,6 +1,7 @@
 #pragma once
 #include "../gfx/GraphicsEngine.h"
 #include <GLFW/glfw3.h>
+#include <sstream>
 #include <imgui/imgui.cpp>
 #include <imgui/imgui_impl_glfw_gl3.cpp>
 #include "Game.h"
@@ -12,7 +13,7 @@ int main( ){
 
 	int width = 1600;
 	int height = 900;
-	bool vsync = false;
+	bool vsync = true;
 	bool fullscreen = false;
 
 	GLFWwindow* window = gfx::g_GFXEngine.Initialize( width, height, vsync, fullscreen );
@@ -31,12 +32,14 @@ int main( ){
 		}
 		//update game
 		game.Update( io.DeltaTime );
-
 		game.Render( &drawQueue );
 		//render graphics
 		gfx::g_GFXEngine.Render( &drawQueue );
 		RenderImgui( );
 		gfx::g_GFXEngine.Swap( );
+		std::stringstream ss;
+		ss << "AssetTool FPS:" << io.Framerate;
+		glfwSetWindowTitle(window, ss.str().c_str());
 		drawQueue.Clear();
 	};
 

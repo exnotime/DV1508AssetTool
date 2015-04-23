@@ -88,9 +88,14 @@ float BeckmannDistribution(in float ndoth,in float roughness)
 }
 float GGX(float ndoth, float  roughness) //ty Tim
 {
+	/*
 	float cosSquared = ndoth * ndoth;
 	float tanSquared = (1 - cosSquared) / cosSquared;
 	return (1.0 / PI) * sqr(roughness / cosSquared * ( sqr(roughness + tanSquared)));
+	*/
+	float den = sqr(ndoth) * sqr(roughness) + (1 - sqr(ndoth));
+	float v = ndoth > 0 ? 1 : 0;
+	return (v * sqr(roughness)) / ( PI * den * den);
 }
 
 float D_GGX(float ndoth, float roughness) //ty frostbite
@@ -121,7 +126,7 @@ vec3 CookTorranceSpecular(vec3 normal, vec3 lightDir, vec3 toeye, float roughnes
 	float f0 = IORToF0(ior);
 
 	vec3 F = vec3(F_Schlick(f0, hdotl));
-	vec3 D = vec3(BeckmannDistribution(ndoth, roughness));
+	vec3 D = vec3(GGX(ndoth, roughness));
 	//float G = V_SmithGGXCorrelated(ndotl,ndotv,roughness);
 	vec3 G = vec3(GeometricAtt(normal, lightDir,toeye, halfWayVector));
 

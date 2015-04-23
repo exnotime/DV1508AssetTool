@@ -20,5 +20,7 @@ namespace gfx{
 		GLFWwindow*			m_Window;
 		Camera				m_Camera;
 		ShaderProgramHandle m_Shader;
+		int					m_Width;
+		int					m_Height;
 	};
 };
