@@ -30,16 +30,17 @@ in vec4 NormalW;
 in vec4 TexOut;
 in vec4 TangentW;
 
-uniform 	sampler2D 	g_DiffuseTex; //Texture
+uniform 	sampler2D 	g_DiffuseTex;
+uniform		samplerCube	g_IrradianceCubeTex;
+uniform		samplerCube	g_SkyCubeTex;
 uniform  	vec3 		g_Campos;
 uniform 	float		g_Roughness;
 uniform 	float		g_Metallic;
 uniform 	vec3 		g_LightDir;
+uniform		vec3		g_CamDir;
 
 out vec4 FragmentColor;
-//12
 #include LightingFunc.txt
-//150
 void main(){
 
 	// Only things we need for a directional light

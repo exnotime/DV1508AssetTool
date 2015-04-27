@@ -2,6 +2,7 @@
 #define g_MaterialBank MaterialBank::GetInstance()
 #include <map>
 #include <vector>
+#include "Texture.h"
 struct aiScene;
 typedef int TextureHandle;
 namespace gfx
@@ -18,11 +19,13 @@ namespace gfx
 		Material* GetMaterial(int matIndex);
 		Material* GetMaterial(const std::string& name);
 		int GetMaterialID(const std::string& name);
+		TextureHandle LoadTexture(const char* filename);
+		Texture* GetTexture(TextureHandle handle);
 	private:
 		MaterialBank();
 		int									m_Numerator = 0;
 		std::vector<Material*>				m_Materials;
 		std::map<std::string, Material*>	m_MatMap;
-	
+		std::vector<Texture*>				m_Textures;
 	};
 }

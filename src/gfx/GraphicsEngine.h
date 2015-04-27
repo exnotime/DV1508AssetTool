@@ -16,11 +16,17 @@ namespace gfx{
 		void Render(RenderQueue* drawQueue);
 		void Swap( );
 		Camera* GetCamera( ) { return &m_Camera; };
+		float GetWidth() { return m_Width; }
+		float GetHeight(){ return m_Height; }
 	private:
 		GLFWwindow*			m_Window;
 		Camera				m_Camera;
 		ShaderProgramHandle m_Shader;
+		ShaderProgramHandle m_SpriteShader;
 		int					m_Width;
 		int					m_Height;
+		Texture*			m_SkyTex;
+		Texture*			m_IrradianceTex;
+		Texture*			m_TestTex;
 	};
 };

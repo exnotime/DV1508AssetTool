@@ -8,8 +8,9 @@ namespace gfx
 {
 	enum TextureType
 	{
-		TEXTURE_2D,
-		CUBE_TEXTURE
+		TEXTURE_COLOR,
+		TEXTURE_GREYSCALE,
+		TEXTURE_CUBE
 	};
 
 	class Texture
@@ -18,17 +19,20 @@ namespace gfx
 		Texture();
 		~Texture();
 
-	 bool Init( const char* Filename);
+	 bool Init( const char* Filename, TextureType type);
 	 GLuint GetHandle();
 	 void Apply( GLuint location, int index );
 	 bool GetLoaded();
 	 void SetFilename( const char* filename );
 	 std::string GetFilename();
-
+	 float GetWidth() { return m_Width; }
+	 float GetHeight(){ return m_Height; }
+	 int GetChannels(){ return m_Channels; }
 	private:
 		GLuint m_Handle;
 		int m_Width, m_Height, m_Channels;
 		bool m_Loaded;
 		std::string m_Filename;
+		TextureType m_Type;
 	};
 }

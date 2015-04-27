@@ -37,7 +37,7 @@ void gfx::MaterialBank::LoadMaterials(Model& model, std::string filename, const 
 				std::string fullpath = GetDir(filename) + path.data;
 
 				Texture* albedo = new Texture();
-				albedo->Init( fullpath.c_str( ) );
+				albedo->Init( fullpath.c_str( ), TEXTURE_COLOR);
 				modelMat->SetAlbedoTexture(albedo);
 			}
 		}
@@ -47,7 +47,7 @@ void gfx::MaterialBank::LoadMaterials(Model& model, std::string filename, const 
 			if (mat->GetTexture(aiTextureType_HEIGHT, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS){
 				std::string fullpath = GetDir( filename ) + path.data;
 				Texture* normal = new Texture();
-				normal->Init( fullpath.c_str( ) );
+				normal->Init(fullpath.c_str(), TEXTURE_COLOR);
 				modelMat->SetNormalTexture(normal);
 			}
 		}
@@ -82,4 +82,15 @@ gfx::Material* gfx::MaterialBank::GetMaterial(const std::string& name){
 	}
 	else
 		return nullptr;
+}
+
+TextureHandle gfx::MaterialBank::LoadTexture(const char* filename){
+	Texture* tex = new Texture();
+	tex->Init(filename, TEXTURE_COLOR);
+	m_Textures.push_back(tex);
+	return m_Numerator++;
+}
+
+gfx::Texture* gfx::MaterialBank::GetTexture(TextureHandle handle){
+	return m_Textures[handle];
 }

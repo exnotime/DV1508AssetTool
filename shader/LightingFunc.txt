@@ -144,6 +144,18 @@ vec4 CalcDLight(Light light, vec3 inNormal, vec3 posw, vec3 campos, vec3 baseCol
 	//metallic
 	diff = mix(diff, vec3(0.0), metal);
 	spec = mix(spec, spec * baseColor, metal);
-	lightColor.xyz = vec3(light.Color.xyz) * (diff + spec);
+	//ibl
+	vec3 reflected = reflect(g_CamDir, inNormal);
+
+	ivec2 texDim = textureSize(g_SkyCubeTex,0);
+	float numMips = ceil(log2(float(max(texDim.x,texDim.y)))) - 1.0f;
+	float mipLevel = numMips * roughness;
+	vec4 iblSpec = textureLod(g_SkyCubeTex,reflected, mipLevel);
+	iblSpec = pow(iblSpec, vec4(2.2));
+
+	vec4 iblDiff = texture(g_IrradianceCubeTex,inNormal);
+	iblDiff = pow(iblDiff, vec4(2.2));
+
+	lightColor.xyz = vec3(light.Color.xyz) * (diff * iblDiff.xyz + spec * iblSpec.xyz);
 	return lightColor;
 }

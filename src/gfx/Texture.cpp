@@ -1,5 +1,5 @@
 #include "Texture.h"
-#include "stb_image/stb_image.h"
+#include <Soil2/SOIL2.h>
 using namespace gfx;
 
 Texture::Texture()
@@ -17,46 +17,59 @@ Texture::~Texture()
 	glDeleteTextures(1, &m_Handle);
 }
 
-bool Texture::Init(const char* Filename)
+bool Texture::Init(const char* Filename, TextureType type)
 {
 	m_Filename = std::string(Filename);
+	m_Type = type;
 
-	unsigned char* data;
-	FILE* file = fopen(Filename, "rb");
-	if (!file){
-		printf("Error loading texture: %s\n", Filename);
-		return false;
+	if (type == TEXTURE_COLOR || type == TEXTURE_GREYSCALE){
+		unsigned char* data;
+		int force_channels = (type == TEXTURE_COLOR ? SOIL_LOAD_AUTO : SOIL_LOAD_L);
+		data = SOIL_load_image(Filename, &m_Width, &m_Height, &m_Channels, force_channels);
+
+		glGenTextures(1, &m_Handle);
+		glBindTexture(GL_TEXTURE_2D, m_Handle);
+		GLenum format, internalFormat;
+		if (m_Channels == 1){
+			format = GL_RED;
+			internalFormat = GL_R8;
+		}
+		else if (m_Channels == 3){
+			format = GL_RGB;
+			internalFormat = GL_RGB8;
+		}
+		else if (m_Channels == 4){
+			format = GL_RGBA;
+			internalFormat = GL_RGBA8;
+		}
+
+		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, data);
+
+		SOIL_free_image_data(data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		GLfloat fLargest;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	}
-	data = stbi_load_from_file(file, &m_Width, &m_Height, &m_Channels, 0);
+	else if (type == TEXTURE_CUBE){
+		m_Handle = SOIL_load_OGL_single_cubemap(Filename, SOIL_DDS_CUBEMAP_FACE_ORDER, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_GL_MIPMAPS | SOIL_FLAG_DDS_LOAD_DIRECT | SOIL_FLAG_COMPRESS_TO_DXT);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_Handle);
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 
-	glGenTextures(1, &m_Handle);
-	glBindTexture(GL_TEXTURE_2D, m_Handle);
-	GLenum format, internalFormat;
-	if (m_Channels == 3){
-		format = GL_RGB;
-		internalFormat = GL_RGB8;
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	}
-	else {
-		format = GL_RGBA;
-		internalFormat = GL_RGBA8;
-	}
-		
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, data);
 
-	stbi_image_free(data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	GLfloat fLargest;
-	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	printf("Loaded Texture %s \n", Filename);
-	fclose(file);
 	return true;
 }
 
@@ -69,7 +82,10 @@ void Texture::Apply(GLuint location,int index)
 {
 	glUniform1i(location,index);
 	glActiveTexture(GL_TEXTURE0 + index);
-	glBindTexture(GL_TEXTURE_2D, m_Handle);
+	if (m_Type == TEXTURE_COLOR || m_Type == TEXTURE_GREYSCALE)
+		glBindTexture(GL_TEXTURE_2D, m_Handle);
+	else
+		glBindTexture(GL_TEXTURE_CUBE_MAP, m_Handle);
 }
 
 bool Texture::GetLoaded(){
