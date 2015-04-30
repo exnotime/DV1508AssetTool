@@ -4,6 +4,7 @@
 #include "RenderQueue.h"
 #include "Camera.h"
 #include "ShaderBank.h"
+#include "FrameBuffer.h"
 namespace gfx{
 
 #define g_GFXEngine GraphicsEngine::GetInstance()
@@ -19,7 +20,11 @@ namespace gfx{
 		float GetWidth() { return m_Width; }
 		float GetHeight(){ return m_Height; }
 	private:
+		void RenderGeometry(RenderQueue* drawQueue);
+		void RenderSprites(RenderQueue* drawQueue);
+		void RenderToTexture(RenderQueue* drawQueue);
 		GLFWwindow*			m_Window;
+		FrameBuffer			m_FrameBuffer;
 		Camera				m_Camera;
 		ShaderProgramHandle m_Shader;
 		ShaderProgramHandle m_SpriteShader;

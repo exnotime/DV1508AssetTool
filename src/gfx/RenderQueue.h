@@ -16,9 +16,12 @@ namespace gfx{
 		void Enqueue(const Sprite& spr, int layer = 0);
 		std::vector<RenderObject>& GetQueue( );
 		std::vector<std::vector<Sprite>>& GetSpriteQueue();
+		void SetTargetTexture(TextureHandle handle);
+		TextureHandle GetTargetTexture();
 		void Clear();
 	private:
 		std::vector<RenderObject> m_Queue;
 		std::vector<std::vector<Sprite>> m_SpriteQueue;
+		TextureHandle m_TargetTexture;
 	};
 };

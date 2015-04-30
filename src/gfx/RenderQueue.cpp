@@ -5,6 +5,7 @@ gfx::RenderQueue::RenderQueue(){
 	m_SpriteQueue.push_back(list);
 	m_SpriteQueue.push_back(list);
 	m_SpriteQueue.push_back(list);
+	m_TargetTexture = -1;
 }
 
 gfx::RenderQueue::~RenderQueue( ){
@@ -23,6 +24,14 @@ std::vector<gfx::RenderObject>& gfx::RenderQueue::GetQueue( ){
 
 std::vector<std::vector<gfx::Sprite>>& gfx::RenderQueue::GetSpriteQueue(){
 	return m_SpriteQueue;
+}
+
+void gfx::RenderQueue::SetTargetTexture(TextureHandle handle){
+	m_TargetTexture = handle;
+}
+
+TextureHandle gfx::RenderQueue::GetTargetTexture(){
+	return m_TargetTexture;
 }
 
 void gfx::RenderQueue::Clear( ){

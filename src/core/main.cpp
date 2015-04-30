@@ -11,8 +11,8 @@
 void RenderImgui( );
 int main( ){
 
-	int width = 1600;
-	int height = 900;
+	int width = 1280;
+	int height = 720;
 	bool vsync = true;
 	bool fullscreen = false;
 

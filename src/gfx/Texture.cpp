@@ -24,8 +24,8 @@ bool Texture::Init(const char* Filename, TextureType type)
 	m_Type = type;
 	
 	if (type == TEXTURE_COLOR || type == TEXTURE_GREYSCALE){
-		m_Handle = SOIL_load_OGL_texture(Filename, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_GL_MIPMAPS | SOIL_FLAG_COMPRESS_TO_DXT);
-		
+		m_Handle = SOIL_load_OGL_texture(Filename, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_COMPRESS_TO_DXT);
+		glBindTexture(GL_TEXTURE_2D, m_Handle);
 		glGenerateMipmap(GL_TEXTURE_2D);
 		GLfloat fLargest;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);

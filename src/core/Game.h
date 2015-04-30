@@ -16,5 +16,6 @@ private:
 	float				m_Scale;
 	float				m_RotateY;
 	gfx::Sprite			m_TestSprite;
+	TextureHandle		m_TargetTex;
 };
 

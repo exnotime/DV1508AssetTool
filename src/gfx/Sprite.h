@@ -10,6 +10,7 @@ namespace gfx{
 		void SetPos(const glm::vec2& pos); //in pixels
 		void SetSize(const glm::vec2& size); // in pixels
 		void SetTexture(const char* filename);
+		void SetTexture(TextureHandle tex);
 		glm::vec2& GetPos();//in pixels
 		glm::vec2& GetSize();//in pixels
 		glm::vec4& GetPosFlt();//used by the gfx engine

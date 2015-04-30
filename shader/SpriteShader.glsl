@@ -54,7 +54,7 @@ in vec2 texcoord;
 out vec4 FragmentColor;
 uniform sampler2D g_Texture;
 void main(){
-	FragmentColor = texture(g_Texture, texcoord);
+	FragmentColor = texture(g_Texture, vec2(texcoord.x, 1.0 - texcoord.y));
 }
 
 #end_shader

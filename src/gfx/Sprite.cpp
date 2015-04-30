@@ -31,7 +31,12 @@ void gfx::Sprite::SetTexture(const char* filename){
 	float width = g_MaterialBank.GetTexture(m_Texture)->GetWidth() / g_GFXEngine.GetWidth();
 	float height = g_MaterialBank.GetTexture(m_Texture)->GetHeight() / g_GFXEngine.GetHeight();
 	m_Size = glm::vec4(width, height, 1.0f, 1.0f);
-
+}
+void gfx::Sprite::SetTexture(TextureHandle tex){
+	m_Texture = tex;
+	float width = g_MaterialBank.GetTexture(m_Texture)->GetWidth() / g_GFXEngine.GetWidth();
+	float height = g_MaterialBank.GetTexture(m_Texture)->GetHeight() / g_GFXEngine.GetHeight();
+	m_Size = glm::vec4(width, height, 1.0f, 1.0f);
 }
 glm::vec2& gfx::Sprite::GetPos(){
 	return glm::vec2(m_Pos.x * g_GFXEngine.GetWidth(), m_Pos.y * g_GFXEngine.GetHeight());

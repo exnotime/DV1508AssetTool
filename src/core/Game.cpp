@@ -12,11 +12,12 @@ Game::~Game( )
 }
 
 void Game::Initialize(){
-	m_Model = gfx::g_ModelBank.LoadModel("asset/LucinaResource/Lucina_posed.obj");
+	m_Model = gfx::g_ModelBank.LoadModel("asset/Bomb/model.obj");
 	m_Pos = glm::vec3(0,-1,-10);
 	m_Scale = 1.0f;
 	m_RotateY = 0.0f;
 	m_TestSprite.SetTexture("asset/rockman_teeth.png");
+	m_TargetTex = gfx::g_MaterialBank.LoadTexture("asset/flcl.jpg");
 }
 
 void Game::Update(float dt){
@@ -40,4 +41,5 @@ void Game::Render( gfx::RenderQueue* rq ){
 	
 	rq->Enqueue(ro);
 	rq->Enqueue(m_TestSprite);
+	rq->SetTargetTexture(m_TargetTex);
 }
