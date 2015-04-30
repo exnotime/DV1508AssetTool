@@ -126,7 +126,6 @@ void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 			g_MaterialBank.GetTexture(spr.GetTexture())->Apply(prog->FetchUniform("g_Texture"), 0);
 			glDrawArrays(GL_POINTS, 0, 1);
 		}
-		
 	}
 	glUseProgram(0);
 

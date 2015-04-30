@@ -12,7 +12,7 @@ Game::~Game( )
 }
 
 void Game::Initialize(){
-	m_Model = gfx::g_ModelBank.LoadModel("asset/Bomb/model.obj");
+	m_Model = gfx::g_ModelBank.LoadModel("asset/LucinaResource/Lucina_posed.obj");
 	m_Pos = glm::vec3(0,-1,-10);
 	m_Scale = 1.0f;
 	m_RotateY = 0.0f;

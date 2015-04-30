@@ -7,6 +7,7 @@ Texture::Texture()
 	m_Loaded = false;
 	m_Width = 0;
 	m_Height = 0;
+	m_Channels = 0;
 	m_Filename = "";
 	m_Handle = 0;
 }
@@ -21,35 +22,17 @@ bool Texture::Init(const char* Filename, TextureType type)
 {
 	m_Filename = std::string(Filename);
 	m_Type = type;
-
+	
 	if (type == TEXTURE_COLOR || type == TEXTURE_GREYSCALE){
-		unsigned char* data;
-		int force_channels = (type == TEXTURE_COLOR ? SOIL_LOAD_AUTO : SOIL_LOAD_L);
-		data = SOIL_load_image(Filename, &m_Width, &m_Height, &m_Channels, force_channels);
-
-		glGenTextures(1, &m_Handle);
-		glBindTexture(GL_TEXTURE_2D, m_Handle);
-		GLenum format, internalFormat;
-		if (m_Channels == 1){
-			format = GL_RED;
-			internalFormat = GL_R8;
-		}
-		else if (m_Channels == 3){
-			format = GL_RGB;
-			internalFormat = GL_RGB8;
-		}
-		else if (m_Channels == 4){
-			format = GL_RGBA;
-			internalFormat = GL_RGBA8;
-		}
-
-		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, data);
-
-		SOIL_free_image_data(data);
+		m_Handle = SOIL_load_OGL_texture(Filename, SOIL_LOAD_AUTO, SOIL_CREATE_NEW_ID, SOIL_FLAG_GL_MIPMAPS | SOIL_FLAG_COMPRESS_TO_DXT);
+		
 		glGenerateMipmap(GL_TEXTURE_2D);
 		GLfloat fLargest;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
 		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, fLargest);
+
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &m_Width);
+		glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &m_Height);
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
