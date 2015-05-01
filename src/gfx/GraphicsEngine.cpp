@@ -53,7 +53,7 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	m_Camera.GetEditableLens( ).VerticalFOV = ( ( 90.0f / ( aspectRatio ) ) / 360.0f ) * 2 * glm::pi<float>( ); // calc FOV as horisontal FOV 90 degrees
 	m_Camera.GetEditableLens( ).WindowHeight = height;
 	m_Camera.GetEditableLens( ).WindowWidth = width * 0.5f;
-	m_Camera.SetPosition(glm::vec3(0.0f));
+	m_Camera.SetPosition(glm::vec3(0.0f, 10.0f, 20.0f));
 
 	m_Camera.CalculateViewProjection();
 	//load shaders
@@ -92,8 +92,8 @@ void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 	prog->SetUniformVec3("g_Campos", m_Camera.GetPosition());
 	static float metal = 0.001f;
 	static float roughness = 0.001f;
-	glm::vec3 lightDir = glm::vec3(0.5f, -1, 0.5f);
-	static float lightangle = 0.0f;
+	glm::vec3 lightDir = glm::vec3(0.5f,-1,0.5f);
+	static float lightangle = 4.0f;
 	ImGui::Begin("Lighting");
 	ImGui::SliderFloat("Roughness", &roughness, 0.001f, 1);
 	ImGui::SliderFloat("Metallic", &metal, 0.001f, 1);

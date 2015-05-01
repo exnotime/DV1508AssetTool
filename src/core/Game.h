@@ -2,6 +2,8 @@
 #include "../gfx/RenderQueue.h"
 #include "../gfx/ModelBank.h"
 #include "../gfx/Sprite.h"
+#include "verticeTranslation/VerticeTranslation.h"
+
 class Game
 {
 public:
@@ -17,5 +19,7 @@ private:
 	float				m_RotateY;
 	gfx::Sprite			m_TestSprite;
 	TextureHandle		m_TargetTex;
+	VerticeTranslation			m_VerticeTranslation;
+	std::vector<unsigned int>	m_SelectedVertices;
 };
 

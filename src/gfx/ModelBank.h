@@ -28,6 +28,7 @@ namespace gfx
 		 void DeleteModel(ModelHandle& handle);
 		 void ApplyBuffers();
 		 void Clear();
+		 std::vector<VertexPosNormalTexTangent>& GetVertices();
 		 VertexBuffer& GetVertexBuffer( VertexType modelType );
 		 GLuint& GetIndexBuffer( VertexType modelType );
 	private:

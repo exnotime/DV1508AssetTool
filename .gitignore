@@ -1,5 +1,6 @@
-!/bin/
+/bin/
 
 /solution
 /
 !premake5.exe
+imgui.ini
