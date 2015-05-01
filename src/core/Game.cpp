@@ -17,6 +17,7 @@ void Game::Initialize(){
 	m_Scale = 1.0f;
 	m_RotateY = 0.0f;
 	m_TestSprite.SetTexture("asset/rockman_teeth.png");
+	m_VerticeTranslation.Initialize();
 }
 
 void Game::Update(float dt){
@@ -31,6 +32,10 @@ void Game::Update(float dt){
 	ImGui::SliderFloat("X##002", &x, 0, 1600);
 	ImGui::SliderFloat("Y##002", &y, 0, 900);
 	m_TestSprite.SetPos(glm::vec2(x, y));
+
+	TempSelectVertices( m_Model, m_SelectedVertices );	// TODO: Remove when real vertice selection is implemented.
+	m_VerticeTranslation.SetSelectedVertices( m_SelectedVertices );
+	m_VerticeTranslation.Update( dt );
 }
 
 void Game::Render( gfx::RenderQueue* rq ){
@@ -40,4 +45,6 @@ void Game::Render( gfx::RenderQueue* rq ){
 	
 	rq->Enqueue(ro);
 	rq->Enqueue(m_TestSprite);
+
+	m_VerticeTranslation.Draw( rq );
 }
