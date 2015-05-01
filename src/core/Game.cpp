@@ -17,8 +17,9 @@ void Game::Initialize(){
 	m_Pos = glm::vec3(0.0f);
 	m_Scale = 1.0f;
 	m_RotateY = 0.0f;
-	m_TestSprite.SetTexture("asset/rockman_teeth.png");
 	m_VerticeTranslation.Initialize();
+	m_TestSprite.SetTexture("asset/brush.png");
+	m_TargetTex = gfx::g_MaterialBank.LoadTexture("asset/flcl.jpg");
 }
 
 void Game::Update(float dt){

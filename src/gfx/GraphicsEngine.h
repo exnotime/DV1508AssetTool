@@ -23,6 +23,8 @@ namespace gfx{
 		void RenderGeometry(RenderQueue* drawQueue);
 		void RenderSprites(RenderQueue* drawQueue);
 		void RenderToTexture(RenderQueue* drawQueue);
+		void RenderActiveTarget();
+
 		GLFWwindow*			m_Window;
 		FrameBuffer			m_FrameBuffer;
 		Camera				m_Camera;

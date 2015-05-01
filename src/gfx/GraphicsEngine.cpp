@@ -75,9 +75,13 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 	
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT );
+	if (ImGui::Button("Brush")){
+		RenderToTexture(drawQueue);
+	}
+	RenderActiveTarget();
 	RenderGeometry(drawQueue);
 	RenderSprites(drawQueue);
-	RenderToTexture(drawQueue);
+	
 	glUseProgram(0);
 }
 
@@ -129,23 +133,38 @@ void gfx::GraphicsEngine::RenderSprites(RenderQueue* drawQueue){
 	spriteProg->Apply();
 	glBindVertexArray(0);
 	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
 	for (int layer = 0; layer < 3; layer++){
 		for (auto& spr : drawQueue->GetSpriteQueue()[layer]){
 			spriteProg->SetUniformVec4("g_Pos", spr.GetPosFlt());
 			spriteProg->SetUniformVec4("g_Size", spr.GetSizeFlt());
-			g_MaterialBank.GetTexture(spr.GetTexture())->Apply(spriteProg->FetchUniform("g_Texture"), 0);
+			TextureHandle tex;
+			static bool usetarget = false;
+			if (ImGui::Button("Use RenderTarget")){
+				usetarget = !usetarget;
+			}
+			if (usetarget){
+				g_MaterialBank.GetTexture(m_FrameBuffer.GetTexture())->Apply(spriteProg->FetchUniform("g_Texture"), 0);
+			}
+			else {
+				g_MaterialBank.GetTexture(spr.GetTexture())->Apply(spriteProg->FetchUniform("g_Texture"), 0);
+			}
+			
 			glDrawArrays(GL_POINTS, 0, 1);
 		}
 	}
 }
 void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
-	m_FrameBuffer.SetTexture(drawQueue->GetTargetTexture());
+	TextureHandle target = drawQueue->GetTargetTexture();
+	m_FrameBuffer.SetTexture(target);
 	m_FrameBuffer.Apply();
 
 	ShaderProgram* spriteProg = g_ShaderBank.GetProgramFromHandle(m_SpriteShader);
 	spriteProg->Apply();
 	glBindVertexArray(0);
 	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	for (int layer = 0; layer < 3; layer++){
 		for (auto& spr : drawQueue->GetSpriteQueue()[layer]){
 			spriteProg->SetUniformVec4("g_Pos", spr.GetPosFlt());
@@ -157,6 +176,23 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void gfx::GraphicsEngine::RenderActiveTarget(){
+	glViewport(m_Width * 0.5f, 0, m_Width * 0.5f, m_Height);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	ShaderProgram* spriteProg = g_ShaderBank.GetProgramFromHandle(m_SpriteShader);
+	spriteProg->Apply();
+	glBindVertexArray(0);
+	Texture* tex = g_MaterialBank.GetTexture(m_FrameBuffer.GetTexture());
+	float sizeH;
+	sizeH = tex->GetHeight() / tex->GetWidth();
+	tex->Apply(spriteProg->FetchUniform("g_Texture"), 0);
+	spriteProg->SetUniformVec4("g_Pos", glm::vec4(0.0f, 0.5f + sizeH * 0.5f, 0.0f,0.0f));
+	spriteProg->SetUniformVec4("g_Size", glm::vec4(1.0f, sizeH, 1.0f, 1.0f));
+	glDrawArrays(GL_POINTS, 0, 1);
+}
+
 void gfx::GraphicsEngine::Swap( ){
 	glfwSwapBuffers( m_Window );
+
 }

@@ -21,19 +21,16 @@ void FrameBuffer::Apply(){
 }
 
 void FrameBuffer::SetTexture(gfx::TextureHandle handle){
-	Texture* tex = g_MaterialBank.GetTexture(handle);
+	//dont change if the target has not changed
+	if (m_TargetTexture == handle)
+		return;
+	m_TargetTexture = handle;
+
+	Texture* tex = g_MaterialBank.GetTexture(m_TargetTexture);
 	m_Width = tex->GetWidth();
 	m_Height = tex->GetHeight();
 	glBindFramebuffer(GL_FRAMEBUFFER, m_Handle);
-	glBindTexture(GL_TEXTURE_2D, tex->GetHandle());
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex->GetHandle(), 0);
-	GLuint depth;
-	glGenTextures(1, &depth);
-	glBindTexture(GL_TEXTURE_2D, depth);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_Width, m_Height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depth, 0);
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	switch (status){
 	case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT :
@@ -44,4 +41,8 @@ void FrameBuffer::SetTexture(gfx::TextureHandle handle){
 		break;
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+gfx::TextureHandle FrameBuffer::GetTexture(){
+	return m_TargetTexture;
 }
