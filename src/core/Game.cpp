@@ -48,7 +48,6 @@ void Game::Render( gfx::RenderQueue* rq ){
 	gfx::RenderObject ro;
 	ro.Model = m_Model;
 	ro.world = glm::translate(m_Pos) * glm::scale(glm::vec3(m_Scale)) * glm::rotate(m_RotateY, glm::vec3(0, 1, 0));
-	
 	rq->Enqueue(ro);
 
 	//Set texture
@@ -57,11 +56,16 @@ void Game::Render( gfx::RenderQueue* rq ){
 	ImGui::SliderInt("Mesh Texture", &meshIndex, 0, lucina.Meshes.size() - 1);
 	gfx::Material* lucMat = gfx::g_MaterialBank.GetMaterial(lucina.Meshes[meshIndex].Material);
 	rq->SetTargetTexture(lucMat->GetAlbedoTexture());
+
 	m_VerticeTranslation.Draw( rq );
+
+	static float brushSize = 24;
+	ImGui::SliderFloat("BrushSize", &brushSize, 1, 640);
 	glm::vec2 clickPos;
 	if (m_TestArea.IsClicked(clickPos)){
 		gfx::BrushObject bo;
 		bo.Position = clickPos;
+		bo.Size = brushSize;
 		bo.Texture = m_TestSprite.GetTexture();
 		rq->Enqueue(bo);
 	}

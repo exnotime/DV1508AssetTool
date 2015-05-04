@@ -42,7 +42,7 @@ glm::vec2& gfx::Sprite::GetPos(){
 	return glm::vec2(m_Pos.x * g_GFXEngine.GetWidth(), m_Pos.y * g_GFXEngine.GetHeight());
 }
 glm::vec2& gfx::Sprite::GetSize(){
-	return glm::vec2(m_Size.x * g_GFXEngine.GetWidth(), m_Size.y * g_GFXEngine.GetHeight());
+	return glm::vec2(m_Size.x * g_MaterialBank.GetTexture(m_Texture)->GetWidth(), m_Size.y * g_MaterialBank.GetTexture(m_Texture)->GetHeight());
 }
 glm::vec4& gfx::Sprite::GetPosFlt(){
 	return m_Pos;

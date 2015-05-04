@@ -48,7 +48,11 @@ void main(){
 	l.Color = vec4(1.0f);
 	l.Direction = normalize(g_LightDir);
 	vec3 normal = normalize(NormalW.xyz);
-	vec3 baseColor = pow(texture(g_DiffuseTex, vec2(TexOut.x,TexOut.y)).xyz, vec3(2.2)); //flip y in uv since this is gl, also raise to 2.2(gamma) to be in linear
+	vec4 albedo = texture(g_DiffuseTex, vec2(TexOut.x,TexOut.y));
+	if(albedo.a <= 0.01f){
+		discard;
+	}
+	vec3 baseColor = pow(albedo.xyz, vec3(2.2)); //raise to 2.2(gamma) to be in linear space
 
 	vec4 LightColor = CalcDLight(l, normal, PosW.xyz, g_Campos, baseColor, g_Roughness, g_Metallic);
 	FragmentColor = pow(LightColor, vec4(1.0 / 2.2)); 

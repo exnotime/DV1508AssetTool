@@ -135,22 +135,12 @@ void gfx::GraphicsEngine::RenderSprites(RenderQueue* drawQueue){
 	glBindVertexArray(0);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	for (int layer = 0; layer < 3; layer++){
 		for (auto& spr : drawQueue->GetSpriteQueue()[layer]){
 			spriteProg->SetUniformVec4("g_Pos", spr.GetPosFlt());
 			spriteProg->SetUniformVec4("g_Size", spr.GetSizeFlt());
-			TextureHandle tex;
-			static bool usetarget = false;
-			if (ImGui::Button("Use RenderTarget")){
-				usetarget = !usetarget;
-			}
-			if (usetarget){
-				g_MaterialBank.GetTexture(m_FrameBuffer.GetTexture())->Apply(spriteProg->FetchUniform("g_Texture"), 0);
-			}
-			else {
-				g_MaterialBank.GetTexture(spr.GetTexture())->Apply(spriteProg->FetchUniform("g_Texture"), 0);
-			}
-			
+			g_MaterialBank.GetTexture(spr.GetTexture())->Apply(spriteProg->FetchUniform("g_Texture"), 0);
 			glDrawArrays(GL_POINTS, 0, 1);
 		}
 	}
@@ -165,12 +155,13 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 	glBindVertexArray(0);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-	static float brushSize = 32.0f;
-	ImGui::SliderFloat("BrushSize", &brushSize, 1, 640);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	for (auto& brush : drawQueue->GetBrushQueue()){
 		Texture* brushTex = g_MaterialBank.GetTexture(brush.Texture);
-		spriteProg->SetUniformVec4("g_Pos", glm::vec4(glm::vec2(brush.Position.x,1.0f - brush.Position.y), 0,0));
-		spriteProg->SetUniformVec4("g_Size", glm::vec4(brushSize / (m_Width * 0.5f), brushSize / m_Height, 1, 1)); //should be brush size
+		glm::vec2 brushSize(brush.Size / (m_Width * 0.5f), brush.Size / m_Height);
+
+		spriteProg->SetUniformVec4("g_Pos", glm::vec4(glm::vec2(brush.Position.x - brushSize.x * 0.5f, 1.0f - brush.Position.y + brushSize.y * 0.5f), 0, 0));
+		spriteProg->SetUniformVec4("g_Size", glm::vec4(brushSize.x, brushSize.y, 1, 1));
 		brushTex->Apply(spriteProg->FetchUniform("g_Texture"), 0);
 		glDrawArrays(GL_POINTS, 0, 1);
 	}
