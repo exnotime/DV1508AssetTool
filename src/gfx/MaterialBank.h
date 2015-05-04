@@ -19,7 +19,7 @@ namespace gfx
 		Material* GetMaterial(int matIndex);
 		Material* GetMaterial(const std::string& name);
 		int GetMaterialID(const std::string& name);
-		TextureHandle LoadTexture(const char* filename);
+		TextureHandle LoadTexture(const char* filename, TextureType type);
 		Texture* GetTexture(TextureHandle handle);
 	private:
 		MaterialBank();

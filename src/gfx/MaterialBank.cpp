@@ -35,10 +35,7 @@ void gfx::MaterialBank::LoadMaterials(Model& model, std::string filename, const 
 			aiString path;
 			if (mat->GetTexture(aiTextureType_DIFFUSE, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS){
 				std::string fullpath = GetDir(filename) + path.data;
-
-				Texture* albedo = new Texture();
-				albedo->Init( fullpath.c_str( ), TEXTURE_COLOR);
-				modelMat->SetAlbedoTexture(albedo);
+				modelMat->SetAlbedoTexture(LoadTexture(fullpath.c_str(), TEXTURE_COLOR));
 			}
 		}
 		//normal map
@@ -46,9 +43,7 @@ void gfx::MaterialBank::LoadMaterials(Model& model, std::string filename, const 
 			aiString path;
 			if (mat->GetTexture(aiTextureType_HEIGHT, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS){
 				std::string fullpath = GetDir( filename ) + path.data;
-				Texture* normal = new Texture();
-				normal->Init(fullpath.c_str(), TEXTURE_COLOR);
-				modelMat->SetNormalTexture(normal);
+				modelMat->SetNormalTexture(LoadTexture(fullpath.c_str(), TEXTURE_COLOR));
 			}
 		}
 
@@ -84,9 +79,9 @@ gfx::Material* gfx::MaterialBank::GetMaterial(const std::string& name){
 		return nullptr;
 }
 
-TextureHandle gfx::MaterialBank::LoadTexture(const char* filename){
+TextureHandle gfx::MaterialBank::LoadTexture(const char* filename, TextureType type){
 	Texture* tex = new Texture();
-	tex->Init(filename, TEXTURE_COLOR);
+	tex->Init(filename, type);
 	m_Textures.push_back(tex);
 	return m_Numerator++;
 }

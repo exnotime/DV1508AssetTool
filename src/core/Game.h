@@ -3,6 +3,7 @@
 #include "../gfx/ModelBank.h"
 #include "../gfx/Sprite.h"
 #include "verticeTranslation/VerticeTranslation.h"
+#include "InteractiveArea/InterActiveArea.h"
 
 class Game
 {
@@ -20,6 +21,7 @@ private:
 	gfx::Sprite			m_TestSprite;
 	TextureHandle		m_TargetTex;
 	VerticeTranslation			m_VerticeTranslation;
+	InteractiveArea				m_TestArea;
 	std::vector<unsigned int>	m_SelectedVertices;
 };
 

@@ -75,9 +75,9 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 	
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT );
-	if (ImGui::Button("Brush")){
-		RenderToTexture(drawQueue);
-	}
+	TextureHandle target = drawQueue->GetTargetTexture();
+	m_FrameBuffer.SetTexture(target);
+	RenderToTexture(drawQueue);
 	RenderActiveTarget();
 	RenderGeometry(drawQueue);
 	RenderSprites(drawQueue);
@@ -109,7 +109,7 @@ void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 	prog->SetUniformFloat("g_Roughness", roughness);
 	prog->SetUniformFloat("g_Metallic", metal);
 
-	vec4 temp = vec4(lightDir, 0) * glm::rotate(lightangle, glm::vec3(0, 1, 0));
+	glm::vec4 temp = glm::vec4(lightDir, 0) * glm::rotate(lightangle, glm::vec3(0, 1, 0));
 	prog->SetUniformVec3("g_LightDir", glm::vec3(temp.x, temp.y, temp.z));
 	prog->SetUniformVec3("g_CamDir", m_Camera.GetForward());
 	m_SkyTex->Apply(prog->FetchUniform("g_SkyCubeTex"), 1);
@@ -120,7 +120,8 @@ void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 		prog->SetUniformMat4("g_World", object.world);
 		for (auto& mesh : model.Meshes){
 			Material* mat = g_MaterialBank.GetMaterial(model.MaterialOffset + mesh.Material);
-			prog->SetUniformTextureHandle("g_DiffuseTex", mat->GetAlbedoTexture()->GetHandle(), 0);
+			Texture* albedoTex = g_MaterialBank.GetTexture(mat->GetAlbedoTexture());
+			prog->SetUniformTextureHandle("g_DiffuseTex", albedoTex->GetHandle(), 0);
 			glDrawElements(GL_TRIANGLES, mesh.Indices, GL_UNSIGNED_INT,
 				(GLvoid*)(0 + ((model.IndexHandle + mesh.IndexBufferOffset) * sizeof(unsigned int))));
 		}
@@ -164,14 +165,14 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 	glBindVertexArray(0);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	for (int layer = 0; layer < 3; layer++){
-		for (auto& spr : drawQueue->GetSpriteQueue()[layer]){
-			spriteProg->SetUniformVec4("g_Pos", spr.GetPosFlt());
-			spriteProg->SetUniformVec4("g_Size", spr.GetSizeFlt());
-			g_MaterialBank.GetTexture(spr.GetTexture())->Apply(spriteProg->FetchUniform("g_Texture"), 0);
-			glDrawArrays(GL_POINTS, 0, 1);
-		}
+	static float brushSize = 32.0f;
+	ImGui::SliderFloat("BrushSize", &brushSize, 1, 640);
+	for (auto& brush : drawQueue->GetBrushQueue()){
+		Texture* brushTex = g_MaterialBank.GetTexture(brush.Texture);
+		spriteProg->SetUniformVec4("g_Pos", glm::vec4(glm::vec2(brush.Position.x,1.0f - brush.Position.y), 0,0));
+		spriteProg->SetUniformVec4("g_Size", glm::vec4(brushSize / (m_Width * 0.5f), brushSize / m_Height, 1, 1)); //should be brush size
+		brushTex->Apply(spriteProg->FetchUniform("g_Texture"), 0);
+		glDrawArrays(GL_POINTS, 0, 1);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
@@ -190,6 +191,7 @@ void gfx::GraphicsEngine::RenderActiveTarget(){
 	spriteProg->SetUniformVec4("g_Pos", glm::vec4(0.0f, 0.5f + sizeH * 0.5f, 0.0f,0.0f));
 	spriteProg->SetUniformVec4("g_Size", glm::vec4(1.0f, sizeH, 1.0f, 1.0f));
 	glDrawArrays(GL_POINTS, 0, 1);
+
 }
 
 void gfx::GraphicsEngine::Swap( ){
