@@ -38,6 +38,9 @@ void gfx::MaterialBank::LoadMaterials(Model& model, std::string filename, const 
 				modelMat->SetAlbedoTexture(LoadTexture(fullpath.c_str(), TEXTURE_COLOR));
 			}
 		}
+		else {
+			modelMat->SetAlbedoTexture(LoadTexture("asset/whitePixel.png", TEXTURE_COLOR));
+		}
 		//normal map
 		if (mat->GetTextureCount(aiTextureType_HEIGHT) > 0){
 			aiString path;
@@ -46,7 +49,9 @@ void gfx::MaterialBank::LoadMaterials(Model& model, std::string filename, const 
 				modelMat->SetNormalTexture(LoadTexture(fullpath.c_str(), TEXTURE_COLOR));
 			}
 		}
-
+		else {
+			modelMat->SetNormalTexture(LoadTexture("asset/normal.dds", TEXTURE_COLOR));
+		}
 		m_Materials.push_back(modelMat);
 	}
 }

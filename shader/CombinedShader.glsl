@@ -31,6 +31,7 @@ in vec4 TexOut;
 in vec4 TangentW;
 
 uniform 	sampler2D 	g_DiffuseTex;
+uniform 	sampler2D 	g_NormalTex;
 uniform		samplerCube	g_IrradianceCubeTex;
 uniform		samplerCube	g_SkyCubeTex;
 uniform  	vec3 		g_Campos;
@@ -41,14 +42,30 @@ uniform		vec3		g_CamDir;
 
 out vec4 FragmentColor;
 #include LightingFunc.txt
+
+vec3 CalcBumpedNormal(vec3 Normal, vec3 Tangent, sampler2D normalMap, vec2 uv){
+	vec3 normal = normalize(Normal);
+	vec3 tangent = normalize(Tangent);
+	tangent = normalize(tangent - dot(tangent,normal) * normal);
+	vec3 bitangent = cross(tangent,normal);
+
+	vec3 bump = texture(normalMap,uv).xyz;
+	bump = (bump * 2.0) - 1.0;
+
+	vec3 newNormal;
+	mat3 TBN = mat3(tangent,bitangent,normal);
+	newNormal = TBN * bump;
+	return normalize(newNormal);
+}
 void main(){
 
 	// Only things we need for a directional light
 	Light l;
 	l.Color = vec4(1.0f);
 	l.Direction = normalize(g_LightDir);
-	vec3 normal = normalize(NormalW.xyz);
-	vec4 albedo = texture(g_DiffuseTex, vec2(TexOut.x,TexOut.y));
+
+	vec3 normal = CalcBumpedNormal(NormalW.xyz, TangentW.xyz, g_NormalTex, TexOut.xy);
+	vec4 albedo = texture(g_DiffuseTex, TexOut.xy);
 	if(albedo.a <= 0.01f){
 		discard;
 	}

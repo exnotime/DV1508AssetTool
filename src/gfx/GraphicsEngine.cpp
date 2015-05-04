@@ -119,9 +119,12 @@ void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 		Model model = g_ModelBank.FetchModel(object.Model);
 		prog->SetUniformMat4("g_World", object.world);
 		for (auto& mesh : model.Meshes){
+
 			Material* mat = g_MaterialBank.GetMaterial(model.MaterialOffset + mesh.Material);
 			Texture* albedoTex = g_MaterialBank.GetTexture(mat->GetAlbedoTexture());
+			Texture* normalTex = g_MaterialBank.GetTexture(mat->GetNormalTexture());
 			prog->SetUniformTextureHandle("g_DiffuseTex", albedoTex->GetHandle(), 0);
+			prog->SetUniformTextureHandle("g_NormalTex", normalTex->GetHandle(), 3);
 			glDrawElements(GL_TRIANGLES, mesh.Indices, GL_UNSIGNED_INT,
 				(GLvoid*)(0 + ((model.IndexHandle + mesh.IndexBufferOffset) * sizeof(unsigned int))));
 		}
