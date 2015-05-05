@@ -25,17 +25,64 @@ void Game::Initialize(){
 
 	m_TestArea.SetPos(glm::vec2(640, 0));
 	m_TestArea.SetSize(glm::vec2(640, 720));
+
+	///////////////////////////////////////////////////////////////////////////////
+	m_TestArea2.Initialize(glm::vec2(640, 720), glm::vec2(0, 0));
+	m_AutomaticRotate = false;
+	temp = 0;
+	m_MousePos = glm::vec2(0, 0);
+	m_PrevMousePos = glm::vec2(0, 0);
+	///////////////////////////////////////////////////////////////////////////////
 }
 
 void Game::Update(float dt){
 
+	///////////////////////////////////////////////////////////////////////////////
+
+	m_PrevMousePos = m_MousePos;
+	m_TestArea2.Update();
+	m_MousePos = m_TestArea2.GetMousePos();
+
+	if (m_TestArea2.GetLeftMousePressed())//Rotate
+	{
+		float x = 0, y = 0;
+		x = m_PrevMousePos.x - m_MousePos.x;
+		//y = m_PrevMousePos.y - m_MousePos.y;
+		m_RotateY -= x * dt;
+		//m_Pos.y += y * dt;
+	}
+	if (m_TestArea2.GetRightMousePressed())//move
+	{
+		float x = 0, y = 0;
+		x = m_PrevMousePos.x - m_MousePos.x;
+		y = m_PrevMousePos.y - m_MousePos.y;
+		m_Pos.x -= x * dt;
+		m_Pos.y += y * dt;
+	}
+	if (m_RotateY > 6.28f)
+	{
+		m_RotateY = 0.0f;
+	}
+	if (m_RotateY < -6.28f)
+	{
+		m_RotateY = 0.0f;
+	}
+	if (m_AutomaticRotate)
+	{
+		if (m_RotateY > 6.28f)
+		{
+			m_RotateY = 0.0f;
+		}
+		m_RotateY += dt;
+	}
+	///////////////////////////////////////////////////////////////////////////////
 	m_TestArea.Update();
 	static float x = 0;
 	static float y = 0;
 	ImGui::SliderFloat( "X##001", &m_Pos.x, -10, 10 );
 	ImGui::SliderFloat( "Y##001", &m_Pos.y, -10, 10 );
 	ImGui::SliderFloat( "Z", &m_Pos.z, -20, 10 );
-	ImGui::SliderFloat( "Scale", &m_Scale, 0, 2 );
+	ImGui::SliderFloat("Scale", &m_Scale, 0, 2);
 	ImGui::SliderFloat("RotateY", &m_RotateY, 0, 6.28f);
 	m_TestSprite.SetPos(glm::vec2(x, y));
 

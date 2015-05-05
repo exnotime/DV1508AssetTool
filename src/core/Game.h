@@ -5,6 +5,10 @@
 #include "verticeTranslation/VerticeTranslation.h"
 #include "InteractiveArea/InterActiveArea.h"
 
+///////////////////////////////////////////////////////////////////////////////
+#include "InteractiveArea\ModelInteraction.h"
+
+///////////////////////////////////////////////////////////////////////////////
 class Game
 {
 public:
@@ -23,5 +27,20 @@ private:
 	VerticeTranslation			m_VerticeTranslation;
 	InteractiveArea				m_TestArea;
 	std::vector<unsigned int>	m_SelectedVertices;
+
+
+
+	///////////////////////////////////////////////////////////////////////////////
+
+	ModelInteraction 				m_TestArea2;
+	glm::vec2 m_clickedPos;
+	float temp;
+	bool m_AutomaticRotate;
+
+	glm::vec2 m_MousePos;
+	glm::vec2 m_PrevMousePos;
+
+	///////////////////////////////////////////////////////////////////////////////
+
 };
 
