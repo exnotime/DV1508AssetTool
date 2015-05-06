@@ -152,6 +152,7 @@ void gfx::GraphicsEngine::RenderSprites(RenderQueue* drawQueue){
 		for (auto& spr : drawQueue->GetSpriteQueue()[layer]){
 			spriteProg->SetUniformVec4("g_Pos", spr.GetPosFlt());
 			spriteProg->SetUniformVec4("g_Size", spr.GetSizeFlt());
+			spriteProg->SetUniformVec4("g_Color", glm::vec4(1));
 			g_MaterialBank.GetTexture(spr.GetTexture())->Apply(spriteProg->FetchUniform("g_Texture"), 0);
 			glDrawArrays(GL_POINTS, 0, 1);
 		}
@@ -173,15 +174,18 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
 	}
 	else {
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	}
-	
+	static glm::vec4 color = glm::vec4(1);
+	ImGui::ColorEdit4("BrushColor", &color[0], true);
+
 	for (auto& brush : drawQueue->GetBrushQueue()){
 		Texture* brushTex = g_MaterialBank.GetTexture(brush.Texture);
 		glm::vec2 brushSize(brush.Size / (m_Width * 0.5f), brush.Size / m_Height);
 
 		spriteProg->SetUniformVec4("g_Pos", glm::vec4(glm::vec2(brush.Position.x - brushSize.x * 0.5f, 1.0f - brush.Position.y + brushSize.y * 0.5f), 0, 0));
 		spriteProg->SetUniformVec4("g_Size", glm::vec4(brushSize.x, brushSize.y, 1, 1));
+		spriteProg->SetUniformVec4("g_Color", color);
 		brushTex->Apply(spriteProg->FetchUniform("g_Texture"), 0);
 		glDrawArrays(GL_POINTS, 0, 1);
 	}
@@ -200,6 +204,7 @@ void gfx::GraphicsEngine::RenderActiveTarget(){
 	float sizeH;
 	sizeH = tex->GetHeight() / tex->GetWidth();
 	tex->Apply(spriteProg->FetchUniform("g_Texture"), 0);
+	spriteProg->SetUniformVec4("g_Color", glm::vec4(1));
 	spriteProg->SetUniformVec4("g_Pos", glm::vec4(0.0f, 0.5f + sizeH * 0.5f, 0.0f,0.0f));
 	spriteProg->SetUniformVec4("g_Size", glm::vec4(1.0f, sizeH, 1.0f, 1.0f));
 	glDrawArrays(GL_POINTS, 0, 1);
