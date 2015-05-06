@@ -38,6 +38,7 @@ private:
 	float m_StartRotationY;
 	float m_StartScale;
 	bool m_AutomaticRotate;
+	bool m_AutomaticRotateLeft;
 
 	glm::vec2 m_MousePos;
 	glm::vec2 m_PrevMousePos;

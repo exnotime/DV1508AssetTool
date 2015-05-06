@@ -34,6 +34,7 @@ void Game::Initialize(){
 	m_StartPos = m_Pos;
 	m_StartRotationY = m_RotateY;
 	m_StartScale = m_Scale;
+	m_AutomaticRotateLeft = false;
 	///////////////////////////////////////////////////////////////////////////////
 }
 
@@ -44,12 +45,20 @@ void Game::Update(float dt){
 	m_PrevMousePos = m_MousePos;
 	m_TestArea2.Update();
 	m_MousePos = m_TestArea2.GetMousePos();
-
-	if (m_TestArea2.GetLeftMousePressed())//Rotate
+	//Rotate the model around Y
+	if (m_TestArea2.GetLeftMousePressed())
 	{
 		float x = 0, y = 0;
 		x = m_PrevMousePos.x - m_MousePos.x;
 		//y = m_PrevMousePos.y - m_MousePos.y;
+		if (x < 0)
+		{
+			m_AutomaticRotateLeft = false;
+		}
+		else
+		{
+			m_AutomaticRotateLeft = true;
+		}
 		m_RotateY -= x * dt;
 		//m_Pos.y += y * dt;
 	}
@@ -74,19 +83,17 @@ void Game::Update(float dt){
 	//Manipulate scale by scrolling the mouse wheel
 	m_Scale += m_TestArea2.GetMouseWheelState() * dt;
 
-
-
-
-
 	//Reset position, rotation and scale
 	if (m_TestArea2.GetMouseWheelClicked())
 	{
 		m_Scale = m_StartScale;
 	}
+
 	if (m_TestArea2.GetRightMouseDoubleClicked())
 	{
 		m_Pos = m_StartPos;
 	}
+
 	if (m_TestArea2.GetLeftMouseDoubleClicked() && m_RotateY == m_StartRotationY && !m_AutomaticRotate)
 	{
 		m_AutomaticRotate = true;
@@ -102,11 +109,14 @@ void Game::Update(float dt){
 	//Rotates automatically
 	if (m_AutomaticRotate)
 	{
-		if (m_RotateY > 6.28f)
+		if (!m_AutomaticRotateLeft)
 		{
-			m_RotateY = 0.0f;
+			m_RotateY += dt;
 		}
-		m_RotateY += dt;
+		else
+		{
+			m_RotateY -= dt;
+		}
 	}
 	///////////////////////////////////////////////////////////////////////////////
 	m_TestArea.Update();
