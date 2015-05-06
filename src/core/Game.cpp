@@ -74,6 +74,10 @@ void Game::Update(float dt){
 	//Manipulate scale by scrolling the mouse wheel
 	m_Scale += m_TestArea2.GetMouseWheelState() * dt;
 
+
+
+
+
 	//Reset position, rotation and scale
 	if (m_TestArea2.GetMouseWheelClicked())
 	{
@@ -83,7 +87,15 @@ void Game::Update(float dt){
 	{
 		m_Pos = m_StartPos;
 	}
-	if (m_TestArea2.GetLeftMouseDoubleClicked())
+	if (m_TestArea2.GetLeftMouseDoubleClicked() && m_RotateY == m_StartRotationY && !m_AutomaticRotate)
+	{
+		m_AutomaticRotate = true;
+	}
+	else if (m_TestArea2.GetLeftMouseDoubleClicked() && m_AutomaticRotate)
+	{
+		m_AutomaticRotate = false;
+	}
+	else if (m_TestArea2.GetLeftMouseDoubleClicked())
 	{
 		m_RotateY = m_StartRotationY;
 	}
