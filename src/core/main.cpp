@@ -9,6 +9,7 @@
 #include "../gfx/ModelBank.h"
 
 void RenderImgui( );
+void UpdateWindow(GLFWwindow* window, int w, int h);
 int main( ){
 
 	int width = 1280;
@@ -17,6 +18,8 @@ int main( ){
 	bool fullscreen = false;
 
 	GLFWwindow* window = gfx::g_GFXEngine.Initialize( width, height, vsync, fullscreen );
+	glfwSetFramebufferSizeCallback(window, UpdateWindow);
+
 	Game game;
 	game.Initialize( );
 	gfx::g_ModelBank.BuildBuffers( ); //update vertex and index buffer
@@ -53,4 +56,8 @@ void RenderImgui( ){
 	glViewport( 0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y );
 	//glClear( GL_COLOR_BUFFER_BIT );
 	ImGui::Render( );
+}
+
+void UpdateWindow(GLFWwindow* window, int w, int h){
+	gfx::g_GFXEngine.UpdateWindowSize(w, h);
 }

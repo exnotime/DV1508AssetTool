@@ -65,13 +65,19 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	m_TestTex->Init("asset/rockman_teeth.png", TEXTURE_COLOR);
 	//Load cubeTex
 	m_SkyTex = new Texture();
-	m_SkyTex->Init("asset/CubeMaps/campus.dds", TEXTURE_CUBE);
+	m_SkyTex->Init("asset/CubeMaps/square.dds", TEXTURE_CUBE);
 	m_IrradianceTex = new Texture();
-	m_IrradianceTex->Init("asset/CubeMaps/campus_irr.dds", TEXTURE_CUBE);
+	m_IrradianceTex->Init("asset/CubeMaps/square_irr.dds", TEXTURE_CUBE);
 
 	m_FrameBuffer.Init();
 	return m_Window;
 }
+
+void gfx::GraphicsEngine::UpdateWindowSize(int width, int height){
+	m_Width = width;
+	m_Height = height;
+}
+
 void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 	
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT );
@@ -87,7 +93,8 @@ void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 
 void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 	glViewport(0, 0, m_Width * 0.5f, m_Height);
-	glDisable(GL_BLEND);
+	//glDisable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 	g_ModelBank.ApplyBuffers();
 	ShaderProgram* prog = g_ShaderBank.GetProgramFromHandle(m_Shader);
@@ -123,8 +130,10 @@ void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 			Material* mat = g_MaterialBank.GetMaterial(model.MaterialOffset + mesh.Material);
 			Texture* albedoTex = g_MaterialBank.GetTexture(mat->GetAlbedoTexture());
 			Texture* normalTex = g_MaterialBank.GetTexture(mat->GetNormalTexture());
+			Texture* roughnessTex = g_MaterialBank.GetTexture(mat->GetRoughnessTexture());
 			prog->SetUniformTextureHandle("g_DiffuseTex", albedoTex->GetHandle(), 0);
 			prog->SetUniformTextureHandle("g_NormalTex", normalTex->GetHandle(), 3);
+			prog->SetUniformTextureHandle("g_RoughnessTex", roughnessTex->GetHandle(), 4);
 			glDrawElements(GL_TRIANGLES, mesh.Indices, GL_UNSIGNED_INT,
 				(GLvoid*)(0 + ((model.IndexHandle + mesh.IndexBufferOffset) * sizeof(unsigned int))));
 		}
