@@ -94,7 +94,7 @@ void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 	glViewport(0, 0, m_Width * 0.5f, m_Height);
 	//glDisable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 	g_ModelBank.ApplyBuffers();
 	ShaderProgram* prog = g_ShaderBank.GetProgramFromHandle(m_Shader);

@@ -63,7 +63,7 @@ void main(){
 	float roughness = texture(g_RoughnessTex,TexOut.xy).r;
 	// Only things we need for a directional light
 	Light l;
-	l.Color = vec4(1.0f);
+	l.Color = vec4(5.0f);
 	l.Direction = normalize(g_LightDir);
 
 	vec3 normal = CalcBumpedNormal(NormalW.xyz, TangentW.xyz, g_NormalTex, TexOut.xy);
