@@ -167,7 +167,15 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 	glBindVertexArray(0);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	static bool additive = true; 
+	ImGui::Checkbox("Additive", &additive);
+	if (additive){
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	}
+	else {
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+	
 	for (auto& brush : drawQueue->GetBrushQueue()){
 		Texture* brushTex = g_MaterialBank.GetTexture(brush.Texture);
 		glm::vec2 brushSize(brush.Size / (m_Width * 0.5f), brush.Size / m_Height);
@@ -184,6 +192,7 @@ void gfx::GraphicsEngine::RenderActiveTarget(){
 	glViewport(m_Width * 0.5f, 0, m_Width * 0.5f, m_Height);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	ShaderProgram* spriteProg = g_ShaderBank.GetProgramFromHandle(m_SpriteShader);
 	spriteProg->Apply();
 	glBindVertexArray(0);
