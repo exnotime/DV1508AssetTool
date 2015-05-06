@@ -20,6 +20,7 @@ void Game::Initialize(){
 	m_Scale = 1.0f;
 	m_RotateY = 0.0f;
 	m_VerticeTranslation.Initialize();
+	m_uvTranslation.Initialize();
 	m_TestSprite.SetTexture("asset/brush.png");
 	m_TargetTex = gfx::g_MaterialBank.LoadTexture("asset/flcl.jpg",gfx::TEXTURE_COLOR);
 
@@ -42,6 +43,9 @@ void Game::Update(float dt){
 	TempSelectVertices( m_Model, m_SelectedVertices );	// TODO: Remove when real vertice selection is implemented.
 	m_VerticeTranslation.SetSelectedVertices( m_SelectedVertices );
 	m_VerticeTranslation.Update( dt );
+
+	// UV
+	m_uvTranslation.Update(dt);
 }
 
 void Game::Render( gfx::RenderQueue* rq ){
@@ -58,6 +62,7 @@ void Game::Render( gfx::RenderQueue* rq ){
 	rq->SetTargetTexture(lucMat->GetAlbedoTexture());
 
 	m_VerticeTranslation.Draw( rq );
+	m_uvTranslation.Draw(rq);
 
 	static float brushSize = 24;
 	ImGui::SliderFloat("BrushSize", &brushSize, 1, 640);
@@ -69,5 +74,4 @@ void Game::Render( gfx::RenderQueue* rq ){
 		bo.Texture = m_TestSprite.GetTexture();
 		rq->Enqueue(bo);
 	}
-
 }

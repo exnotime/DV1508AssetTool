@@ -4,6 +4,7 @@
 #include "../gfx/Sprite.h"
 #include "verticeTranslation/VerticeTranslation.h"
 #include "InteractiveArea/InterActiveArea.h"
+#include "UV/UVTranslation.h"
 
 class Game
 {
@@ -23,5 +24,6 @@ private:
 	VerticeTranslation			m_VerticeTranslation;
 	InteractiveArea				m_TestArea;
 	std::vector<unsigned int>	m_SelectedVertices;
+	UVTranslation				m_uvTranslation;
 };
 
