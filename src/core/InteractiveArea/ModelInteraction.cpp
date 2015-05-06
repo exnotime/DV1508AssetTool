@@ -45,10 +45,7 @@ void ModelInteraction::Update()
 
 	if (io.MouseDown[0])
 	{
-		if (m_mouseInSideWorkspace)
-		{
-			m_LeftMouseIsPressed = true;
-		}
+		m_LeftMouseIsPressed = true;
 	}
 	else
 	{
@@ -56,10 +53,7 @@ void ModelInteraction::Update()
 	}
 	if (io.MouseDown[1])
 	{
-		if (m_mouseInSideWorkspace)
-		{
-			m_RightMouseIsPressed = true;
-		}
+		m_RightMouseIsPressed = true;
 	}
 	else
 	{
@@ -102,21 +96,53 @@ glm::vec2 ModelInteraction::GetMousePos()
 }
 bool ModelInteraction::GetLeftMouseClicked()
 {
-	//TODO
-	return true;
+	if (!m_LeftMouseIsPressed && m_PrevLeftMouseState)
+	{
+		if (m_mouseInSideWorkspace)
+		{
+			return true;
+		}
+	}
+	else
+	{
+		return false;
+	}
 }
 bool ModelInteraction::GetLeftMousePressed()
 {
-	return m_LeftMouseIsPressed;
+	if (m_LeftMouseIsPressed)
+	{
+		if (m_mouseInSideWorkspace)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 bool ModelInteraction::GetRightMouseClicked()
 {
-	//TODO
-	return true;
+	if (!m_RightMouseIsPressed && m_PrevRightMouseState)
+	{
+		if (m_mouseInSideWorkspace)
+		{
+			return true;
+		}
+	}
+	else
+	{
+		return false;
+	}
 }
 bool ModelInteraction::GetRightMousePressed()
 {
-	return m_RightMouseIsPressed;
+	if (m_RightMouseIsPressed)
+	{
+		if (m_mouseInSideWorkspace)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 
 void ModelInteraction::CheckMouseInsideWorkspace()
@@ -134,17 +160,45 @@ void ModelInteraction::CheckMouseInsideWorkspace()
 
 int ModelInteraction::GetMouseWheelState()
 {
-	return m_mouseWheelState;
+	if (m_mouseWheelState)
+	{
+		if (m_mouseInSideWorkspace)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 bool ModelInteraction::GetRightMouseDoubleClicked()
 {
-	return m_rightMouseButtonDoubleClick;
+	if (m_rightMouseButtonDoubleClick)
+	{
+		if (m_mouseInSideWorkspace)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 bool ModelInteraction::GetLeftMouseDoubleClicked()
 {
-	return m_leftMouseButtonDoubleClick;
+	if (m_leftMouseButtonDoubleClick)
+	{
+		if (m_mouseInSideWorkspace)
+		{
+			return true;
+		}
+	}
+	return false;
 }
 bool ModelInteraction::GetMouseWheelClicked()
 {
-	return m_mouseWheelClicked;
+	if (m_mouseWheelClicked)
+	{
+		if (m_mouseInSideWorkspace)
+		{
+			return true;
+		}
+	}
+	return false;
 }
