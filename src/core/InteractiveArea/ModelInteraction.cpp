@@ -59,13 +59,13 @@ void ModelInteraction::Update()
 	{
 		m_RightMouseIsPressed = false;
 	}
-	if (io.MouseDoubleClicked[1])
+	if (io.MouseClicked[2])
 	{
-		m_rightMouseButtonDoubleClick = true;
+		m_mouseWheelClicked = true;
 	}
 	else
 	{
-		m_rightMouseButtonDoubleClick = false;
+		m_mouseWheelClicked = false;
 	}
 	if (io.MouseDoubleClicked[0])
 	{
@@ -75,14 +75,13 @@ void ModelInteraction::Update()
 	{
 		m_leftMouseButtonDoubleClick = false;
 	}
-
-	if (io.MouseClicked[2])
+	if (io.MouseDoubleClicked[1])
 	{
-		m_mouseWheelClicked = true;
+		m_rightMouseButtonDoubleClick = true;
 	}
 	else
 	{
-		m_mouseWheelClicked = false;
+		m_rightMouseButtonDoubleClick = false;
 	}
 
 	m_mouseWheelState = (int)io.MouseWheel;
