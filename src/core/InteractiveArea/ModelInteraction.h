@@ -20,6 +20,10 @@ public:
 	bool GetLeftMousePressed();
 	bool GetRightMouseClicked();
 	bool GetRightMousePressed();
+	int GetMouseWheelState();
+	bool GetRightMouseDoubleClicked();
+	bool GetLeftMouseDoubleClicked();
+	bool GetMouseWheelClicked();
 
 private:
 	void CheckMouseInsideWorkspace();
@@ -35,7 +39,14 @@ private:
 	bool m_RightMouseIsPressed;//True if pressed
 	bool m_PrevRightMouseState;//True if pressed
 
+	bool m_rightMouseButtonDoubleClick;
+	bool m_leftMouseButtonDoubleClick;
+
 	bool m_mouseInSideWorkspace;
+
+	int m_mouseWheelState;
+	bool m_mouseWheelClicked;
+
 
 };
 

@@ -32,9 +32,11 @@ private:
 
 	///////////////////////////////////////////////////////////////////////////////
 
+	glm::vec3			m_StartPos;
 	ModelInteraction 				m_TestArea2;
 	glm::vec2 m_clickedPos;
-	float temp;
+	float m_StartRotationY;
+	float m_StartScale;
 	bool m_AutomaticRotate;
 
 	glm::vec2 m_MousePos;

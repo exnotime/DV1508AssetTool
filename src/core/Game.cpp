@@ -29,9 +29,11 @@ void Game::Initialize(){
 	///////////////////////////////////////////////////////////////////////////////
 	m_TestArea2.Initialize(glm::vec2(640, 720), glm::vec2(0, 0));
 	m_AutomaticRotate = false;
-	temp = 0;
 	m_MousePos = glm::vec2(0, 0);
 	m_PrevMousePos = glm::vec2(0, 0);
+	m_StartPos = m_Pos;
+	m_StartRotationY = m_RotateY;
+	m_StartScale = m_Scale;
 	///////////////////////////////////////////////////////////////////////////////
 }
 
@@ -51,7 +53,8 @@ void Game::Update(float dt){
 		m_RotateY -= x * dt;
 		//m_Pos.y += y * dt;
 	}
-	if (m_TestArea2.GetRightMousePressed())//move
+	//Move the model around in the viewspace
+	if (m_TestArea2.GetRightMousePressed())
 	{
 		float x = 0, y = 0;
 		x = m_PrevMousePos.x - m_MousePos.x;
@@ -59,6 +62,7 @@ void Game::Update(float dt){
 		m_Pos.x -= x * dt;
 		m_Pos.y += y * dt;
 	}
+	//if the Y rotation goes past min/max then reset
 	if (m_RotateY > 6.28f)
 	{
 		m_RotateY = 0.0f;
@@ -67,6 +71,23 @@ void Game::Update(float dt){
 	{
 		m_RotateY = 0.0f;
 	}
+	//Manipulate scale by scrolling the mouse wheel
+	m_Scale += m_TestArea2.GetMouseWheelState() * dt;
+
+	//Reset position, rotation and scale
+	if (m_TestArea2.GetMouseWheelClicked())
+	{
+		m_Scale = m_StartScale;
+	}
+	if (m_TestArea2.GetRightMouseDoubleClicked())
+	{
+		m_Pos = m_StartPos;
+	}
+	if (m_TestArea2.GetLeftMouseDoubleClicked())
+	{
+		m_RotateY = m_StartRotationY;
+	}
+	//Rotates automatically
 	if (m_AutomaticRotate)
 	{
 		if (m_RotateY > 6.28f)

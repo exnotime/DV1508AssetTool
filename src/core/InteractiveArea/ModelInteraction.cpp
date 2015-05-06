@@ -14,6 +14,10 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	m_RightMouseIsPressed = false;
 	m_PrevRightMouseState = false;
 	m_mouseInSideWorkspace = false;
+	m_mouseWheelState = 0;
+	m_rightMouseButtonDoubleClick = false;
+	m_leftMouseButtonDoubleClick = false;
+	m_mouseWheelClicked = false;
 }
 void ModelInteraction::SetSpaceSize(const glm::vec2& p_size)
 {
@@ -61,6 +65,33 @@ void ModelInteraction::Update()
 	{
 		m_RightMouseIsPressed = false;
 	}
+	if (io.MouseDoubleClicked[1])
+	{
+		m_rightMouseButtonDoubleClick = true;
+	}
+	else
+	{
+		m_rightMouseButtonDoubleClick = false;
+	}
+	if (io.MouseDoubleClicked[0])
+	{
+		m_leftMouseButtonDoubleClick = true;
+	}
+	else
+	{
+		m_leftMouseButtonDoubleClick = false;
+	}
+
+	if (io.MouseClicked[2])
+	{
+		m_mouseWheelClicked = true;
+	}
+	else
+	{
+		m_mouseWheelClicked = false;
+	}
+
+	m_mouseWheelState = (int)io.MouseWheel;
 	m_MousePos.x = io.MousePos.x;
 	m_MousePos.y = io.MousePos.y;
 }
@@ -99,4 +130,21 @@ void ModelInteraction::CheckMouseInsideWorkspace()
 		}
 	}
 	m_mouseInSideWorkspace = false;
+}
+
+int ModelInteraction::GetMouseWheelState()
+{
+	return m_mouseWheelState;
+}
+bool ModelInteraction::GetRightMouseDoubleClicked()
+{
+	return m_rightMouseButtonDoubleClick;
+}
+bool ModelInteraction::GetLeftMouseDoubleClicked()
+{
+	return m_leftMouseButtonDoubleClick;
+}
+bool ModelInteraction::GetMouseWheelClicked()
+{
+	return m_mouseWheelClicked;
 }
