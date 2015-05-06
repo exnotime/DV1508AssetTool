@@ -31,6 +31,8 @@ private:
 
 
 	///////////////////////////////////////////////////////////////////////////////
+	void UpdateModelViewWindow(float p_deltaTime);
+
 
 	glm::vec3			m_StartPos;
 	ModelInteraction 				m_TestArea2;
