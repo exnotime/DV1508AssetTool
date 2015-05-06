@@ -65,13 +65,19 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	m_TestTex->Init("asset/rockman_teeth.png", TEXTURE_COLOR);
 	//Load cubeTex
 	m_SkyTex = new Texture();
-	m_SkyTex->Init("asset/CubeMaps/campus.dds", TEXTURE_CUBE);
+	m_SkyTex->Init("asset/CubeMaps/square.dds", TEXTURE_CUBE);
 	m_IrradianceTex = new Texture();
-	m_IrradianceTex->Init("asset/CubeMaps/campus_irr.dds", TEXTURE_CUBE);
+	m_IrradianceTex->Init("asset/CubeMaps/square_irr.dds", TEXTURE_CUBE);
 
 	m_FrameBuffer.Init();
 	return m_Window;
 }
+
+void gfx::GraphicsEngine::UpdateWindowSize(int width, int height){
+	m_Width = width;
+	m_Height = height;
+}
+
 void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 	
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT );
@@ -87,7 +93,8 @@ void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 
 void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 	glViewport(0, 0, m_Width * 0.5f, m_Height);
-	glDisable(GL_BLEND);
+	//glDisable(GL_BLEND);
+	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
 	g_ModelBank.ApplyBuffers();
 	ShaderProgram* prog = g_ShaderBank.GetProgramFromHandle(m_Shader);
@@ -123,8 +130,10 @@ void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 			Material* mat = g_MaterialBank.GetMaterial(model.MaterialOffset + mesh.Material);
 			Texture* albedoTex = g_MaterialBank.GetTexture(mat->GetAlbedoTexture());
 			Texture* normalTex = g_MaterialBank.GetTexture(mat->GetNormalTexture());
+			Texture* roughnessTex = g_MaterialBank.GetTexture(mat->GetRoughnessTexture());
 			prog->SetUniformTextureHandle("g_DiffuseTex", albedoTex->GetHandle(), 0);
 			prog->SetUniformTextureHandle("g_NormalTex", normalTex->GetHandle(), 3);
+			prog->SetUniformTextureHandle("g_RoughnessTex", roughnessTex->GetHandle(), 4);
 			glDrawElements(GL_TRIANGLES, mesh.Indices, GL_UNSIGNED_INT,
 				(GLvoid*)(0 + ((model.IndexHandle + mesh.IndexBufferOffset) * sizeof(unsigned int))));
 		}
@@ -143,6 +152,7 @@ void gfx::GraphicsEngine::RenderSprites(RenderQueue* drawQueue){
 		for (auto& spr : drawQueue->GetSpriteQueue()[layer]){
 			spriteProg->SetUniformVec4("g_Pos", spr.GetPosFlt());
 			spriteProg->SetUniformVec4("g_Size", spr.GetSizeFlt());
+			spriteProg->SetUniformVec4("g_Color", glm::vec4(1));
 			g_MaterialBank.GetTexture(spr.GetTexture())->Apply(spriteProg->FetchUniform("g_Texture"), 0);
 			glDrawArrays(GL_POINTS, 0, 1);
 		}
@@ -158,13 +168,24 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 	glBindVertexArray(0);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	static bool additive = true; 
+	ImGui::Checkbox("Additive", &additive);
+	if (additive){
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
+	}
+	else {
+		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+	}
+	static glm::vec4 color = glm::vec4(1);
+	ImGui::ColorEdit4("BrushColor", &color[0], true);
+
 	for (auto& brush : drawQueue->GetBrushQueue()){
 		Texture* brushTex = g_MaterialBank.GetTexture(brush.Texture);
 		glm::vec2 brushSize(brush.Size / (m_Width * 0.5f), brush.Size / m_Height);
 
 		spriteProg->SetUniformVec4("g_Pos", glm::vec4(glm::vec2(brush.Position.x - brushSize.x * 0.5f, 1.0f - brush.Position.y + brushSize.y * 0.5f), 0, 0));
 		spriteProg->SetUniformVec4("g_Size", glm::vec4(brushSize.x, brushSize.y, 1, 1));
+		spriteProg->SetUniformVec4("g_Color", color);
 		brushTex->Apply(spriteProg->FetchUniform("g_Texture"), 0);
 		glDrawArrays(GL_POINTS, 0, 1);
 	}
@@ -175,6 +196,7 @@ void gfx::GraphicsEngine::RenderActiveTarget(){
 	glViewport(m_Width * 0.5f, 0, m_Width * 0.5f, m_Height);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	ShaderProgram* spriteProg = g_ShaderBank.GetProgramFromHandle(m_SpriteShader);
 	spriteProg->Apply();
 	glBindVertexArray(0);
@@ -182,6 +204,7 @@ void gfx::GraphicsEngine::RenderActiveTarget(){
 	float sizeH;
 	sizeH = tex->GetHeight() / tex->GetWidth();
 	tex->Apply(spriteProg->FetchUniform("g_Texture"), 0);
+	spriteProg->SetUniformVec4("g_Color", glm::vec4(1));
 	spriteProg->SetUniformVec4("g_Pos", glm::vec4(0.0f, 0.5f + sizeH * 0.5f, 0.0f,0.0f));
 	spriteProg->SetUniformVec4("g_Size", glm::vec4(1.0f, sizeH, 1.0f, 1.0f));
 	glDrawArrays(GL_POINTS, 0, 1);

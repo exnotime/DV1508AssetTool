@@ -52,6 +52,17 @@ void gfx::MaterialBank::LoadMaterials(Model& model, std::string filename, const 
 		else {
 			modelMat->SetNormalTexture(LoadTexture("asset/normal.dds", TEXTURE_COLOR));
 		}
+		//roughness map
+		if (mat->GetTextureCount(aiTextureType_SPECULAR) > 0){
+			aiString path;
+			if (mat->GetTexture(aiTextureType_SPECULAR, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS){
+				std::string fullpath = GetDir(filename) + path.data;
+				modelMat->SetRoughnessTexture(LoadTexture(fullpath.c_str(), TEXTURE_GREYSCALE));
+			}
+		}
+		else {
+			modelMat->SetRoughnessTexture(LoadTexture("asset/roughness.tga", TEXTURE_GREYSCALE));
+		}
 		m_Materials.push_back(modelMat);
 	}
 }

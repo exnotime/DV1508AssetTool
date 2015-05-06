@@ -141,9 +141,7 @@ vec4 CalcDLight(Light light, vec3 inNormal, vec3 posw, vec3 campos, vec3 baseCol
 	vec3 toeye = normalize(campos - posw);
 	vec3 diff = vec3(OrenNayarDiffuse(inNormal, -lightDir,toeye, roughness)) * baseColor;
 	vec3 spec = CookTorranceSpecular(inNormal, -lightDir, toeye, roughness, metal);
-	//metallic
-	diff = mix(diff, vec3(0.0), metal);
-	spec = mix(spec, spec * baseColor, metal);
+
 	//ibl
 	vec3 reflected = reflect(g_CamDir, inNormal);
 
@@ -155,7 +153,13 @@ vec4 CalcDLight(Light light, vec3 inNormal, vec3 posw, vec3 campos, vec3 baseCol
 
 	vec4 iblDiff = texture(g_IrradianceCubeTex,inNormal);
 	iblDiff = pow(iblDiff, vec4(2.2));
+	//diff = diff * iblDiff.xyz;
+	//spec = spec * iblSpec.xyz;
+	//metallic
+	diff = mix(diff, vec3(0.0), metal);
+	spec = mix(spec, spec * baseColor, metal);
 
-	lightColor.xyz = vec3(light.Color.xyz) * (diff * iblDiff.xyz + spec * iblSpec.xyz);
+	vec3 iblColor = mix(iblSpec.xyz , iblDiff.xyz, roughness);
+	lightColor.xyz = vec3(light.Color.xyz) * (diff + spec) * iblColor;
 	return lightColor;
 }

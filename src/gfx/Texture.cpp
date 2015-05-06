@@ -24,7 +24,7 @@ bool Texture::Init(const char* Filename, TextureType type)
 	
 	if (type == TEXTURE_COLOR || type == TEXTURE_GREYSCALE){
 		int forceChannel = type == TEXTURE_COLOR ? 4 : 1;
-		m_Handle = SOIL_load_OGL_texture(Filename, forceChannel, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+		m_Handle = SOIL_load_OGL_texture(Filename, forceChannel, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y |SOIL_FLAG_MULTIPLY_ALPHA);
 		glBindTexture(GL_TEXTURE_2D, m_Handle);
 		//glGenerateMipmap(GL_TEXTURE_2D);
 		GLfloat fLargest;

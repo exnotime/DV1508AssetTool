@@ -14,7 +14,6 @@ Game::~Game( )
 }
 
 void Game::Initialize(){
-	m_TargetTex = gfx::g_MaterialBank.LoadTexture("asset/flcl.jpg", gfx::TEXTURE_COLOR);
 	m_Model = gfx::g_ModelBank.LoadModel("asset/LucinaResource/Lucina_posed.obj");
 	m_Pos = glm::vec3(0.0f);
 	m_Scale = 1.0f;
@@ -22,10 +21,9 @@ void Game::Initialize(){
 	m_VerticeTranslation.Initialize();
 	m_uvTranslation.Initialize();
 	m_TestSprite.SetTexture("asset/brush.png");
-	m_TargetTex = gfx::g_MaterialBank.LoadTexture("asset/flcl.jpg",gfx::TEXTURE_COLOR);
 
-	m_TestArea.SetPos(glm::vec2(640, 0));
-	m_TestArea.SetSize(glm::vec2(640, 720));
+	m_TestArea.SetPos(glm::vec2(800, 0));
+	m_TestArea.SetSize(glm::vec2(800, 900));
 }
 
 void Game::Update(float dt){
@@ -59,7 +57,15 @@ void Game::Render( gfx::RenderQueue* rq ){
 	static int meshIndex = 0;
 	ImGui::SliderInt("Mesh Texture", &meshIndex, 0, lucina.Meshes.size() - 1);
 	gfx::Material* lucMat = gfx::g_MaterialBank.GetMaterial(lucina.Meshes[meshIndex].Material);
-	rq->SetTargetTexture(lucMat->GetAlbedoTexture());
+	static bool useRoughness = false;
+	ImGui::Checkbox("roughness", &useRoughness);
+	if (useRoughness){
+		rq->SetTargetTexture(lucMat->GetRoughnessTexture());
+	}
+	else {
+		rq->SetTargetTexture(lucMat->GetAlbedoTexture());
+	}
+	
 
 	m_VerticeTranslation.Draw( rq );
 	m_uvTranslation.Draw(rq);
