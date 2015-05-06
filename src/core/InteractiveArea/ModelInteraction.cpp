@@ -163,10 +163,10 @@ int ModelInteraction::GetMouseWheelState()
 	{
 		if (m_mouseInSideWorkspace)
 		{
-			return true;
+			return m_mouseWheelState;
 		}
 	}
-	return false;
+	return 0;
 }
 bool ModelInteraction::GetRightMouseDoubleClicked()
 {
