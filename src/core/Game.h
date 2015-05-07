@@ -5,6 +5,7 @@
 #include "verticeTranslation/VerticeTranslation.h"
 #include "InteractiveArea/InterActiveArea.h"
 #include "Button/Button.h"
+#include "UV/UVTranslation.h"
 ///////////////////////////////////////////////////////////////////////////////
 #include "InteractiveArea\ModelInteraction.h"
 class Camera;
@@ -17,6 +18,7 @@ public:
 	void Initialize();
 	void Update(float dt);
 	void Render( gfx::RenderQueue* rq );
+	void Shutdown();
 private:
 	gfx::ModelHandle	m_Model;
 	glm::vec3			m_Pos;
@@ -28,7 +30,7 @@ private:
 	VerticeTranslation			m_VerticeTranslation;
 	InteractiveArea				m_TestArea;
 	std::vector<unsigned int>	m_SelectedVertices;
-
+	UVTranslation				m_uvTranslation;
 
 
 	///////////////////////////////////////////////////////////////////////////////

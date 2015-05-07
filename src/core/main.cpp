@@ -46,6 +46,7 @@ int main( ){
 		drawQueue.Clear();
 	};
 
+	game.Shutdown();
 	ImGui_ImplGlfwGL3_Shutdown( );
 	glfwTerminate( );
 	return 0;

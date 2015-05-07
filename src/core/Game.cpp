@@ -22,6 +22,7 @@ void Game::Initialize(){
 	m_Scale = 1.0f;
 	m_RotateY = 0.0f;
 	m_VerticeTranslation.Initialize();
+	m_uvTranslation.Initialize(m_Model);
 	m_TestSprite.SetTexture("asset/brush.png");
 
 	m_TestArea.SetPos(glm::vec2(800, 0));
@@ -74,6 +75,9 @@ void Game::Update(float dt){
 	m_VerticeTranslation.SetSelectedVertices( m_SelectedVertices );
 	m_VerticeTranslation.Update( dt );
 	m_TestButton.Update();
+
+	// UV
+	m_uvTranslation.Update(dt);
 }
 
 void Game::Render( gfx::RenderQueue* rq ){
@@ -97,6 +101,8 @@ void Game::Render( gfx::RenderQueue* rq ){
 	}
 	m_VerticeTranslation.Draw( rq );
 	m_TestButton.Draw(rq);
+	m_uvTranslation.Draw(rq);
+
 	static float brushSize = 24;
 	ImGui::SliderFloat("BrushSize", &brushSize, 1, 640);
 	glm::vec2 clickPos;
@@ -107,7 +113,11 @@ void Game::Render( gfx::RenderQueue* rq ){
 		bo.Texture = m_TestSprite.GetTexture();
 		rq->Enqueue(bo);
 	}
+}
 
+void Game::Shutdown()
+{
+	m_uvTranslation.Shutdown();
 }
 void Game::UpdateModelViewWindow(float p_deltaTime)
 {
