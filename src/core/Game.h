@@ -5,6 +5,10 @@
 #include "verticeTranslation/VerticeTranslation.h"
 #include "InteractiveArea/InterActiveArea.h"
 #include "Button/Button.h"
+///////////////////////////////////////////////////////////////////////////////
+#include "InteractiveArea\ModelInteraction.h"
+class Camera;
+///////////////////////////////////////////////////////////////////////////////
 class Game
 {
 public:
@@ -24,5 +28,25 @@ private:
 	VerticeTranslation			m_VerticeTranslation;
 	InteractiveArea				m_TestArea;
 	std::vector<unsigned int>	m_SelectedVertices;
+
+
+
+	///////////////////////////////////////////////////////////////////////////////
+	void UpdateModelViewWindow(float p_deltaTime);
+
+	Camera* m_Camera;
+	glm::vec3			m_StartPos;
+	ModelInteraction 				m_TestArea2;
+	glm::vec2 m_clickedPos;
+	//float m_StartRotationY;
+	float m_StartScale;
+	bool m_AutomaticRotate;
+	bool m_AutomaticRotateLeft;
+
+	glm::vec2 m_MousePos;
+	glm::vec2 m_PrevMousePos;
+
+	///////////////////////////////////////////////////////////////////////////////
+
 };
 
