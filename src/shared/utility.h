@@ -8,6 +8,10 @@ static std::string GetDir ( std::string filename )
         {
             found = true;
         }
+		else if (filename.c_str()[i] == '\\')
+		{
+			found = true;
+		}
         if ( !found )
         {
             filename.erase ( i );

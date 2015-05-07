@@ -3,6 +3,7 @@
 #include <imgui/imgui.h>
 #include "../gfx/MaterialBank.h"
 #include "../gfx/Material.h"
+#include <nfd/nfd.h>
 Game::Game( )
 {
 }
@@ -30,6 +31,21 @@ void Game::Initialize(){
 void Game::Update(float dt){
 
 	m_TestArea.Update();
+
+	// Load model button
+	if (ImGui::Button("Load Model"))
+	{
+		nfdchar_t *outPath = NULL;
+		nfdresult_t result = NFD_OpenDialog("obj", "", &outPath);
+		if (result == NFD_OKAY)
+		{
+			gfx::g_ModelBank.Clear();
+			gfx::g_MaterialBank.ClearMaterials();
+			m_Model = gfx::g_ModelBank.LoadModel(outPath);
+			gfx::g_ModelBank.BuildBuffers();
+		}
+	}
+
 	static float x = 0;
 	static float y = 0;
 	ImGui::SliderFloat( "X##001", &m_Pos.x, -10, 10 );
