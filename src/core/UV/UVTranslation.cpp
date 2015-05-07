@@ -8,7 +8,7 @@
 
 void UVTranslation::Initialize(gfx::ModelHandle modelHandle)
 {
-	m_uvModeOn = true;
+	m_uvModeOn = false;
 
 	m_selectedFace = glm::vec3(0, 1, 2);
 
