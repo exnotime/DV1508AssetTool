@@ -18,6 +18,7 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	m_rightMouseButtonDoubleClick = false;
 	m_leftMouseButtonDoubleClick = false;
 	m_mouseWheelClicked = false;
+	m_controlButtonPressed = false;
 }
 void ModelInteraction::SetSpaceSize(const glm::vec2& p_size)
 {
@@ -42,6 +43,15 @@ void ModelInteraction::Update()
 	m_PrevRightMouseState = m_RightMouseIsPressed;
 
 	ImGuiIO& io = ImGui::GetIO();
+
+	if (io.KeyCtrl)
+	{
+		m_controlButtonPressed = true;
+	}
+	else
+	{
+		m_controlButtonPressed = false;
+	}
 
 	if (io.MouseDown[0])
 	{
@@ -200,4 +210,9 @@ bool ModelInteraction::GetMouseWheelClicked()
 		}
 	}
 	return false;
+}
+
+bool ModelInteraction::GetCtrlButtonPressed()
+{
+	return m_controlButtonPressed;
 }

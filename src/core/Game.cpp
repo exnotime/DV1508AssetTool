@@ -33,11 +33,11 @@ void Game::Initialize(){
 	m_AutomaticRotate = false;
 	m_MousePos = glm::vec2(0, 0);
 	m_PrevMousePos = glm::vec2(0, 0);
-	m_StartPos = m_Pos;
-	m_StartRotationY = m_RotateY;
-	m_StartScale = m_Scale;
+//	m_StartRotationY = m_RotateY;
 	m_AutomaticRotateLeft = false;
-	m_Camera = gfx::g_GFXEngine.GetCamera();
+	m_Camera = gfx::g_GFXEngine.GetCamera();	
+	m_StartPos = m_Camera->GetPosition();
+	m_StartScale = m_Camera->GetPosition().z;
 	///////////////////////////////////////////////////////////////////////////////
 }
 
@@ -95,77 +95,78 @@ void Game::UpdateModelViewWindow(float p_deltaTime)
 	m_TestArea2.Update();
 	m_MousePos = m_TestArea2.GetMousePos();
 	//Rotate the model around Y
-	if (m_TestArea2.GetLeftMousePressed())
+	if (m_TestArea2.GetCtrlButtonPressed())
 	{
-		float x = 0, y = 0;
-		x = m_PrevMousePos.x - m_MousePos.x;
-		//y = m_PrevMousePos.y - m_MousePos.y;
-		if (x < 0)
-		{
-			m_AutomaticRotateLeft = false;
-		}
-		else
-		{
-			m_AutomaticRotateLeft = true;
-		}
-		m_RotateY -= x * p_deltaTime;
-		//m_Pos.y += y * p_deltaTime;
-	}
-	//Move the model around in the viewspace
-	if (m_TestArea2.GetRightMousePressed())
-	{
-		float x = 0, y = 0;
-		x = m_PrevMousePos.x - m_MousePos.x;
-		y = m_PrevMousePos.y - m_MousePos.y;
-		m_Pos.x -= x * p_deltaTime;
-		m_Pos.y += y * p_deltaTime;
-		
-	}
-	//if the Y rotation goes past min/max then reset
-	if (m_RotateY > 6.28f)
-	{
-		m_RotateY = 0.0f;
-	}
-	if (m_RotateY < -6.28f)
-	{
-		m_RotateY = 0.0f;
-	}
-	//Manipulate scale by scrolling the mouse wheel
-	m_Scale += m_TestArea2.GetMouseWheelState() * p_deltaTime;
+		if (m_TestArea2.GetLeftMousePressed())
+		{//TODO: MOve camera instead
+			glm::vec3 newPos = m_Camera->GetPosition();
+			float x = 0, y = 0;
+			x = m_PrevMousePos.x - m_MousePos.x;
+			y = m_PrevMousePos.y - m_MousePos.y;
+			if (x < 0)
+			{
+				m_AutomaticRotateLeft = false;
+			}
+			else
+			{
+				m_AutomaticRotateLeft = true;
+			}
+			newPos.x -= x * p_deltaTime;
+			newPos.y += y * p_deltaTime;
 
-	//Reset position, rotation and scale
-	if (m_TestArea2.GetMouseWheelClicked())
-	{
-		m_Scale = m_StartScale;
-	}
-
-	if (m_TestArea2.GetRightMouseDoubleClicked())
-	{
-		m_Pos = m_StartPos;
-	}
-
-	if (m_TestArea2.GetLeftMouseDoubleClicked() && m_RotateY == m_StartRotationY && !m_AutomaticRotate)
-	{
-		m_AutomaticRotate = true;
-	}
-	else if (m_TestArea2.GetLeftMouseDoubleClicked() && m_AutomaticRotate)
-	{
-		m_AutomaticRotate = false;
-	}
-	else if (m_TestArea2.GetLeftMouseDoubleClicked())
-	{
-		m_RotateY = m_StartRotationY;
-	}
-	//Rotates automatically
-	if (m_AutomaticRotate)
-	{
-		if (!m_AutomaticRotateLeft)
-		{
-			m_RotateY += p_deltaTime;
+			m_Camera->SetPosition(newPos);
 		}
-		else
+		//Move the model around in the viewspace
+		if (m_TestArea2.GetRightMousePressed())
 		{
-			m_RotateY -= p_deltaTime;
+			float x = 0, y = 0;
+			x = m_PrevMousePos.x - m_MousePos.x;
+			y = m_PrevMousePos.y - m_MousePos.y;
+			glm::vec3 temp = m_Camera->GetPosition();
+			temp.x += x * p_deltaTime;
+			temp.y -= y * p_deltaTime;
+			m_Camera->SetPosition(temp);
+
+		}
+		//Manipulate scale by scrolling the mouse wheel
+		m_Camera->MoveRelative(glm::vec3(0, 0, -m_TestArea2.GetMouseWheelState() * p_deltaTime * 20));
+
+		//Reset position, rotation and scale
+		if (m_TestArea2.GetMouseWheelClicked())
+		{
+			glm::vec3 temp = m_Camera->GetPosition();
+			temp.z = m_StartScale;
+			m_Camera->SetPosition(temp);
+		}
+
+		if (m_TestArea2.GetRightMouseDoubleClicked())
+		{
+			m_Camera->SetPosition(m_StartPos);
+		}
+
+		if (m_TestArea2.GetLeftMouseDoubleClicked() && m_StartPos == m_Camera->GetPosition() && !m_AutomaticRotate)
+		{
+			m_AutomaticRotate = true;
+		}
+		else if (m_TestArea2.GetLeftMouseDoubleClicked() && m_AutomaticRotate)
+		{
+			m_AutomaticRotate = false;
+		}
+		else if (m_TestArea2.GetLeftMouseDoubleClicked())
+		{
+			m_Camera->SetPosition(m_StartPos);
+		}
+		//Rotates automatically
+		if (m_AutomaticRotate)
+		{//TODO: MOve camera instead
+			if (!m_AutomaticRotateLeft)
+			{
+				m_RotateY += p_deltaTime;
+			}
+			else
+			{
+				m_RotateY -= p_deltaTime;
+			}
 		}
 	}
 }
