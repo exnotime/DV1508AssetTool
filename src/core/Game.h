@@ -14,6 +14,7 @@ public:
 	void Initialize();
 	void Update(float dt);
 	void Render( gfx::RenderQueue* rq );
+	void Shutdown();
 private:
 	gfx::ModelHandle	m_Model;
 	glm::vec3			m_Pos;

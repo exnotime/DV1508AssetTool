@@ -14,12 +14,12 @@ Game::~Game( )
 }
 
 void Game::Initialize(){
-	m_Model = gfx::g_ModelBank.LoadModel("asset/LucinaResource/Lucina_posed.obj");
+	m_Model = gfx::g_ModelBank.LoadModel("asset/Cube/cube.obj");
 	m_Pos = glm::vec3(0.0f);
 	m_Scale = 1.0f;
 	m_RotateY = 0.0f;
 	m_VerticeTranslation.Initialize();
-	m_uvTranslation.Initialize();
+	m_uvTranslation.Initialize(m_Model);
 	m_TestSprite.SetTexture("asset/brush.png");
 
 	m_TestArea.SetPos(glm::vec2(800, 0));
@@ -80,4 +80,9 @@ void Game::Render( gfx::RenderQueue* rq ){
 		bo.Texture = m_TestSprite.GetTexture();
 		rq->Enqueue(bo);
 	}
+}
+
+void Game::Shutdown()
+{
+	m_uvTranslation.Shutdown();
 }
