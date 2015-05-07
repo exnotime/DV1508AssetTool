@@ -6,6 +6,10 @@
 #include "InteractiveArea/InterActiveArea.h"
 #include "UV/UVTranslation.h"
 
+///////////////////////////////////////////////////////////////////////////////
+#include "InteractiveArea\ModelInteraction.h"
+class Camera;
+///////////////////////////////////////////////////////////////////////////////
 class Game
 {
 public:
@@ -26,5 +30,24 @@ private:
 	InteractiveArea				m_TestArea;
 	std::vector<unsigned int>	m_SelectedVertices;
 	UVTranslation				m_uvTranslation;
+
+
+	///////////////////////////////////////////////////////////////////////////////
+	void UpdateModelViewWindow(float p_deltaTime);
+
+	Camera* m_Camera;
+	glm::vec3			m_StartPos;
+	ModelInteraction 				m_TestArea2;
+	glm::vec2 m_clickedPos;
+	//float m_StartRotationY;
+	float m_StartScale;
+	bool m_AutomaticRotate;
+	bool m_AutomaticRotateLeft;
+
+	glm::vec2 m_MousePos;
+	glm::vec2 m_PrevMousePos;
+
+	///////////////////////////////////////////////////////////////////////////////
+
 };
 

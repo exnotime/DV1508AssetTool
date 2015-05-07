@@ -123,7 +123,8 @@ const gfx::Model& gfx::ModelBank::FetchModel(ModelHandle handle)
 void gfx::ModelBank::Clear()
 {
 	m_Models.clear();
-
+	m_Vertices.clear();
+	m_Indices.clear();
 	glDeleteBuffers(1, &m_IndexBuffer);
 	m_VertexBuffer.Release();
 	m_Numerator = 0;
