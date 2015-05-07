@@ -23,6 +23,8 @@ void Game::Initialize(){
 
 	m_TestArea.SetPos(glm::vec2(800, 0));
 	m_TestArea.SetSize(glm::vec2(800, 900));
+
+	m_TestButton = Button(glm::vec2(0), glm::vec2(50), "asset/brush.png");
 }
 
 void Game::Update(float dt){
@@ -40,6 +42,7 @@ void Game::Update(float dt){
 	TempSelectVertices( m_Model, m_SelectedVertices );	// TODO: Remove when real vertice selection is implemented.
 	m_VerticeTranslation.SetSelectedVertices( m_SelectedVertices );
 	m_VerticeTranslation.Update( dt );
+	m_TestButton.Update();
 }
 
 void Game::Render( gfx::RenderQueue* rq ){
@@ -64,7 +67,7 @@ void Game::Render( gfx::RenderQueue* rq ){
 	
 
 	m_VerticeTranslation.Draw( rq );
-
+	m_TestButton.Draw(rq);
 	static float brushSize = 24;
 	ImGui::SliderFloat("BrushSize", &brushSize, 1, 640);
 	glm::vec2 clickPos;

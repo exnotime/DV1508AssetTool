@@ -4,7 +4,7 @@
 #include "../gfx/Sprite.h"
 #include "verticeTranslation/VerticeTranslation.h"
 #include "InteractiveArea/InterActiveArea.h"
-
+#include "Button/Button.h"
 class Game
 {
 public:
@@ -18,6 +18,7 @@ private:
 	glm::vec3			m_Pos;
 	float				m_Scale;
 	float				m_RotateY;
+	Button				m_TestButton;
 	gfx::Sprite			m_TestSprite;
 	TextureHandle		m_TargetTex;
 	VerticeTranslation			m_VerticeTranslation;

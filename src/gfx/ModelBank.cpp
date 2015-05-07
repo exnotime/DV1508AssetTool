@@ -127,6 +127,8 @@ void gfx::ModelBank::Clear()
 	glDeleteBuffers(1, &m_IndexBuffer);
 	m_VertexBuffer.Release();
 	m_Numerator = 0;
+	m_Vertices.clear();
+	m_Indices.clear();
 }
 
 void gfx::ModelBank::BuildBuffers()

@@ -73,6 +73,9 @@ void gfx::MaterialBank::ClearMaterials()
 	{
 		delete m_Materials[i];
 	}
+	for (int i = 0; i < m_Textures.size(); i++){
+		delete m_Textures[i];
+	}
 	m_Materials.clear();
 	m_MatMap.clear();
 }

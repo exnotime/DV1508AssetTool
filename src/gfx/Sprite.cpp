@@ -3,6 +3,7 @@
 gfx::Sprite::Sprite(){
 	m_Pos = glm::vec4(0,1,0,0);
 	m_Size = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Color = glm::vec4(1);
 }
 
 gfx::Sprite::~Sprite(){
@@ -24,6 +25,10 @@ void gfx::Sprite::SetPos(const glm::vec2& pos){
 void gfx::Sprite::SetSize(const glm::vec2& size){
 	m_Size.x = size.x / g_GFXEngine.GetWidth();
 	m_Size.y = size.y / g_GFXEngine.GetHeight();
+}
+
+void gfx::Sprite::SetColor(const glm::vec4 color){
+	m_Color = color;
 }
 void gfx::Sprite::SetTexture(const char* filename){
 	m_Texture = g_MaterialBank.LoadTexture(filename, gfx::TEXTURE_COLOR);
@@ -52,5 +57,9 @@ glm::vec4& gfx::Sprite::GetSizeFlt(){
 }
 TextureHandle gfx::Sprite::GetTexture(){
 	return m_Texture;
+}
+
+glm::vec4& gfx::Sprite::GetColor(){
+	return m_Color;
 }
 

@@ -152,7 +152,7 @@ void gfx::GraphicsEngine::RenderSprites(RenderQueue* drawQueue){
 		for (auto& spr : drawQueue->GetSpriteQueue()[layer]){
 			spriteProg->SetUniformVec4("g_Pos", spr.GetPosFlt());
 			spriteProg->SetUniformVec4("g_Size", spr.GetSizeFlt());
-			spriteProg->SetUniformVec4("g_Color", glm::vec4(1));
+			spriteProg->SetUniformVec4("g_Color", spr.GetColor());
 			g_MaterialBank.GetTexture(spr.GetTexture())->Apply(spriteProg->FetchUniform("g_Texture"), 0);
 			glDrawArrays(GL_POINTS, 0, 1);
 		}
