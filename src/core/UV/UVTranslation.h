@@ -22,6 +22,9 @@ private:
 	float* m_uvPos2;
 	float* m_uvPos3;
 
+	gfx::Sprite m_dotSprite4;
+	float* m_uvPos4;
+
 	bool m_uvModeOn;
 };
 
