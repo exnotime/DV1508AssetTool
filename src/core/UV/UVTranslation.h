@@ -13,8 +13,12 @@ public:
 	void Update(const float deltaTime);
 	void Draw(gfx::RenderQueue* renderQueue);
 	void Shutdown();
+
+	void SelectFace(int vertex1, int vertex2, int vertex3);
 	
 private:
+	glm::vec3 m_selectedFace;
+
 	gfx::Sprite m_dotSprite1;
 	gfx::Sprite m_dotSprite2;
 	gfx::Sprite m_dotSprite3;
