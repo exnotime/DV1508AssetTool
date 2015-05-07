@@ -42,4 +42,4 @@ solution "AssetTool"
 		kind "ConsoleApp"
 		files { "src/**" }
 		includedirs { "include","src/shared", "src/core", "src/gfx"}
-		links { "assimp", "glew32", "glfw3" , "opengl32", "soil2"}
+		links { "assimp", "glew32", "glfw3" , "opengl32", "soil2", "nfd"}
