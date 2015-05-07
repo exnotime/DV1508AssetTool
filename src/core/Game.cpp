@@ -97,12 +97,11 @@ void Game::UpdateModelViewWindow(float p_deltaTime)
 	if (m_TestArea2.GetCtrlButtonPressed())
 	{
 		if (m_TestArea2.GetLeftMousePressed())
-		{//TODO: MOve camera instead
+		{//TODO: ändra orienteringen av kameran... dafuq?
 			glm::vec3 newPos = m_Camera->GetPosition();
 
-			float x = 0, y = 0;
-			x = m_PrevMousePos.x - m_MousePos.x;
-			y = m_PrevMousePos.y - m_MousePos.y;
+			float x = m_PrevMousePos.x - m_MousePos.x;
+			float y = m_PrevMousePos.y - m_MousePos.y;
 			if (x < 0)
 			{
 				m_AutomaticRotateLeft = false;
@@ -122,9 +121,7 @@ void Game::UpdateModelViewWindow(float p_deltaTime)
 				float zPos = newPos.z;
 				newPos.x = xPos * cosAngle - zPos * sinAngle;
 				newPos.z = zPos * cosAngle + xPos * sinAngle;
-
-				m_Camera->SetPosition(newPos);
-				//m_Camera->SetOrientation(glm::quat(0.0f, 0.0f, 0.0f, 1.0f));
+				
 			}
 			if (y != 0.0f)
 			{
@@ -135,10 +132,11 @@ void Game::UpdateModelViewWindow(float p_deltaTime)
 				float zPos = newPos.z;
 				newPos.y = yPos * cosAngle - zPos * sinAngle;
 				newPos.z = zPos * cosAngle + yPos * sinAngle;
-
-				m_Camera->SetPosition(newPos);
-				//m_Camera->SetOrientation(glm::quat(0.0f, 0.0f, 0.0f, 1.0f));
 			}
+			m_Camera->SetPosition(newPos);
+			//const glm::quat temp = glm::quat(0.0f, 0.0f, 0.0f, 1.0f);
+			//m_Camera->SetOrientation(temp);
+			//m_Camera->CalculateViewProjection();
 		}
 		//Move the model around in the viewspace
 		if (m_TestArea2.GetRightMousePressed())
@@ -164,7 +162,8 @@ void Game::UpdateModelViewWindow(float p_deltaTime)
 
 		if (m_TestArea2.GetRightMouseDoubleClicked())
 		{
-			m_Camera->SetPosition(m_StartPos);
+			//m_Camera->SetPosition(m_StartPos);
+			m_Camera->MoveRelative(glm::vec3(1.0f,0.0f,0.0f));
 		}
 
 		if (m_TestArea2.GetLeftMouseDoubleClicked() && m_StartPos == m_Camera->GetPosition() && !m_AutomaticRotate)
@@ -182,13 +181,14 @@ void Game::UpdateModelViewWindow(float p_deltaTime)
 	}
 	//Rotates automatically
 	if (m_AutomaticRotate)
-	{//TODO: MOve camera instead
+	{//TODO: Set the camera orientation
 		glm::vec3 newPos = m_Camera->GetPosition();
 		float xDivZ;
 		if (m_AutomaticRotateLeft)
 			xDivZ = (p_deltaTime * 5) / newPos.z;
 		else
 			xDivZ = (-p_deltaTime * 5) / newPos.z;
+
 		float angle = atan(xDivZ);
 		float sinAngle = sin(angle);
 		float cosAngle = cos(angle);
@@ -198,9 +198,12 @@ void Game::UpdateModelViewWindow(float p_deltaTime)
 		newPos.x = xPos * cosAngle - zPos * sinAngle;
 		newPos.z = zPos * cosAngle + xPos * sinAngle;
 
-		//m_Camera->MoveRelative(newPos);
+
 		m_Camera->SetPosition(newPos);
-		m_Camera->SetOrientation(glm::quat(m_Pos.x, m_Pos.y, m_Pos.z, 0.0f));
+		//m_Camera->SetOrientation(glm::quat(m_Pos.x, m_Pos.y, m_Pos.z, 0.0f));
 		//m_Camera->SetOrientation(glm::quat(1.0f, 0.0f, 0.0f, 0.0f));
+		const glm::quat temp = glm::quat(m_Pos.x, m_Pos.y, m_Pos.z, 0.0f);
+		m_Camera->SetOrientation(temp);
 	}
+	m_Camera->CalculateViewProjection();
 }
