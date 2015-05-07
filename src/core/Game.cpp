@@ -3,6 +3,8 @@
 #include <imgui/imgui.h>
 #include "../gfx/MaterialBank.h"
 #include "../gfx/Material.h"
+#include "../gfx/GraphicsEngine.h"
+#include "../gfx/Camera.h"
 Game::Game( )
 {
 }
@@ -35,6 +37,7 @@ void Game::Initialize(){
 	m_StartRotationY = m_RotateY;
 	m_StartScale = m_Scale;
 	m_AutomaticRotateLeft = false;
+	m_Camera = gfx::g_GFXEngine.GetCamera();
 	///////////////////////////////////////////////////////////////////////////////
 }
 
@@ -87,6 +90,7 @@ void Game::Render( gfx::RenderQueue* rq ){
 }
 void Game::UpdateModelViewWindow(float p_deltaTime)
 {
+	//m_Camera->MoveRelative(glm::vec3(0, 0, p_deltaTime));//move camera backward 
 	m_PrevMousePos = m_MousePos;
 	m_TestArea2.Update();
 	m_MousePos = m_TestArea2.GetMousePos();
@@ -115,6 +119,7 @@ void Game::UpdateModelViewWindow(float p_deltaTime)
 		y = m_PrevMousePos.y - m_MousePos.y;
 		m_Pos.x -= x * p_deltaTime;
 		m_Pos.y += y * p_deltaTime;
+		
 	}
 	//if the Y rotation goes past min/max then reset
 	if (m_RotateY > 6.28f)

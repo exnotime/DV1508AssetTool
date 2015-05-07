@@ -73,7 +73,7 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	return m_Window;
 }
 void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
-	
+	m_Camera.CalculateViewProjection();
 	glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT );
 	TextureHandle target = drawQueue->GetTargetTexture();
 	m_FrameBuffer.SetTexture(target);
