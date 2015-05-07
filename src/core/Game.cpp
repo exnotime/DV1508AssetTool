@@ -52,13 +52,14 @@ void Game::Update(float dt){
 	if (ImGui::Button("Load Model"))
 	{
 		nfdchar_t *outPath = NULL;
-		nfdresult_t result = NFD_OpenDialog("obj", "", &outPath);
+		nfdresult_t result = NFD_OpenDialog("obj,dae", "", &outPath);
 		if (result == NFD_OKAY)
 		{
 			gfx::g_ModelBank.Clear();
-			gfx::g_MaterialBank.ClearMaterials();
+			//gfx::g_MaterialBank.ClearMaterials();
 			m_Model = gfx::g_ModelBank.LoadModel(outPath);
 			gfx::g_ModelBank.BuildBuffers();
+			m_SelectedVertices.clear();
 		}
 	}
 
@@ -87,17 +88,20 @@ void Game::Render( gfx::RenderQueue* rq ){
 	rq->Enqueue(ro);
 
 	//Set texture
-	gfx::Model lucina = gfx::g_ModelBank.FetchModel(m_Model);
+	gfx::Model model = gfx::g_ModelBank.FetchModel(m_Model);
 	static int meshIndex = 0;
-	ImGui::SliderInt("Mesh Texture", &meshIndex, 0, lucina.Meshes.size() - 1);
-	gfx::Material* lucMat = gfx::g_MaterialBank.GetMaterial(lucina.Meshes[meshIndex].Material);
+	ImGui::SliderInt("Mesh Texture", &meshIndex, 0, model.Meshes.size() - 1);
+	//fixing error with imgui when min and max is the same
+	if (meshIndex < 0)
+		meshIndex = 0;
+	gfx::Material* mat = gfx::g_MaterialBank.GetMaterial(model.MaterialOffset + model.Meshes[meshIndex].Material);
 	static bool useRoughness = false;
 	ImGui::Checkbox("roughness", &useRoughness);
 	if (useRoughness){
-		rq->SetTargetTexture(lucMat->GetRoughnessTexture());
+		rq->SetTargetTexture(mat->GetRoughnessTexture());
 	}
 	else {
-		rq->SetTargetTexture(lucMat->GetAlbedoTexture());
+		rq->SetTargetTexture(mat->GetAlbedoTexture());
 	}
 	m_VerticeTranslation.Draw( rq );
 	m_TestButton.Draw(rq);
