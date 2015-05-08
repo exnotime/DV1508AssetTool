@@ -133,7 +133,7 @@ void Game::UpdateModelViewWindow(float p_deltaTime)
 {
 	m_TestArea2.Update();
 	float moveSpeed = p_deltaTime * 5.0f;
-	float rotationSpeed = p_deltaTime * 2.0f;
+	float rotationSpeed = p_deltaTime * 1.0f;
 	if (!m_TestArea2.GetSpaceState())
 	{
 		glm::vec3 newPos = glm::vec3(0.0f,0.0f,0.0f);
