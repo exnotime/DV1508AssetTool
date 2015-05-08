@@ -45,19 +45,21 @@ void VerticeTranslation::Update( const float deltaTime ) {
 		return;
 	}
 
-	std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
-
+	std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();	
 	ImGuiIO& io = ImGui::GetIO();
-	if ( io.MouseDown[0] ) {
-		Ray lineX;
-		lineX.Position	= m_TranslationToolPosition;
-		lineX.Direction	= glm::vec3( 1.0f, 0.0f, 0.0f );
 
-		Ray		mouseRay;
-		Camera*	camera		= gfx::g_GFXEngine.GetCamera();
-		CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y ), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
+	Ray lineX;
+	lineX.Position	= m_TranslationToolPosition;
+	lineX.Direction	= glm::vec3( 1.0f, 0.0f, 0.0f );
 
-		const glm::vec3 diff = ClosestPointOnFirstRay( lineX, mouseRay ) - m_TranslationToolPosition;
+	Ray		mouseRay;
+	Camera*	camera		= gfx::g_GFXEngine.GetCamera();
+	CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y ), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
+
+	if ( io.MouseClicked[0] ) {
+		m_TranslationToolOffset = ClosestPointOnFirstRay( lineX, mouseRay ) - m_TranslationToolPosition;
+	} else if ( io.MouseDown[0] ) {
+		const glm::vec3 diff = ClosestPointOnFirstRay( lineX, mouseRay ) - (m_TranslationToolPosition + m_TranslationToolOffset);
 
 		if ( diff != glm::vec3( 0.0f ) ) {
 			glm::vec4 diffVec4 = glm::vec4( diff, 0.0f );

@@ -24,5 +24,6 @@ private:
 
 	std::vector<unsigned int>	m_SelectedVertices;
 	glm::vec3					m_TranslationToolPosition;
+	glm::vec3					m_TranslationToolOffset;
 	gfx::ModelHandle			m_TranslationToolModel;
 };
