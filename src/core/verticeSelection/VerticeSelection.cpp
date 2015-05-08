@@ -12,18 +12,21 @@ VerticeSelection::~VerticeSelection(){
 }
 
 void VerticeSelection::Initialize(){
+	m_Checked = false;
+
 
 }
 
-void VerticeSelection::Update(const float deltaTime){
+bool VerticeSelection::Update(const float deltaTime){
+	ImGui::Begin("VerticeSelection");
 
+	ImGui::Checkbox("Enabled", &m_Checked);
+
+	ImGui::End();
+
+	return m_Checked;
 }
 
 void VerticeSelection::Draw(gfx::RenderQueue* renderQueue, gfx::RenderObject ro){
-	/*glDepthFunc(GL_LEQUAL);
-	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-	gfx::RenderObject renderObject;
-	renderObject = ro;
-	renderQueue->Enqueue(renderObject);*/
 }

@@ -23,6 +23,9 @@ public:
 	void SetWireFrameModel(gfx::RenderObject ro);
 	gfx::RenderObject GetWireFrameModel();
 	void Shutdown();
+
+	bool GetWireFrameState();
+	void SetWireFrameState(bool state);
 private:
 	gfx::ModelHandle	m_Model;
 	glm::vec3			m_Pos;
@@ -57,5 +60,6 @@ private:
 
 	///////////////////////////////////////////////////////////////////////////////
 
+	bool m_wfState;
 };
 

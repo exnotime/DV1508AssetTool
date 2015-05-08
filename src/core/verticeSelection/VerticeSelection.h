@@ -10,9 +10,10 @@ public:
 	~VerticeSelection();
 
 	void					Initialize();
-	void					Update(const float deltaTime);
+	bool					Update(const float deltaTime);
 	void					Draw(gfx::RenderQueue* renderQueue, gfx::RenderObject ro );
 
 private:
 	std::vector<unsigned int>	m_SelectedVertices;
+	bool m_Checked;
 };

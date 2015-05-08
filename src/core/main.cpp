@@ -40,7 +40,9 @@ int main( ){
 		wireFrameRO = game.GetWireFrameModel();
 		//render graphics
 		gfx::g_GFXEngine.Render( &drawQueue );
-		gfx::g_GFXEngine.RenderWireFrame(wireFrameRO);
+		if (game.GetWireFrameState()){
+			gfx::g_GFXEngine.RenderWireFrame(wireFrameRO);
+		}
 		RenderImgui( );
 		gfx::g_GFXEngine.Swap( );
 		std::stringstream ss;

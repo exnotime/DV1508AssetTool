@@ -80,7 +80,7 @@ void Game::Update(float dt){
 
 	// UV
 	m_uvTranslation.Update(dt);
-	m_VerticeSelection.Update(dt);
+	SetWireFrameState(m_VerticeSelection.Update(dt));
 }
 
 void Game::Render( gfx::RenderQueue* rq ){
@@ -256,4 +256,12 @@ gfx::RenderObject Game::GetWireFrameModel(){
 
 void Game::SetWireFrameModel(gfx::RenderObject ro){
 	m_wfModel = ro;
+}
+
+bool Game::GetWireFrameState(){
+	return m_wfState;
+}
+
+void Game::SetWireFrameState(bool state){
+	m_wfState = state;
 }
