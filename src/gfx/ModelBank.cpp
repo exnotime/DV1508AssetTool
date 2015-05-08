@@ -4,6 +4,7 @@
 gfx::ModelBank::ModelBank()
 {
 	m_Numerator	= 0;
+	m_IndexBuffer = 0;
 }
 
 gfx::ModelBank::~ModelBank()
@@ -122,10 +123,13 @@ const gfx::Model& gfx::ModelBank::FetchModel(ModelHandle handle)
 void gfx::ModelBank::Clear()
 {
 	m_Models.clear();
-
+	m_Vertices.clear();
+	m_Indices.clear();
 	glDeleteBuffers(1, &m_IndexBuffer);
 	m_VertexBuffer.Release();
 	m_Numerator = 0;
+	m_Vertices.clear();
+	m_Indices.clear();
 }
 
 void gfx::ModelBank::BuildBuffers()
@@ -139,8 +143,8 @@ void gfx::ModelBank::BuildBuffers()
 		it->second.IndexHandle = staticId;
 		staticId += it->second.NumIndices;
 	}
-
-	glGenBuffers( 1, &m_IndexBuffer );
+	if (m_IndexBuffer == 0)
+		glGenBuffers( 1, &m_IndexBuffer );
 	glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer );
 	glBufferData( GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int)* m_Indices.size( ), &m_Indices[0], GL_STATIC_DRAW );
 }

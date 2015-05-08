@@ -14,7 +14,6 @@ Texture::Texture()
 
 Texture::~Texture()
 {
-	//check up on how to release textures later
 	glDeleteTextures(1, &m_Handle);
 }
 
@@ -24,7 +23,8 @@ bool Texture::Init(const char* Filename, TextureType type)
 	m_Type = type;
 	
 	if (type == TEXTURE_COLOR || type == TEXTURE_GREYSCALE){
-		m_Handle = SOIL_load_OGL_texture(Filename, 4, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+		int forceChannel = type == TEXTURE_COLOR ? 4 : 1;
+		m_Handle = SOIL_load_OGL_texture(Filename, forceChannel, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y |SOIL_FLAG_MULTIPLY_ALPHA);
 		glBindTexture(GL_TEXTURE_2D, m_Handle);
 		//glGenerateMipmap(GL_TEXTURE_2D);
 		GLfloat fLargest;

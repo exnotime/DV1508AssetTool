@@ -2,6 +2,8 @@
 
 gfx::VertexBuffer::VertexBuffer ( void )
 {
+	m_Handle = 0;
+	m_VertexArrayId = 0;
 }
 
 gfx::VertexBuffer::VertexBuffer( VertexType VertexType, void* Data, unsigned int Size, GLuint BindingIndex )
@@ -16,13 +18,16 @@ gfx::VertexBuffer::~VertexBuffer( void )
 
 bool gfx::VertexBuffer::Init( VertexType VertexType, void* Data, unsigned int Size, GLuint BindingIndex )
 {
-    glGenVertexArrays ( 1,&m_VertexArrayId );
-    glBindVertexArray ( m_VertexArrayId );
-    glGenBuffers ( 1,&m_Handle );
+	if (m_VertexArrayId == 0)
+		glGenVertexArrays ( 1,&m_VertexArrayId );
+	if (m_Handle == 0)
+		glGenBuffers ( 1,&m_Handle );
     if ( m_Handle == GL_INVALID_VALUE )
     {
         return false;
     }
+
+	glBindVertexArray(m_VertexArrayId);
     glBindBuffer ( GL_ARRAY_BUFFER,m_Handle );
     glBufferData ( GL_ARRAY_BUFFER,Size,Data,GL_STATIC_DRAW );
 

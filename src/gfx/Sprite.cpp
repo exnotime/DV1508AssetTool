@@ -3,13 +3,14 @@
 gfx::Sprite::Sprite(){
 	m_Pos = glm::vec4(0,1,0,0);
 	m_Size = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
+	m_Color = glm::vec4(1);
 }
 
 gfx::Sprite::~Sprite(){
 }
 
 gfx::Sprite::Sprite(const char* filename){
-	m_Texture = g_MaterialBank.LoadTexture(filename);
+	m_Texture = g_MaterialBank.LoadTexture(filename,gfx::TEXTURE_COLOR);
 
 	float width = g_MaterialBank.GetTexture(m_Texture)->GetWidth() / g_GFXEngine.GetWidth();
 	float height = g_MaterialBank.GetTexture(m_Texture)->GetHeight() / g_GFXEngine.GetHeight();
@@ -25,8 +26,12 @@ void gfx::Sprite::SetSize(const glm::vec2& size){
 	m_Size.x = size.x / g_GFXEngine.GetWidth();
 	m_Size.y = size.y / g_GFXEngine.GetHeight();
 }
+
+void gfx::Sprite::SetColor(const glm::vec4 color){
+	m_Color = color;
+}
 void gfx::Sprite::SetTexture(const char* filename){
-	m_Texture = g_MaterialBank.LoadTexture(filename);
+	m_Texture = g_MaterialBank.LoadTexture(filename, gfx::TEXTURE_COLOR);
 
 	float width = g_MaterialBank.GetTexture(m_Texture)->GetWidth() / g_GFXEngine.GetWidth();
 	float height = g_MaterialBank.GetTexture(m_Texture)->GetHeight() / g_GFXEngine.GetHeight();
@@ -42,7 +47,7 @@ glm::vec2& gfx::Sprite::GetPos(){
 	return glm::vec2(m_Pos.x * g_GFXEngine.GetWidth(), m_Pos.y * g_GFXEngine.GetHeight());
 }
 glm::vec2& gfx::Sprite::GetSize(){
-	return glm::vec2(m_Size.x * g_GFXEngine.GetWidth(), m_Size.y * g_GFXEngine.GetHeight());
+	return glm::vec2(m_Size.x * g_MaterialBank.GetTexture(m_Texture)->GetWidth(), m_Size.y * g_MaterialBank.GetTexture(m_Texture)->GetHeight());
 }
 glm::vec4& gfx::Sprite::GetPosFlt(){
 	return m_Pos;
@@ -52,5 +57,9 @@ glm::vec4& gfx::Sprite::GetSizeFlt(){
 }
 TextureHandle gfx::Sprite::GetTexture(){
 	return m_Texture;
+}
+
+glm::vec4& gfx::Sprite::GetColor(){
+	return m_Color;
 }
 
