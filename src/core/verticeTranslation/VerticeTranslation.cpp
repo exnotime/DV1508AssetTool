@@ -49,6 +49,20 @@ void VerticeTranslation::Initialize() {
 	m_VolumeAxisX.HalfSizes[0]	= 0.5f;
 	m_VolumeAxisX.HalfSizes[1]	= 0.05f;
 	m_VolumeAxisX.HalfSizes[2]	= 0.05f;
+
+	m_VolumeAxisY.Directions[0]	= glm::vec3( 1.0f, 0.0f, 0.0f );
+	m_VolumeAxisY.Directions[1]	= glm::vec3( 0.0f, 1.0f, 0.0f );
+	m_VolumeAxisY.Directions[2]	= glm::vec3( 0.0f, 0.0f, 1.0f );
+	m_VolumeAxisY.HalfSizes[0]	= 0.05f;
+	m_VolumeAxisY.HalfSizes[1]	= 0.5f;
+	m_VolumeAxisY.HalfSizes[2]	= 0.05f;
+
+	m_VolumeAxisZ.Directions[0]	= glm::vec3( 1.0f, 0.0f, 0.0f );
+	m_VolumeAxisZ.Directions[1]	= glm::vec3( 0.0f, 1.0f, 0.0f );
+	m_VolumeAxisZ.Directions[2]	= glm::vec3( 0.0f, 0.0f, 1.0f );
+	m_VolumeAxisZ.HalfSizes[0]	= 0.05f;
+	m_VolumeAxisZ.HalfSizes[1]	= 0.05f;
+	m_VolumeAxisZ.HalfSizes[2]	= 0.5f;
 }
 
 void VerticeTranslation::Update( const float deltaTime ) {
@@ -59,9 +73,8 @@ void VerticeTranslation::Update( const float deltaTime ) {
 	std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();	
 	ImGuiIO& io = ImGui::GetIO();
 
-	Ray lineX;
-	lineX.Position	= m_TranslationToolPosition;
-	lineX.Direction	= glm::vec3( 1.0f, 0.0f, 0.0f );
+	Ray line;
+	line.Position	= m_TranslationToolPosition;
 
 	Ray		mouseRay;
 	Camera*	camera		= gfx::g_GFXEngine.GetCamera();
@@ -69,16 +82,29 @@ void VerticeTranslation::Update( const float deltaTime ) {
 
 	if ( io.MouseClicked[0] ) {
 		m_VolumeAxisX.Position = m_TranslationToolPosition + glm::vec3( m_VolumeAxisX.HalfSizes[0], 0.0f, 0.0f );
+		m_VolumeAxisY.Position = m_TranslationToolPosition + glm::vec3( 0.0f, m_VolumeAxisY.HalfSizes[1], 0.0f );
+		m_VolumeAxisZ.Position = m_TranslationToolPosition + glm::vec3( 0.0f, 0.0f, m_VolumeAxisZ.HalfSizes[2] );
 
 		glm::vec3 intersectionPoint;
 		if ( RayOBB( &mouseRay, &m_VolumeAxisX, &intersectionPoint ) ) {
 			m_Translating = true;
-			m_TranslationToolOffset = ClosestPointOnFirstRay( lineX, mouseRay ) - m_TranslationToolPosition;
+			line.Direction	= glm::vec3( 1.0f, 0.0f, 0.0f );
+			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
+		} else if ( RayOBB( &mouseRay, &m_VolumeAxisY, &intersectionPoint ) ) {
+			m_Translating = true;
+			line.Direction	= glm::vec3( 0.0f, 1.0f, 0.0f );
+			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
+		} else if ( RayOBB( &mouseRay, &m_VolumeAxisZ, &intersectionPoint ) ) {
+			m_Translating = true;
+			line.Direction	= glm::vec3( 0.0f, 0.0f, 1.0f );
+			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
 		}
+		m_TranslatingDirection = line.Direction;
 	}
 	
 	if ( m_Translating && io.MouseDown[0] ) {
-		const glm::vec3 diff = ClosestPointOnFirstRay( lineX, mouseRay ) - (m_TranslationToolPosition + m_TranslationToolOffset);
+		line.Direction = m_TranslatingDirection;
+		const glm::vec3 diff = ClosestPointOnFirstRay( line, mouseRay ) - (m_TranslationToolPosition + m_TranslationToolOffset);
 
 		if ( diff != glm::vec3( 0.0f ) ) {
 			glm::vec4 diffVec4 = glm::vec4( diff, 0.0f );

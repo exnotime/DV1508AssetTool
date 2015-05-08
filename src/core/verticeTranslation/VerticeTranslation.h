@@ -36,5 +36,8 @@ private:
 	glm::vec3					m_TranslationToolOffset;
 	gfx::ModelHandle			m_TranslationToolModel;
 	bool						m_Translating;
+	glm::vec3					m_TranslatingDirection;
 	OBB							m_VolumeAxisX;
+	OBB							m_VolumeAxisY;
+	OBB							m_VolumeAxisZ;
 };
