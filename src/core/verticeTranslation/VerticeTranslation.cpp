@@ -6,7 +6,7 @@
 // TODO: Remove when real vertice selection is implemented.
 void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>& selectedVertices ) {
 	const gfx::Model& model = gfx::g_ModelBank.FetchModel( modelHandle );
-	static int meshIndex = 0;
+	static int meshIndex = 2;
 	static int prevMeshIndex = meshIndex + 1;
 
 	ImGui::Begin( "VerticeTranslation" );
@@ -47,10 +47,19 @@ void VerticeTranslation::Update( const float deltaTime ) {
 }
 
 void VerticeTranslation::Draw( gfx::RenderQueue* renderQueue ) {
-	gfx::RenderObject renderObject;
-	renderObject.Model = m_TranslationToolModel;
-	renderObject.world	= glm::translate(m_TranslationToolPosition) * glm::scale(glm::vec3(1.0f)) * glm::rotate(0.0f, glm::vec3(0.0f, 1.0f, 0.0f) );
+	const float			halfPi				= 0.5f * glm::pi<float>();
+	const glm::mat4x4	scaleTranslation	= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(1.0f) );
 
+	gfx::RenderObject renderObject;
+	renderObject.Model	= m_TranslationToolModel;
+
+	renderObject.world	= scaleTranslation * glm::rotate( -halfPi, glm::vec3(0.0f, 0.0f, 1.0f) );	// X
+	renderQueue->Enqueue(renderObject);
+
+	renderObject.world	= scaleTranslation;	// Y
+	renderQueue->Enqueue(renderObject);
+
+	renderObject.world	= scaleTranslation * glm::rotate( halfPi, glm::vec3(1.0f, 0.0f, 0.0f) );	// Z
 	renderQueue->Enqueue(renderObject);
 }
 
