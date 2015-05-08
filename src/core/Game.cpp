@@ -132,7 +132,7 @@ void Game::Shutdown()
 void Game::UpdateModelViewWindow(float p_deltaTime)
 {
 	m_TestArea2.Update();
-	float moveSpeed = p_deltaTime * 5.0f;
+	float moveSpeed = p_deltaTime * 3.0f;
 	float rotationSpeed = p_deltaTime * 1.0f;
 	if (!m_TestArea2.GetSpaceState())
 	{
