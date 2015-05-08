@@ -1,5 +1,6 @@
 #pragma once
 #include <glm/glm.hpp>
+#include <imgui/imgui.h>
 class ModelInteraction
 {
 public:
@@ -26,8 +27,19 @@ public:
 	bool GetMouseWheelClicked();
 	bool GetCtrlButtonPressed();
 
+	bool GetWState();
+	bool GetAState();
+	bool GetSState();
+	bool GetDState();
+	bool GetQState();
+	bool GetEState();
+	bool GetSpaceState();
+
 private:
+	void MouseUpdate(ImGuiIO& p_io);
+	void KeyboardUpdate(ImGuiIO& p_io);
 	void CheckMouseInsideWorkspace();
+	void AddKeys(ImGuiIO& p_io);
 
 	glm::vec2 m_SpacePosition;
 	glm::vec2 m_SpaceSize;
@@ -49,6 +61,19 @@ private:
 	bool m_mouseWheelClicked;
 
 	bool m_controlButtonPressed;
+
+	bool m_AddKeysForInput;
+
+
+
+	bool m_WIsPressed;
+	bool m_AIsPressed;
+	bool m_SIsPressed;
+	bool m_DIsPressed;
+	bool m_QIsPressed;
+	bool m_EIsPressed;
+	bool m_SpaceIsPressed;	
+	
 
 
 };

@@ -1,5 +1,4 @@
 #include "ModelInteraction.h"
-#include <imgui/imgui.h>
 
 
 ModelInteraction::ModelInteraction(){}
@@ -19,6 +18,14 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	m_leftMouseButtonDoubleClick = false;
 	m_mouseWheelClicked = false;
 	m_controlButtonPressed = false;
+	m_AddKeysForInput = true;
+	m_WIsPressed = false;
+	m_AIsPressed = false;
+	m_SIsPressed = false;
+	m_DIsPressed = false;
+	m_QIsPressed = false;
+	m_EIsPressed = false;
+	m_SpaceIsPressed = false;
 }
 void ModelInteraction::SetSpaceSize(const glm::vec2& p_size)
 {
@@ -36,24 +43,37 @@ glm::vec2 ModelInteraction::GetSpacePos()
 {
 	return m_SpacePosition;
 }
+void ModelInteraction::AddKeys(ImGuiIO& p_io)
+{
+	if (m_AddKeysForInput)
+	{
+		p_io.AddInputCharacter('w');
+		p_io.AddInputCharacter('a');
+		p_io.AddInputCharacter('s');
+		p_io.AddInputCharacter('d');
+		p_io.AddInputCharacter('q');
+		p_io.AddInputCharacter('e');
+		m_AddKeysForInput = false;
+	}
+}
 void ModelInteraction::Update()
 {
 	CheckMouseInsideWorkspace();
-	m_PrevLeftMouseState = m_LeftMouseIsPressed;
-	m_PrevRightMouseState = m_RightMouseIsPressed;
 
 	ImGuiIO& io = ImGui::GetIO();
-
-	if (io.KeyCtrl)
+	io.WantCaptureKeyboard = true;
+	if (io.WantCaptureKeyboard)
 	{
-		m_controlButtonPressed = true;
+		AddKeys(io);
+		KeyboardUpdate(io);
 	}
-	else
-	{
-		m_controlButtonPressed = false;
-	}
-
-	if (io.MouseDown[0])
+	MouseUpdate(io);
+}
+void ModelInteraction::MouseUpdate(ImGuiIO& p_io)
+{
+	m_PrevLeftMouseState = m_LeftMouseIsPressed;
+	m_PrevRightMouseState = m_RightMouseIsPressed;
+	if (p_io.MouseDown[0])
 	{
 		m_LeftMouseIsPressed = true;
 	}
@@ -61,7 +81,7 @@ void ModelInteraction::Update()
 	{
 		m_LeftMouseIsPressed = false;
 	}
-	if (io.MouseDown[1])
+	if (p_io.MouseDown[1])
 	{
 		m_RightMouseIsPressed = true;
 	}
@@ -69,7 +89,7 @@ void ModelInteraction::Update()
 	{
 		m_RightMouseIsPressed = false;
 	}
-	if (io.MouseClicked[2])
+	if (p_io.MouseClicked[2])
 	{
 		m_mouseWheelClicked = true;
 	}
@@ -77,7 +97,7 @@ void ModelInteraction::Update()
 	{
 		m_mouseWheelClicked = false;
 	}
-	if (io.MouseDoubleClicked[0])
+	if (p_io.MouseDoubleClicked[0])
 	{
 		m_leftMouseButtonDoubleClick = true;
 	}
@@ -85,7 +105,7 @@ void ModelInteraction::Update()
 	{
 		m_leftMouseButtonDoubleClick = false;
 	}
-	if (io.MouseDoubleClicked[1])
+	if (p_io.MouseDoubleClicked[1])
 	{
 		m_rightMouseButtonDoubleClick = true;
 	}
@@ -94,9 +114,58 @@ void ModelInteraction::Update()
 		m_rightMouseButtonDoubleClick = false;
 	}
 
-	m_mouseWheelState = (int)io.MouseWheel;
-	m_MousePos.x = io.MousePos.x;
-	m_MousePos.y = io.MousePos.y;
+	m_mouseWheelState = (int)p_io.MouseWheel;
+	m_MousePos.x = p_io.MousePos.x;
+	m_MousePos.y = p_io.MousePos.y;
+}
+void ModelInteraction::KeyboardUpdate(ImGuiIO& p_io)
+{
+	if (p_io.KeyCtrl)
+	{
+		m_controlButtonPressed = true;
+	}
+	else
+	{
+		m_controlButtonPressed = false;
+	}
+
+	//for (int i = 0; i < 512; i++)
+	//{
+	//	if (p_io.KeysDown[i] == true)
+	//	{
+	//		int a = 0;
+	//	}
+	//}
+	if (p_io.KeysDown[87])
+		m_WIsPressed = true;
+	else
+		m_WIsPressed = false;
+	if (p_io.KeysDown[65])
+		m_AIsPressed = true;
+	else
+		m_AIsPressed = false;
+	if (p_io.KeysDown[83])
+		m_SIsPressed = true;
+	else
+		m_SIsPressed = false;
+	if (p_io.KeysDown[68])
+		m_DIsPressed = true;
+	else
+		m_DIsPressed = false;
+	if (p_io.KeysDown[81])
+		m_QIsPressed = true;
+	else
+		m_QIsPressed = false;
+	if (p_io.KeysDown[69])
+		m_EIsPressed = true;
+	else
+		m_EIsPressed = false;
+	if (p_io.KeysDown[32])
+		m_SpaceIsPressed = true;
+	else
+		m_SpaceIsPressed = false;
+
+
 }
 
 glm::vec2 ModelInteraction::GetMousePos()
@@ -111,11 +180,8 @@ bool ModelInteraction::GetLeftMouseClicked()
 		{
 			return true;
 		}
-
-		// TODO: är detta vad henrik vill? :3 Saknade return path här.
 		return false;
 	}
-
 	else
 	{
 		return false;
@@ -129,8 +195,6 @@ bool ModelInteraction::GetLeftMousePressed()
 		{
 			return true;
 		}
-
-		// TODO: är detta vad henrik vill? :3 Saknade return path här.
 		return false;
 	}
 	return false;
@@ -143,8 +207,6 @@ bool ModelInteraction::GetRightMouseClicked()
 		{
 			return true;
 		}
-
-		// TODO: är detta vad henrik vill? :3 Saknade return path här.
 		return false;
 	}
 	else
@@ -160,8 +222,6 @@ bool ModelInteraction::GetRightMousePressed()
 		{
 			return true;
 		}
-
-		// TODO: är detta vad henrik vill? :3 Saknade return path här.
 		return false;
 	}
 	return false;
@@ -228,4 +288,34 @@ bool ModelInteraction::GetMouseWheelClicked()
 bool ModelInteraction::GetCtrlButtonPressed()
 {
 	return m_controlButtonPressed;
+}
+
+
+bool ModelInteraction::GetWState()
+{
+	return m_WIsPressed;
+}
+bool ModelInteraction::GetAState()
+{
+	return m_AIsPressed;
+}
+bool ModelInteraction::GetSState()
+{
+	return m_SIsPressed;
+}
+bool ModelInteraction::GetDState()
+{
+	return m_DIsPressed;
+}
+bool ModelInteraction::GetQState()
+{
+	return m_QIsPressed;
+}
+bool ModelInteraction::GetEState()
+{
+	return m_EIsPressed;
+}
+bool ModelInteraction::GetSpaceState()
+{
+	return m_SpaceIsPressed;
 }
