@@ -2,6 +2,13 @@
 
 #include <glm/gtx/transform.hpp>
 #include <imgui/imgui.h>
+#include "../gfx/GraphicsEngine.h"
+#include "../gfx/Camera.h"
+
+struct Ray {
+	glm::vec3	Position;
+	glm::vec3	Direction;
+};
 
 // TODO: Remove when real vertice selection is implemented.
 void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>& selectedVertices ) {
@@ -32,12 +39,25 @@ void VerticeTranslation::Initialize() {
 void VerticeTranslation::Update( const float deltaTime ) {
 	std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
 
-	glm::vec3 avaragePosition( 0.0f );
-	for ( auto& index : m_SelectedVertices ) {
-		avaragePosition += glm::vec3(vertices[index].Position);
+	ImGuiIO& io = ImGui::GetIO();
+	if ( io.MouseDown[0] ) {
+		Ray lineX;
+		lineX.Position	= m_TranslationToolPosition;
+		lineX.Direction	= glm::vec3( 1.0f, 0.0f, 0.0f );
+
+		Ray		mouseRay;
+		Camera*	camera		= gfx::g_GFXEngine.GetCamera();
+		CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y ), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
+
+		m_TranslationToolPosition = ClosestPointOnFirstRay( lineX, mouseRay );
+	} else {
+		glm::vec3 avaragePosition( 0.0f );
+		for ( auto& index : m_SelectedVertices ) {
+			avaragePosition += glm::vec3(vertices[index].Position);
+		}
+		avaragePosition /= m_SelectedVertices.size();
+		m_TranslationToolPosition = avaragePosition;
 	}
-	avaragePosition /= m_SelectedVertices.size();
-	m_TranslationToolPosition = avaragePosition;
 
 	static float derp = 0.0f;
 	if ( (derp -= deltaTime) <= 0.0f ) {
@@ -65,4 +85,37 @@ void VerticeTranslation::Draw( gfx::RenderQueue* renderQueue ) {
 
 void VerticeTranslation::SetSelectedVertices( const std::vector<unsigned int>& newSelectedVertices ) {
 	m_SelectedVertices = newSelectedVertices;
+}
+
+glm::vec3 VerticeTranslation::ClosestPointOnFirstRay( const Ray& first, const Ray& second ) const {
+	const float a = glm::dot( first.Direction, first.Direction );
+	const float b = glm::dot( first.Direction, second.Direction );
+	const float e = glm::dot( second.Direction, second.Direction );   
+	const float d = a*e - b*b;
+        
+	// if lines are not parallel
+	if (d != 0.0f) {
+		const glm::vec3	r = first.Position - second.Position;
+		const float		c = glm::dot( first.Direction, r );
+		const float		f = glm::dot( second.Direction, r );
+		const float		s = (b*f - c*e) / d;
+
+		return first.Position + first.Direction * s;
+	}
+	return first.Position;
+}
+
+void VerticeTranslation::CalculateRayFromPixel( const glm::ivec2& pixel, const glm::ivec2& windowSize, const glm::mat4& invViewProj, Ray* outRay ) const {
+	// Clip space coordinates for the pixel. (-1,-1) in lower left corner, (-1,1) upper left corner, (1,-1) lower right corner. 
+	const glm::vec2	mousePosNorm	= glm::vec2( -1.0f + 2.0f * (pixel.x / static_cast<float>(windowSize.x)),
+											1.0f - 2.0f * (pixel.y / static_cast<float>(windowSize.y)) );
+
+	// Translating pixel at near plane and far plane to world coordinates. Z-coordinate is depth into the screen (values between -1 and 1 are in view of camera).
+	const glm::vec4 nearHomogeneous	= invViewProj * glm::vec4( mousePosNorm.x, mousePosNorm.y, 0.0f, 1.0f );
+	const glm::vec4 farHomogeneous	= invViewProj * glm::vec4( mousePosNorm.x, mousePosNorm.y, 1.0f, 1.0f );
+	const glm::vec3 nearWorld		= glm::vec3( nearHomogeneous ) / nearHomogeneous.w;
+	const glm::vec3 farWorld		= glm::vec3( farHomogeneous ) / farHomogeneous.w;
+
+	outRay->Position			= nearWorld;
+	outRay->Direction			= glm::normalize( farWorld - nearWorld );
 }
