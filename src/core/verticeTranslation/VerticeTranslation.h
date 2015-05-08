@@ -4,7 +4,15 @@
 #include "../../gfx/ModelBank.h"
 #include "../../gfx/RenderQueue.h"
 
+#define OBB_DIRECTIONS 3
+
 struct Ray;
+
+struct OBB {
+	glm::vec3	Position;
+	glm::vec3	Directions	[OBB_DIRECTIONS];	// Should be normalized.
+	float		HalfSizes	[OBB_DIRECTIONS];	// Half length of their respective directions.
+};
 
 void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>& selectedVertices );	// TODO: Remove when real vertice selection is implemented.
 
@@ -21,9 +29,12 @@ public:
 private:
 	glm::vec3					ClosestPointOnFirstRay( const Ray& first, const Ray& second ) const;
 	void						CalculateRayFromPixel( const glm::ivec2& pixel, const glm::ivec2& windowSize, const glm::mat4& invViewProj, Ray* outRay ) const;
+	bool						RayOBB( const Ray* rayVolume, const OBB* obbVolume, glm::vec3* outIntersectionPoint ) const;
 
 	std::vector<unsigned int>	m_SelectedVertices;
 	glm::vec3					m_TranslationToolPosition;
 	glm::vec3					m_TranslationToolOffset;
 	gfx::ModelHandle			m_TranslationToolModel;
+	bool						m_Translating;
+	OBB							m_VolumeAxisX;
 };

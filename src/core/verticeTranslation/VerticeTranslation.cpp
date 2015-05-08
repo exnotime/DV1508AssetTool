@@ -5,6 +5,9 @@
 #include "../gfx/GraphicsEngine.h"
 #include "../gfx/Camera.h"
 
+
+#define EPSILON 1.0e-14f
+
 struct Ray {
 	glm::vec3	Position;
 	glm::vec3	Direction;
@@ -15,7 +18,7 @@ void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>
 	const gfx::Model& model = gfx::g_ModelBank.FetchModel( modelHandle );
 	static int meshIndex = 2;
 	static int prevMeshIndex = meshIndex + 1;
-	static bool unselect = true;
+	static bool unselect = false;
 
 	ImGui::Begin( "VerticeTranslation" );
 	ImGui::SliderInt( "Mesh", &meshIndex, 0, model.Meshes.size() - 1 );
@@ -38,6 +41,14 @@ void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>
 void VerticeTranslation::Initialize() {
 	m_TranslationToolPosition	= glm::vec3( 0.0f );
 	m_TranslationToolModel		= gfx::g_ModelBank.LoadModel("asset/UnitArrow/Unit_Arrow.obj");
+	m_Translating				= false;
+
+	m_VolumeAxisX.Directions[0]	= glm::vec3( 1.0f, 0.0f, 0.0f );
+	m_VolumeAxisX.Directions[1]	= glm::vec3( 0.0f, 1.0f, 0.0f );
+	m_VolumeAxisX.Directions[2]	= glm::vec3( 0.0f, 0.0f, 1.0f );
+	m_VolumeAxisX.HalfSizes[0]	= 0.5f;
+	m_VolumeAxisX.HalfSizes[1]	= 0.05f;
+	m_VolumeAxisX.HalfSizes[2]	= 0.05f;
 }
 
 void VerticeTranslation::Update( const float deltaTime ) {
@@ -57,8 +68,16 @@ void VerticeTranslation::Update( const float deltaTime ) {
 	CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y ), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
 
 	if ( io.MouseClicked[0] ) {
-		m_TranslationToolOffset = ClosestPointOnFirstRay( lineX, mouseRay ) - m_TranslationToolPosition;
-	} else if ( io.MouseDown[0] ) {
+		m_VolumeAxisX.Position = m_TranslationToolPosition + glm::vec3( m_VolumeAxisX.HalfSizes[0], 0.0f, 0.0f );
+
+		glm::vec3 intersectionPoint;
+		if ( RayOBB( &mouseRay, &m_VolumeAxisX, &intersectionPoint ) ) {
+			m_Translating = true;
+			m_TranslationToolOffset = ClosestPointOnFirstRay( lineX, mouseRay ) - m_TranslationToolPosition;
+		}
+	}
+	
+	if ( m_Translating && io.MouseDown[0] ) {
 		const glm::vec3 diff = ClosestPointOnFirstRay( lineX, mouseRay ) - (m_TranslationToolPosition + m_TranslationToolOffset);
 
 		if ( diff != glm::vec3( 0.0f ) ) {
@@ -68,6 +87,8 @@ void VerticeTranslation::Update( const float deltaTime ) {
 			}
 			gfx::g_ModelBank.BuildBuffers();
 		}
+	} else {
+		m_Translating = false;
 	}
 
 	glm::vec3 avaragePosition( 0.0f );
@@ -134,4 +155,41 @@ void VerticeTranslation::CalculateRayFromPixel( const glm::ivec2& pixel, const g
 
 	outRay->Position			= nearWorld;
 	outRay->Direction			= glm::normalize( farWorld - nearWorld );
+}
+
+bool VerticeTranslation::RayOBB( const Ray* ray, const OBB* obb, glm::vec3* outIntersectionPoint ) const {
+	float t_min = -FLT_MAX;
+	float t_max =  FLT_MAX;
+
+	const glm::vec3 p = obb->Position - ray->Position;
+
+	float e;
+	float f;
+	float fInv;
+	float t_1;
+	float t_2;
+
+	for ( int i = 0; i < OBB_DIRECTIONS; ++i )
+	{
+		e	= glm::dot( obb->Directions[i], p );
+		f	= glm::dot( obb->Directions[i], ray->Direction );
+
+		if ( f > EPSILON || f < -EPSILON )
+		{
+			fInv	= 1.0f / f;
+			t_1 = (e + obb->HalfSizes[i]) * fInv;
+			t_2 = (e - obb->HalfSizes[i]) * fInv;
+
+			if ( t_1	> t_2	)	{ const float temp = t_1; t_1 = t_2; t_2 = temp; }
+			if ( t_1	> t_min )	{ t_min = t_1; }
+			if ( t_2	< t_max )	{ t_max = t_2; }
+			if ( t_min	> t_max )	{ return false; }
+			if ( t_max	< 0.0f	)	{ return false; }
+		}
+		else if ( ( -e - obb->HalfSizes[i] > 0.0f) || ( -e + obb->HalfSizes[i] < 0.0f ) ) { return false; }
+	}
+
+	float distance = t_min > 0.0f ? t_min : t_max;
+	//*outIntersectionPoint = ray->Position + distance * ray->Direction;	// TODOOE: Make this work.
+	return true;
 }
