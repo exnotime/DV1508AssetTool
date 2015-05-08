@@ -19,8 +19,8 @@ namespace gfx{
 		void RenderWireFrame(RenderObject ro);
 		void Swap( );
 		Camera* GetCamera( ) { return &m_Camera; };
-		float GetWidth() { return m_Width; }
-		float GetHeight(){ return m_Height; }
+		float GetWidth() { return (float)m_Width; }
+		float GetHeight(){ return (float)m_Height; }
 	private:
 		void RenderGeometry(RenderQueue* drawQueue);
 		void RenderSprites(RenderQueue* drawQueue);

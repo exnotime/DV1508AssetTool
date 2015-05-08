@@ -27,8 +27,8 @@ void FrameBuffer::SetTexture(gfx::TextureHandle handle){
 	m_TargetTexture = handle;
 
 	Texture* tex = g_MaterialBank.GetTexture(m_TargetTexture);
-	m_Width = tex->GetWidth();
-	m_Height = tex->GetHeight();
+	m_Width = (GLuint)tex->GetWidth();
+	m_Height = (GLuint)tex->GetHeight();
 	glBindFramebuffer(GL_FRAMEBUFFER, m_Handle);
 	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex->GetHandle(), 0);
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);

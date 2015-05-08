@@ -21,7 +21,7 @@ void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>
 	static bool unselect = false;
 
 	ImGui::Begin( "VerticeTranslation" );
-	ImGui::SliderInt( "Mesh", &meshIndex, 0, model.Meshes.size() - 1 );
+	ImGui::SliderInt( "Mesh", &meshIndex, 0, (int)(model.Meshes.size() - 1));
 	ImGui::Checkbox( "Unselect", &unselect );
 	ImGui::End();
 
@@ -32,7 +32,8 @@ void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>
 		selectedVertices.clear();
 		int startIndex = model.VertexHandle + model.Meshes[meshIndex].VertexBufferOffset;
 		int endIndex = startIndex + model.Meshes[meshIndex].Size;
-		for ( unsigned int i = startIndex; i < endIndex; ++i ) {
+		for (int i = startIndex; i < endIndex; ++i) 
+		{
 			selectedVertices.push_back( i );
 		}
 	}

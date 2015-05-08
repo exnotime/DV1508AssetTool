@@ -95,7 +95,7 @@ void Game::Render( gfx::RenderQueue* rq ){
 	//Set texture
 	gfx::Model model = gfx::g_ModelBank.FetchModel(m_Model);
 	static int meshIndex = 0;
-	ImGui::SliderInt("Mesh Texture", &meshIndex, 0, model.Meshes.size() - 1);
+	ImGui::SliderInt("Mesh Texture", &meshIndex, 0, (int)(model.Meshes.size() - 1));
 	//fixing error with imgui when min and max is the same
 	if (meshIndex < 0)
 		meshIndex = 0;

@@ -25,8 +25,8 @@ namespace gfx
 	 bool GetLoaded();
 	 void SetFilename( const char* filename );
 	 std::string GetFilename();
-	 float GetWidth() { return m_Width; }
-	 float GetHeight(){ return m_Height; }
+	 float GetWidth() { return (float)m_Width; }
+	 float GetHeight(){ return (float)m_Height; }
 	 int GetChannels(){ return m_Channels; }
 	private:
 		GLuint m_Handle;

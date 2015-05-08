@@ -54,7 +54,7 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	m_Camera.GetEditableLens( ).Far = 100.0f;
 	m_Camera.GetEditableLens( ).VerticalFOV = ( ( 90.0f / ( aspectRatio ) ) / 360.0f ) * 2 * glm::pi<float>( ); // calc FOV as horisontal FOV 90 degrees
 	m_Camera.GetEditableLens( ).WindowHeight = height;
-	m_Camera.GetEditableLens( ).WindowWidth = width * 0.5f;
+	m_Camera.GetEditableLens( ).WindowWidth = (int)(width * 0.5f);
 	m_Camera.SetPosition(glm::vec3(0.0f, 10.0f, 20.0f));
 
 	m_Camera.CalculateViewProjection();
@@ -94,7 +94,7 @@ void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 }
 
 void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
-	glViewport(0, 0, m_Width * 0.5f, m_Height);
+	glViewport(0, 0, (GLsizei)(m_Width * 0.5f), (GLsizei)m_Height);
 	//glDisable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
@@ -196,7 +196,7 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 }
 
 void gfx::GraphicsEngine::RenderActiveTarget(){
-	glViewport(m_Width * 0.5f, 0, m_Width * 0.5f, m_Height);
+	glViewport((GLint)(m_Width * 0.5f), 0, (GLint)(m_Width * 0.5f), m_Height);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -220,7 +220,7 @@ void gfx::GraphicsEngine::Swap( ){
 }
 
 void gfx::GraphicsEngine::RenderWireFrame(RenderObject ro){
-	glViewport(0, 0, m_Width * 0.5f, m_Height);
+	glViewport(0, 0, (GLsizei)(m_Width * 0.5f), (GLsizei)m_Height);
 	glDepthFunc(GL_EQUAL);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	g_ModelBank.ApplyBuffers();

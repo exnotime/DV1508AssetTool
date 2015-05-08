@@ -22,24 +22,24 @@ void UVTranslation::Initialize(gfx::ModelHandle modelHandle)
 
 	// 1
 	m_uvPos1 = new float[2];
-	m_uvPos1[0] = vertices[m_selectedFace.x].TexCoord.x;
-	m_uvPos1[1] = vertices[m_selectedFace.x].TexCoord.y;
+	m_uvPos1[0] = vertices[(int)m_selectedFace.x].TexCoord.x;
+	m_uvPos1[1] = vertices[(int)m_selectedFace.x].TexCoord.y;
 
 	m_dotSprite1.SetTexture("asset/Cube/rDot.png");
 	m_dotSprite1.SetPos(glm::vec2(800.0f, 0.0f));
 	
 	// 2
 	m_uvPos2 = new float[2];
-	m_uvPos2[0] = vertices[m_selectedFace.y].TexCoord.x;
-	m_uvPos2[1] = vertices[m_selectedFace.y].TexCoord.y;
+	m_uvPos2[0] = vertices[(int)m_selectedFace.y].TexCoord.x;
+	m_uvPos2[1] = vertices[(int)m_selectedFace.y].TexCoord.y;
 
 	m_dotSprite2.SetTexture("asset/Cube/gDot.png");
 	m_dotSprite2.SetPos(glm::vec2(800.0f, 0.0f));
 
 	// 3
 	m_uvPos3 = new float[2];
-	m_uvPos3[0] = vertices[m_selectedFace.z].TexCoord.x;
-	m_uvPos3[1] = vertices[m_selectedFace.z].TexCoord.y;
+	m_uvPos3[0] = vertices[(int)m_selectedFace.z].TexCoord.x;
+	m_uvPos3[1] = vertices[(int)m_selectedFace.z].TexCoord.y;
 
 	m_dotSprite3.SetTexture("asset/Cube/bDot.png");
 	m_dotSprite3.SetPos(glm::vec2(800.0f, 0.0f));
@@ -83,14 +83,14 @@ void UVTranslation::Update(const float deltaTime)
 	{
 		std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
 
-		vertices[m_selectedFace.x].TexCoord.x = m_uvPos1[0];
-		vertices[m_selectedFace.x].TexCoord.y = m_uvPos1[1];
+		vertices[(int)m_selectedFace.x].TexCoord.x = m_uvPos1[0];
+		vertices[(int)m_selectedFace.x].TexCoord.y = m_uvPos1[1];
 
-		vertices[m_selectedFace.y].TexCoord.x = m_uvPos2[0];
-		vertices[m_selectedFace.y].TexCoord.y = m_uvPos2[1];
+		vertices[(int)m_selectedFace.y].TexCoord.x = m_uvPos2[0];
+		vertices[(int)m_selectedFace.y].TexCoord.y = m_uvPos2[1];
 
-		vertices[m_selectedFace.z].TexCoord.x = m_uvPos3[0];
-		vertices[m_selectedFace.z].TexCoord.y = m_uvPos3[1];
+		vertices[(int)m_selectedFace.z].TexCoord.x = m_uvPos3[0];
+		vertices[(int)m_selectedFace.z].TexCoord.y = m_uvPos3[1];
 
 		// temp
 		vertices[3].TexCoord.x = m_uvPos4[0];
@@ -130,18 +130,17 @@ void UVTranslation::SelectFace(int vertex1, int vertex2, int vertex3)
 		&& vertex2 >= 0 && vertex2 < vertices.size()
 		&& vertex3 >= 0 && vertex3 < vertices.size())
 	{
-		m_selectedFace.x = vertex1;
-		m_selectedFace.y = vertex2;
-		m_selectedFace.z = vertex3;
+		m_selectedFace.x = (float)vertex1;
+		m_selectedFace.y = (float)vertex2;
+		m_selectedFace.z = (float)vertex3;
 
+		m_uvPos1[0] = vertices[(int)m_selectedFace.x].TexCoord.x;
+		m_uvPos1[1] = vertices[(int)m_selectedFace.x].TexCoord.y;
 
-		m_uvPos1[0] = vertices[m_selectedFace.x].TexCoord.x;
-		m_uvPos1[1] = vertices[m_selectedFace.x].TexCoord.y;
+		m_uvPos2[0] = vertices[(int)m_selectedFace.y].TexCoord.x;
+		m_uvPos2[1] = vertices[(int)m_selectedFace.y].TexCoord.y;
 
-		m_uvPos2[0] = vertices[m_selectedFace.y].TexCoord.x;
-		m_uvPos2[1] = vertices[m_selectedFace.y].TexCoord.y;
-
-		m_uvPos3[0] = vertices[m_selectedFace.z].TexCoord.x;
-		m_uvPos3[1] = vertices[m_selectedFace.z].TexCoord.y;
+		m_uvPos3[0] = vertices[(int)m_selectedFace.z].TexCoord.x;
+		m_uvPos3[1] = vertices[(int)m_selectedFace.z].TexCoord.y;
 	}
 }

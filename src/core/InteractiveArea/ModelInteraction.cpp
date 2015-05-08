@@ -111,7 +111,11 @@ bool ModelInteraction::GetLeftMouseClicked()
 		{
 			return true;
 		}
+
+		// TODO: är detta vad henrik vill? :3 Saknade return path här.
+		return false;
 	}
+
 	else
 	{
 		return false;
@@ -125,6 +129,9 @@ bool ModelInteraction::GetLeftMousePressed()
 		{
 			return true;
 		}
+
+		// TODO: är detta vad henrik vill? :3 Saknade return path här.
+		return false;
 	}
 	return false;
 }
@@ -136,6 +143,9 @@ bool ModelInteraction::GetRightMouseClicked()
 		{
 			return true;
 		}
+
+		// TODO: är detta vad henrik vill? :3 Saknade return path här.
+		return false;
 	}
 	else
 	{
@@ -150,6 +160,9 @@ bool ModelInteraction::GetRightMousePressed()
 		{
 			return true;
 		}
+
+		// TODO: är detta vad henrik vill? :3 Saknade return path här.
+		return false;
 	}
 	return false;
 }
