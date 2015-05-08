@@ -21,6 +21,7 @@ int main( ){
 	game.Initialize( );
 	gfx::g_ModelBank.BuildBuffers( ); //update vertex and index buffer
 	gfx::RenderQueue drawQueue;
+	gfx::RenderObject wireFrameRO;
 
 	while( true ){
 		//update input and window
@@ -33,8 +34,10 @@ int main( ){
 		//update game
 		game.Update( io.DeltaTime );
 		game.Render( &drawQueue );
+		wireFrameRO = game.GetWireFrameModel();
 		//render graphics
 		gfx::g_GFXEngine.Render( &drawQueue );
+		gfx::g_GFXEngine.RenderWireFrame(wireFrameRO);
 		RenderImgui( );
 		gfx::g_GFXEngine.Swap( );
 		std::stringstream ss;

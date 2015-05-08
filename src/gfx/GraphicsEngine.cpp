@@ -4,6 +4,7 @@
 #include <glm/gtx/transform.hpp>
 #include "MaterialBank.h"
 #include "Material.h"
+
 gfx::GraphicsEngine::GraphicsEngine(){
 
 }
@@ -39,6 +40,7 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CCW);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	
 
 	if(vsync){
 		glfwSwapInterval( 1 );
@@ -126,6 +128,7 @@ void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 		}
 	}
 }
+
 void gfx::GraphicsEngine::RenderSprites(RenderQueue* drawQueue){
 	glViewport(0, 0, m_Width, m_Height);
 	//Render Sprites
@@ -195,4 +198,27 @@ void gfx::GraphicsEngine::RenderActiveTarget(){
 void gfx::GraphicsEngine::Swap( ){
 	glfwSwapBuffers( m_Window );
 
+}
+
+void gfx::GraphicsEngine::RenderWireFrame(RenderObject ro){
+	glViewport(0, 0, m_Width * 0.5f, m_Height);
+	glDepthFunc(GL_EQUAL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	g_ModelBank.ApplyBuffers();
+	ShaderProgram* prog = g_ShaderBank.GetProgramFromHandle(m_Shader);
+	prog->Apply();
+	prog->SetUniformMat4("g_ViewProj", m_Camera.GetViewProjection());
+	prog->SetUniformVec3("g_Campos", m_Camera.GetPosition());
+
+	Model model = g_ModelBank.FetchModel(ro.Model);
+	prog->SetUniformMat4("g_World", ro.world);
+	for (auto& mesh : model.Meshes){
+		Material* mat = g_MaterialBank.GetMaterial(model.MaterialOffset + mesh.Material);
+		prog->SetUniformTextureHandle("g_DiffuseTex", mat->GetAlbedoTexture()->GetHandle(), 0);
+		glDrawElements(GL_TRIANGLES, mesh.Indices, GL_UNSIGNED_INT,
+			(GLvoid*)(0 + ((model.IndexHandle + mesh.IndexBufferOffset) * sizeof(unsigned int))));
+	}
+
+	glDepthFunc(GL_LESS);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }

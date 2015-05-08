@@ -15,6 +15,7 @@ namespace gfx{
 		static GraphicsEngine& GetInstance( ){ static GraphicsEngine engine; return engine; };
 		GLFWwindow* Initialize( int width, int height, bool vsync, bool fullscreen );
 		void Render(RenderQueue* drawQueue);
+		void RenderWireFrame(RenderObject ro);
 		void Swap( );
 		Camera* GetCamera( ) { return &m_Camera; };
 		float GetWidth() { return m_Width; }

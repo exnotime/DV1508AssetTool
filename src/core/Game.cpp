@@ -18,6 +18,7 @@ void Game::Initialize(){
 	m_Scale = 1.0f;
 	m_RotateY = 0.0f;
 	m_VerticeTranslation.Initialize();
+	m_VerticeSelection.Initialize();
 	m_TestSprite.SetTexture("asset/brush.png");
 	m_TargetTex = gfx::g_MaterialBank.LoadTexture("asset/flcl.jpg");
 }
@@ -38,6 +39,7 @@ void Game::Update(float dt){
 	TempSelectVertices( m_Model, m_SelectedVertices );	// TODO: Remove when real vertice selection is implemented.
 	m_VerticeTranslation.SetSelectedVertices( m_SelectedVertices );
 	m_VerticeTranslation.Update( dt );
+	m_VerticeSelection.Update(dt);
 }
 
 void Game::Render( gfx::RenderQueue* rq ){
@@ -45,8 +47,20 @@ void Game::Render( gfx::RenderQueue* rq ){
 	ro.Model = m_Model;
 	ro.world = glm::translate(m_Pos) * glm::scale(glm::vec3(m_Scale)) * glm::rotate(m_RotateY, glm::vec3(0, 1, 0));
 	
+	SetWireFrameModel(ro);
+
 	rq->Enqueue(ro);
 	rq->Enqueue(m_TestSprite);
 	rq->SetTargetTexture(m_TargetTex);
 	m_VerticeTranslation.Draw( rq );
+
+	m_VerticeSelection.Draw(rq, ro);
+}
+
+gfx::RenderObject Game::GetWireFrameModel(){
+	return m_wfModel;
+}
+
+void Game::SetWireFrameModel(gfx::RenderObject ro){
+	m_wfModel = ro;
 }
