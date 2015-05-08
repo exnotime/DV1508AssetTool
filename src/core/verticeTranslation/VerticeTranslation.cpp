@@ -15,12 +15,16 @@ void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>
 	const gfx::Model& model = gfx::g_ModelBank.FetchModel( modelHandle );
 	static int meshIndex = 2;
 	static int prevMeshIndex = meshIndex + 1;
+	static bool unselect = true;
 
 	ImGui::Begin( "VerticeTranslation" );
 	ImGui::SliderInt( "Mesh", &meshIndex, 0, model.Meshes.size() - 1 );
+	ImGui::Checkbox( "Unselect", &unselect );
 	ImGui::End();
 
-	if ( meshIndex != prevMeshIndex ) {
+	if ( unselect )
+		selectedVertices.clear();
+	else if ( meshIndex != prevMeshIndex ) {
 		prevMeshIndex = meshIndex;
 		selectedVertices.clear();
 		int startIndex = model.VertexHandle + model.Meshes[meshIndex].VertexBufferOffset;
@@ -37,6 +41,10 @@ void VerticeTranslation::Initialize() {
 }
 
 void VerticeTranslation::Update( const float deltaTime ) {
+	if ( m_SelectedVertices.empty() ) {
+		return;
+	}
+
 	std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
 
 	ImGuiIO& io = ImGui::GetIO();
@@ -49,24 +57,30 @@ void VerticeTranslation::Update( const float deltaTime ) {
 		Camera*	camera		= gfx::g_GFXEngine.GetCamera();
 		CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y ), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
 
-		m_TranslationToolPosition = ClosestPointOnFirstRay( lineX, mouseRay );
-	} else {
-		glm::vec3 avaragePosition( 0.0f );
-		for ( auto& index : m_SelectedVertices ) {
-			avaragePosition += glm::vec3(vertices[index].Position);
+		const glm::vec3 diff = ClosestPointOnFirstRay( lineX, mouseRay ) - m_TranslationToolPosition;
+
+		if ( diff != glm::vec3( 0.0f ) ) {
+			glm::vec4 diffVec4 = glm::vec4( diff, 0.0f );
+			for ( auto& index : m_SelectedVertices ) {
+				vertices[index].Position +=  diffVec4;
+			}
+			gfx::g_ModelBank.BuildBuffers();
 		}
-		avaragePosition /= m_SelectedVertices.size();
-		m_TranslationToolPosition = avaragePosition;
 	}
 
-	static float derp = 0.0f;
-	if ( (derp -= deltaTime) <= 0.0f ) {
-		derp = 0.1f;
-		gfx::g_ModelBank.BuildBuffers();
+	glm::vec3 avaragePosition( 0.0f );
+	for ( auto& index : m_SelectedVertices ) {
+		avaragePosition += glm::vec3(vertices[index].Position);
 	}
+	avaragePosition /= m_SelectedVertices.size();
+	m_TranslationToolPosition = avaragePosition;
 }
 
 void VerticeTranslation::Draw( gfx::RenderQueue* renderQueue ) {
+	if ( m_SelectedVertices.empty() ) {
+		return;
+	}
+
 	const float			halfPi				= 0.5f * glm::pi<float>();
 	const glm::mat4x4	scaleTranslation	= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(1.0f) );
 
