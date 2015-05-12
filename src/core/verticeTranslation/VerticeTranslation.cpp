@@ -105,12 +105,13 @@ void VerticeTranslation::Update( const float deltaTime ) {
 			line.Direction	= glm::vec3( 0.0f, 0.0f, 1.0f );
 			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
 		}
+		m_TranslationToolOffset /= m_TranslationToolScale;
 		m_TranslatingDirection = line.Direction;
 	}
 	
 	if ( m_Translating && io.MouseDown[0] ) {
 		line.Direction = m_TranslatingDirection;
-		const glm::vec3 diff = ClosestPointOnFirstRay( line, mouseRay ) - (m_TranslationToolPosition + m_TranslationToolOffset);
+		const glm::vec3 diff = ClosestPointOnFirstRay( line, mouseRay ) - (m_TranslationToolPosition + (m_TranslationToolOffset * m_TranslationToolScale));
 
 		if ( diff != glm::vec3( 0.0f ) ) {
 			glm::vec4 diffVec4 = glm::vec4( diff, 0.0f );
