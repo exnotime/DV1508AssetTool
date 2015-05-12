@@ -19,7 +19,7 @@ int main( ){
 
 	GLFWwindow* window = gfx::g_GFXEngine.Initialize( width, height, vsync, fullscreen );
 	glfwSetFramebufferSizeCallback(window, UpdateWindow);
-
+	
 	Game game;
 	game.Initialize( width, height);
 	gfx::g_ModelBank.BuildBuffers( ); //update vertex and index buffer
