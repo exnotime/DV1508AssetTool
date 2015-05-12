@@ -40,8 +40,8 @@ void BrushArea::Update(){
 			gfx::BrushObject bo;
 			int numBrush = deltaLength / (BRUSH_DELTA * m_BrushSize);
 			int i = 0;
-			for (; i < numBrush * 32; i++){
-				glm::vec2 deltaPos = m_MousePos + deltaVector * (deltaLength / (float)i);
+			for (; i < numBrush; i++){
+				glm::vec2 deltaPos = m_MousePos + deltaVector *(i * BRUSH_DELTA * m_BrushSize);
 
 				glm::vec2 translatedPos = glm::vec2(deltaPos.x - m_Area.GetPos().x, deltaPos.y - m_Area.GetPos().y);
 				glm::vec2 brushpos = translatedPos / m_Area.GetSize();
@@ -54,7 +54,6 @@ void BrushArea::Update(){
 				bo.Size = m_BrushSize;
 				m_BrushObjects.push_back(bo);
 			}
-
 			m_MousePos += deltaVector * deltaLength;
 		}
 	}
