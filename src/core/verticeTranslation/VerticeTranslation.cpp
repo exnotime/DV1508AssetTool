@@ -47,23 +47,14 @@ void VerticeTranslation::Initialize() {
 	m_VolumeAxisX.Directions[0]	= glm::vec3( 1.0f, 0.0f, 0.0f );
 	m_VolumeAxisX.Directions[1]	= glm::vec3( 0.0f, 1.0f, 0.0f );
 	m_VolumeAxisX.Directions[2]	= glm::vec3( 0.0f, 0.0f, 1.0f );
-	m_VolumeAxisX.HalfSizes[0]	= 0.5f;
-	m_VolumeAxisX.HalfSizes[1]	= 0.05f;
-	m_VolumeAxisX.HalfSizes[2]	= 0.05f;
 
 	m_VolumeAxisY.Directions[0]	= glm::vec3( 1.0f, 0.0f, 0.0f );
 	m_VolumeAxisY.Directions[1]	= glm::vec3( 0.0f, 1.0f, 0.0f );
 	m_VolumeAxisY.Directions[2]	= glm::vec3( 0.0f, 0.0f, 1.0f );
-	m_VolumeAxisY.HalfSizes[0]	= 0.05f;
-	m_VolumeAxisY.HalfSizes[1]	= 0.5f;
-	m_VolumeAxisY.HalfSizes[2]	= 0.05f;
 
 	m_VolumeAxisZ.Directions[0]	= glm::vec3( 1.0f, 0.0f, 0.0f );
 	m_VolumeAxisZ.Directions[1]	= glm::vec3( 0.0f, 1.0f, 0.0f );
 	m_VolumeAxisZ.Directions[2]	= glm::vec3( 0.0f, 0.0f, 1.0f );
-	m_VolumeAxisZ.HalfSizes[0]	= 0.05f;
-	m_VolumeAxisZ.HalfSizes[1]	= 0.05f;
-	m_VolumeAxisZ.HalfSizes[2]	= 0.5f;
 }
 
 void VerticeTranslation::Update( const float deltaTime ) {
@@ -82,6 +73,20 @@ void VerticeTranslation::Update( const float deltaTime ) {
 	CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y ), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
 
 	if ( io.MouseClicked[0] ) {
+		const float hitboxHalfSize = 0.11f;
+
+		m_VolumeAxisX.HalfSizes[0]	= m_TranslationToolScale * 0.5f;
+		m_VolumeAxisX.HalfSizes[1]	= m_TranslationToolScale * hitboxHalfSize;
+		m_VolumeAxisX.HalfSizes[2]	= m_TranslationToolScale * hitboxHalfSize;
+
+		m_VolumeAxisY.HalfSizes[0]	= m_TranslationToolScale * hitboxHalfSize;
+		m_VolumeAxisY.HalfSizes[1]	= m_TranslationToolScale * 0.5f;
+		m_VolumeAxisY.HalfSizes[2]	= m_TranslationToolScale * hitboxHalfSize;
+
+		m_VolumeAxisZ.HalfSizes[0]	= m_TranslationToolScale * hitboxHalfSize;
+		m_VolumeAxisZ.HalfSizes[1]	= m_TranslationToolScale * hitboxHalfSize;
+		m_VolumeAxisZ.HalfSizes[2]	= m_TranslationToolScale * 0.5f;
+
 		m_VolumeAxisX.Position = m_TranslationToolPosition + glm::vec3( m_VolumeAxisX.HalfSizes[0], 0.0f, 0.0f );
 		m_VolumeAxisY.Position = m_TranslationToolPosition + glm::vec3( 0.0f, m_VolumeAxisY.HalfSizes[1], 0.0f );
 		m_VolumeAxisZ.Position = m_TranslationToolPosition + glm::vec3( 0.0f, 0.0f, m_VolumeAxisZ.HalfSizes[2] );
@@ -131,22 +136,32 @@ void VerticeTranslation::Draw( gfx::RenderQueue* renderQueue ) {
 		return;
 	}
 
+	glm::mat4x4 viewProj			= gfx::g_GFXEngine.GetCamera()->GetViewProjection();
+	glm::mat4x4 invViewProj			= glm::inverse( viewProj );
+
+	glm::vec4 nearHomogeneous		= viewProj * glm::vec4( m_TranslationToolPosition, 1.0f );
+	nearHomogeneous					/= nearHomogeneous.w;
+	const glm::vec4 farHomogeneous	= invViewProj * glm::vec4( nearHomogeneous.x + 0.15f, nearHomogeneous.y, nearHomogeneous.z, 1.0f );
+	const glm::vec3 farWorld		= glm::vec3( farHomogeneous ) / farHomogeneous.w;
+
+	m_TranslationToolScale			= glm::distance( farWorld, m_TranslationToolPosition );
+
 	const float			halfPi				= 0.5f * glm::pi<float>();
-	const glm::mat4x4	scaleTranslation	= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(1.0f) );
+	const glm::mat4x4	scaleTranslation	= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(m_TranslationToolScale) );
 
 	gfx::GizmoObject renderObject;
 	renderObject.Model	= m_TranslationToolModel;
 	float alpha = 0.7f;
 	renderObject.world	= scaleTranslation * glm::rotate( -halfPi, glm::vec3(0.0f, 0.0f, 1.0f) );	// X
-	renderObject.Color = glm::vec4(1, 0, 0, 1) * alpha;
+	renderObject.Color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * alpha;
 	renderQueue->Enqueue(renderObject);
 
 	renderObject.world	= scaleTranslation;	// Y
-	renderObject.Color = glm::vec4(0, 1, 0, 1) * alpha;
+	renderObject.Color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) * alpha;
 	renderQueue->Enqueue(renderObject);
 
 	renderObject.world	= scaleTranslation * glm::rotate( halfPi, glm::vec3(1.0f, 0.0f, 0.0f) );	// Z
-	renderObject.Color = glm::vec4(0, 0, 1, 1) * alpha;
+	renderObject.Color = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * alpha;
 	renderQueue->Enqueue(renderObject);
 }
 

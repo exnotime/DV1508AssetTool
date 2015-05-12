@@ -34,6 +34,7 @@ private:
 	std::vector<unsigned int>	m_SelectedVertices;
 	glm::vec3					m_TranslationToolPosition;
 	glm::vec3					m_TranslationToolOffset;
+	float						m_TranslationToolScale;
 	gfx::ModelHandle			m_TranslationToolModel;
 	bool						m_Translating;
 	glm::vec3					m_TranslatingDirection;
