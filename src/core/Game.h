@@ -4,10 +4,12 @@
 #include "../gfx/Sprite.h"
 #include "verticeTranslation/VerticeTranslation.h"
 #include "InteractiveArea/InterActiveArea.h"
+#include "Brush/BrushArea.h"
 #include "Button/Button.h"
 #include "UV/UVTranslation.h"
 #include "InteractiveArea\ModelInteraction.h"
 #include "verticeSelection/VerticeSelection.h"
+#include "Brush/BrushTexGenerator.h"
 ///////////////////////////////////////////////////////////////////////////////
 class Camera;
 ///////////////////////////////////////////////////////////////////////////////
@@ -17,7 +19,7 @@ class Game
 public:
 	Game( );
 	~Game( );
-	void Initialize();
+	void Initialize(int width, int height);
 	void Update(float dt);
 	void Render( gfx::RenderQueue* rq );
 	void SetWireFrameModel(gfx::RenderObject ro);
@@ -37,11 +39,11 @@ private:
 	VerticeTranslation	m_VerticeTranslation;
 	VerticeSelection	m_VerticeSelection;
 	gfx::RenderObject	m_wfModel;
-
+	BrushArea			m_BrushArea;
 	InteractiveArea				m_TestArea;
 	std::vector<unsigned int>	m_SelectedVertices;
 	UVTranslation				m_uvTranslation;
-
+	BrushTexGenerator			m_BrushGenerator;
 
 	///////////////////////////////////////////////////////////////////////////////
 	void UpdateModelViewWindow(float p_deltaTime);

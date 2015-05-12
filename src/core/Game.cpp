@@ -16,7 +16,7 @@ Game::~Game( )
 
 }
 
-void Game::Initialize(){
+void Game::Initialize(int width, int height){
 	m_Model = gfx::g_ModelBank.LoadModel("asset/LucinaResource/Lucina_posed.obj");
 	m_Pos = glm::vec3(0.0f);
 	m_Scale = 1.0f;
@@ -26,17 +26,22 @@ void Game::Initialize(){
 	m_VerticeSelection.Initialize();
 	m_TestSprite.SetTexture("asset/brush.png");
 
-	m_TestArea.SetPos(glm::vec2(800, 0));
-	m_TestArea.SetSize(glm::vec2(800, 900));
-	m_TestButton = Button(glm::vec2(0), glm::vec2(50), "asset/brush.png");
-	
+	m_TestArea.SetPos(glm::vec2(width / 2, 0));
+	m_TestArea.SetSize(glm::vec2(width / 2 , height));
+
+	m_BrushArea.SetArea(m_TestArea);
+	m_BrushArea.SetBrushSize(64);
+	m_BrushArea.SetTexture(m_TestSprite.GetTexture());
+
+	m_BrushGenerator.Init();
+	m_BrushGenerator.GenerateTexture(64, 0.5f, m_TestSprite.GetTexture());
 	///////////////////////////////////////////////////////////////////////////////
-	m_TestArea2.Initialize(glm::vec2(640, 720), glm::vec2(0, 0));
+	m_TestArea2.Initialize(glm::vec2(width / 2, height), glm::vec2(0, 0));
 	m_AutomaticRotate = false;
 	m_AutomaticRotateLeft = false;
 	m_MousePos = glm::vec2(0, 0);
 	m_PrevMousePos = glm::vec2(0, 0);
-	m_Camera = gfx::g_GFXEngine.GetCamera();	
+	m_Camera = gfx::g_GFXEngine.GetCamera();
 	m_StartPos = m_Camera->GetPosition();
 	m_StartScale = m_Camera->GetPosition().z;
 	///////////////////////////////////////////////////////////////////////////////
@@ -47,7 +52,7 @@ void Game::Update(float dt){
 	///////////////////////////////////////////////////////////////////////////////
 	UpdateModelViewWindow(dt);	
 	///////////////////////////////////////////////////////////////////////////////
-	m_TestArea.Update();
+	m_BrushArea.Update();
 
 	// Load model button
 	if (ImGui::Button("Load Model"))
@@ -66,17 +71,17 @@ void Game::Update(float dt){
 
 	static float x = 0;
 	static float y = 0;
-	ImGui::SliderFloat( "X##001", &m_Pos.x, -10, 10 );
-	ImGui::SliderFloat( "Y##001", &m_Pos.y, -10, 10 );
-	ImGui::SliderFloat( "Z", &m_Pos.z, -20, 10 );
+	static float h = 0;
 	ImGui::SliderFloat("Scale", &m_Scale, 0, 2);
 	ImGui::SliderFloat("RotateY", &m_RotateY, 0, 6.28f);
-	m_TestSprite.SetPos(glm::vec2(x, y));
-
+	ImGui::SliderFloat("Hardness", &h, 0, 1);
+	if (ImGui::Button("GenBrush")){
+		m_BrushGenerator.GenerateTexture(64, h, m_TestSprite.GetTexture());
+	}
 	TempSelectVertices( m_Model, m_SelectedVertices );	// TODO: Remove when real vertice selection is implemented.
 	m_VerticeTranslation.SetSelectedVertices( m_SelectedVertices );
 	m_VerticeTranslation.Update( dt );
-	m_TestButton.Update();
+
 
 	// UV
 	m_uvTranslation.Update(dt);
@@ -87,9 +92,7 @@ void Game::Render( gfx::RenderQueue* rq ){
 	gfx::RenderObject ro;
 	ro.Model = m_Model;
 	ro.world = glm::translate(m_Pos) * glm::scale(glm::vec3(m_Scale)) * glm::rotate(m_RotateY, glm::vec3(0, 1, 0));
-	
 	SetWireFrameModel(ro);
-
 	rq->Enqueue(ro);
 
 	//Set texture
@@ -109,20 +112,13 @@ void Game::Render( gfx::RenderQueue* rq ){
 		rq->SetTargetTexture(mat->GetAlbedoTexture());
 	}
 	m_VerticeTranslation.Draw( rq );
-	m_TestButton.Draw(rq);
 	m_uvTranslation.Draw(rq);
 	m_VerticeSelection.Draw(rq, ro);
 
-	static float brushSize = 24;
+	static float brushSize = 64;
 	ImGui::SliderFloat("BrushSize", &brushSize, 1, 640);
-	glm::vec2 clickPos;
-	if (m_TestArea.IsClicked(clickPos)){
-		gfx::BrushObject bo;
-		bo.Position = clickPos;
-		bo.Size = brushSize;
-		bo.Texture = m_TestSprite.GetTexture();
-		rq->Enqueue(bo);
-	}
+	m_BrushArea.SetBrushSize(brushSize);
+	m_BrushArea.PushStrokes(rq);
 }
 
 void Game::Shutdown()

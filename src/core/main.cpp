@@ -21,7 +21,7 @@ int main( ){
 	glfwSetFramebufferSizeCallback(window, UpdateWindow);
 
 	Game game;
-	game.Initialize( );
+	game.Initialize( width, height);
 	gfx::g_ModelBank.BuildBuffers( ); //update vertex and index buffer
 	gfx::RenderQueue drawQueue;
 	gfx::RenderObject wireFrameRO;

@@ -82,3 +82,10 @@ void Texture::SetFilename(const char* filename){
 std::string Texture::GetFilename(){
 	return m_Filename;
 }
+
+void Texture::Resize(int width, int height){
+	glBindTexture(GL_TEXTURE_2D, m_Handle);
+	GLint intFormat;
+	m_Type == TEXTURE_COLOR ? intFormat = GL_RGBA : intFormat = GL_RED;
+	glTexStorage2D(GL_TEXTURE_2D, 1, intFormat, width, height);
+}

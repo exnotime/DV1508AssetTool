@@ -28,6 +28,7 @@ namespace gfx
 	 float GetWidth() { return (float)m_Width; }
 	 float GetHeight(){ return (float)m_Height; }
 	 int GetChannels(){ return m_Channels; }
+	 void Resize( int width, int height );
 	private:
 		GLuint m_Handle;
 		int m_Width, m_Height, m_Channels;
