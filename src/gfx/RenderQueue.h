@@ -13,16 +13,23 @@ namespace gfx{
 		float			Size;
 		TextureHandle	Texture;
 	};
+	struct GizmoObject{
+		glm::mat4x4 world;
+		ModelHandle	Model;
+		glm::vec4	Color;
+	};
 	class RenderQueue{
 	public:
 		RenderQueue( );
 		~RenderQueue( );
 		void Enqueue( const RenderObject& ro );
-		void Enqueue(const Sprite& spr, int layer = 0);
-		void Enqueue(const BrushObject& bo);
+		void Enqueue( const Sprite& spr, int layer = 0 );
+		void Enqueue( const BrushObject& bo );
+		void Enqueue( const GizmoObject& go );
 		std::vector<RenderObject>& GetQueue( );
 		std::vector<std::vector<Sprite>>& GetSpriteQueue();
 		std::vector<BrushObject>& GetBrushQueue();
+		std::vector<GizmoObject>& GetGizmoQueue();
 		void SetTargetTexture(TextureHandle handle);
 		TextureHandle GetTargetTexture();
 		void Clear();
@@ -31,5 +38,6 @@ namespace gfx{
 		std::vector<std::vector<Sprite>> m_SpriteQueue;
 		TextureHandle m_TargetTexture;
 		std::vector<BrushObject> m_BrushQueue;
+		std::vector<GizmoObject> m_GizmoQueue;
 	};
 };

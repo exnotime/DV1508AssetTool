@@ -61,7 +61,7 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	//load shaders
 	m_Shader = g_ShaderBank.LoadShaderProgram( "shader/CombinedShader.glsl" );
 	m_SpriteShader = g_ShaderBank.LoadShaderProgram("shader/SpriteShader.glsl");
-
+	m_GizmoProgram = g_ShaderBank.LoadShaderProgram("shader/GizmoProgram.glsl");
 	//Test Texture
 	m_TestTex = new Texture();
 	m_TestTex->Init("asset/rockman_teeth.png", TEXTURE_COLOR);
@@ -88,6 +88,7 @@ void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 	RenderToTexture(drawQueue);
 	RenderActiveTarget();
 	RenderGeometry(drawQueue);
+	RenderGizmos(drawQueue);
 	RenderSprites(drawQueue);
 	
 	glUseProgram(0);
@@ -238,4 +239,21 @@ void gfx::GraphicsEngine::RenderWireFrame(RenderObject ro){
 
 	glDepthFunc(GL_LESS);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+}
+
+void gfx::GraphicsEngine::RenderGizmos(RenderQueue* drawQueue){
+	ShaderProgram* prog = g_ShaderBank.GetProgramFromHandle(m_GizmoProgram);
+	prog->Apply();
+	prog->SetUniformMat4("g_ViewProj", m_Camera.GetViewProjection());
+	glDisable(GL_DEPTH_TEST);
+	for (auto& gizmo : drawQueue->GetGizmoQueue()){
+		Model model = g_ModelBank.FetchModel(gizmo.Model);
+		prog->SetUniformMat4("g_World", gizmo.world);
+		for (auto& mesh : model.Meshes){
+			prog->SetUniformVec4("g_Color", gizmo.Color);
+			glDrawElements(GL_TRIANGLES, mesh.Indices, GL_UNSIGNED_INT,
+				(GLvoid*)(0 + ((model.IndexHandle + mesh.IndexBufferOffset) * sizeof(unsigned int))));
+		}
+	}
+	glEnable(GL_DEPTH_TEST);
 }

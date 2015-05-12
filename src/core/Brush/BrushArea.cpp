@@ -41,14 +41,10 @@ void BrushArea::Update(){
 			int numBrush = deltaLength / (BRUSH_DELTA * m_BrushSize);
 			int i = 0;
 			for (; i < numBrush; i++){
-				glm::vec2 deltaPos = m_MousePos + deltaVector *(i * BRUSH_DELTA * m_BrushSize);
+				glm::vec2 deltaPos = m_MousePos + deltaVector * (i * BRUSH_DELTA * m_BrushSize);
 
 				glm::vec2 translatedPos = glm::vec2(deltaPos.x - m_Area.GetPos().x, deltaPos.y - m_Area.GetPos().y);
 				glm::vec2 brushpos = translatedPos / m_Area.GetSize();
-
-				if (deltaLength > 30)
-					int k = 0;
-
 				bo.Position = brushpos;
 				bo.Texture = m_BrushTexture;
 				bo.Size = m_BrushSize;

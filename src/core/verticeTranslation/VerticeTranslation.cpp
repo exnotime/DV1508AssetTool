@@ -134,16 +134,19 @@ void VerticeTranslation::Draw( gfx::RenderQueue* renderQueue ) {
 	const float			halfPi				= 0.5f * glm::pi<float>();
 	const glm::mat4x4	scaleTranslation	= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(1.0f) );
 
-	gfx::RenderObject renderObject;
+	gfx::GizmoObject renderObject;
 	renderObject.Model	= m_TranslationToolModel;
-
+	float alpha = 0.7f;
 	renderObject.world	= scaleTranslation * glm::rotate( -halfPi, glm::vec3(0.0f, 0.0f, 1.0f) );	// X
+	renderObject.Color = glm::vec4(1, 0, 0, 1) * alpha;
 	renderQueue->Enqueue(renderObject);
 
 	renderObject.world	= scaleTranslation;	// Y
+	renderObject.Color = glm::vec4(0, 1, 0, 1) * alpha;
 	renderQueue->Enqueue(renderObject);
 
 	renderObject.world	= scaleTranslation * glm::rotate( halfPi, glm::vec3(1.0f, 0.0f, 0.0f) );	// Z
+	renderObject.Color = glm::vec4(0, 0, 1, 1) * alpha;
 	renderQueue->Enqueue(renderObject);
 }
 

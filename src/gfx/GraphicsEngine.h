@@ -26,12 +26,14 @@ namespace gfx{
 		void RenderSprites(RenderQueue* drawQueue);
 		void RenderToTexture(RenderQueue* drawQueue);
 		void RenderActiveTarget();
+		void RenderGizmos(RenderQueue* drawQueue);
 
 		GLFWwindow*			m_Window;
 		FrameBuffer			m_FrameBuffer;
 		Camera				m_Camera;
 		ShaderProgramHandle m_Shader;
 		ShaderProgramHandle m_SpriteShader;
+		ShaderProgramHandle	m_GizmoProgram;
 		int					m_Width;
 		int					m_Height;
 		Texture*			m_SkyTex;

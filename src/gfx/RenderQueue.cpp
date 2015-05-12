@@ -21,6 +21,9 @@ void gfx::RenderQueue::Enqueue(const Sprite& spr, int layer){
 void gfx::RenderQueue::Enqueue(const BrushObject& bo){
 	m_BrushQueue.push_back(bo);
 }
+void gfx::RenderQueue::Enqueue(const GizmoObject& go){
+	m_GizmoQueue.push_back(go);
+}
 std::vector<gfx::RenderObject>& gfx::RenderQueue::GetQueue(){
 	return m_Queue;
 }
@@ -30,6 +33,9 @@ std::vector<std::vector<gfx::Sprite>>& gfx::RenderQueue::GetSpriteQueue(){
 }
 std::vector<gfx::BrushObject>& gfx::RenderQueue::GetBrushQueue(){
 	return m_BrushQueue;
+}
+std::vector<gfx::GizmoObject>& gfx::RenderQueue::GetGizmoQueue(){
+	return m_GizmoQueue;
 }
 void gfx::RenderQueue::SetTargetTexture(TextureHandle handle){
 	m_TargetTexture = handle;
@@ -42,6 +48,7 @@ TextureHandle gfx::RenderQueue::GetTargetTexture(){
 void gfx::RenderQueue::Clear(){
 	m_Queue.clear();
 	m_BrushQueue.clear();
+	m_GizmoQueue.clear();
 	for (auto& it : m_SpriteQueue){
 		it.clear();
 	}
