@@ -18,14 +18,11 @@ Game::~Game( )
 
 void Game::Initialize(int width, int height){
 	m_Model = gfx::g_ModelBank.LoadModel("asset/LucinaResource/Lucina_posed.obj");
-	m_Pos = glm::vec3(0.0f);
-	m_Scale = 1.0f;
-	m_RotateY = 0.0f;
 	m_VerticeTranslation.Initialize();
 	m_uvTranslation.Initialize(m_Model);
 	m_VerticeSelection.Initialize();
 	m_TestSprite.SetTexture("asset/brush.png");
-
+	m_BrushGhost.SetTexture("asset/BrushGhost.png");
 	m_TestArea.SetPos(glm::vec2(width / 2, 0));
 	m_TestArea.SetSize(glm::vec2(width / 2 , height));
 
@@ -68,12 +65,7 @@ void Game::Update(float dt){
 			m_SelectedVertices.clear();
 		}
 	}
-
-	static float x = 0;
-	static float y = 0;
 	static float h = 0;
-	ImGui::SliderFloat("Scale", &m_Scale, 0, 2);
-	ImGui::SliderFloat("RotateY", &m_RotateY, 0, 6.28f);
 	ImGui::SliderFloat("Hardness", &h, 0, 1);
 	if (ImGui::Button("GenBrush")){
 		m_BrushGenerator.GenerateTexture(64, h, m_TestSprite.GetTexture());
@@ -91,12 +83,13 @@ void Game::Update(float dt){
 void Game::Render( gfx::RenderQueue* rq ){
 	gfx::RenderObject ro;
 	ro.Model = m_Model;
-	ro.world = glm::translate(m_Pos) * glm::scale(glm::vec3(m_Scale)) * glm::rotate(m_RotateY, glm::vec3(0, 1, 0));
+	ro.world = glm::translate(glm::vec3(0));
 	SetWireFrameModel(ro);
 	rq->Enqueue(ro);
 
 	//Set texture
 	gfx::Model model = gfx::g_ModelBank.FetchModel(m_Model);
+
 	static int meshIndex = 0;
 	ImGui::SliderInt("Mesh Texture", &meshIndex, 0, (int)(model.Meshes.size() - 1));
 	//fixing error with imgui when min and max is the same
@@ -111,6 +104,7 @@ void Game::Render( gfx::RenderQueue* rq ){
 	else {
 		rq->SetTargetTexture(mat->GetAlbedoTexture());
 	}
+
 	m_VerticeTranslation.Draw( rq );
 	m_uvTranslation.Draw(rq);
 	m_VerticeSelection.Draw(rq, ro);
@@ -119,6 +113,11 @@ void Game::Render( gfx::RenderQueue* rq ){
 	ImGui::SliderFloat("BrushSize", &brushSize, 1, 640);
 	m_BrushArea.SetBrushSize(brushSize);
 	m_BrushArea.PushStrokes(rq);
+
+	m_BrushGhost.SetSize(glm::vec2(brushSize));
+	ImGuiIO io = ImGui::GetIO();
+	m_BrushGhost.SetPos(glm::vec2(io.MousePos.x - m_BrushGhost.GetSize().x * 0.5f, io.MousePos.y - m_BrushGhost.GetSize().y * 0.5f));
+	rq->Enqueue(m_BrushGhost);
 }
 
 void Game::Shutdown()

@@ -29,17 +29,14 @@ public:
 	bool GetWireFrameState();
 	void SetWireFrameState(bool state);
 private:
-	gfx::ModelHandle	m_Model;
-	glm::vec3			m_Pos;
-	float				m_Scale;
-	float				m_RotateY;
-	Button				m_TestButton;
-	gfx::Sprite			m_TestSprite;
-	TextureHandle		m_TargetTex;
-	VerticeTranslation	m_VerticeTranslation;
-	VerticeSelection	m_VerticeSelection;
-	gfx::RenderObject	m_wfModel;
-	BrushArea			m_BrushArea;
+	gfx::ModelHandle			m_Model;
+	gfx::Sprite					m_TestSprite;
+	gfx::Sprite					m_BrushGhost;
+	TextureHandle				m_TargetTex;
+	VerticeTranslation			m_VerticeTranslation;
+	VerticeSelection			m_VerticeSelection;
+	gfx::RenderObject			m_wfModel;
+	BrushArea					m_BrushArea;
 	InteractiveArea				m_TestArea;
 	std::vector<unsigned int>	m_SelectedVertices;
 	UVTranslation				m_uvTranslation;
