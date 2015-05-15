@@ -2,6 +2,7 @@
 
 #include "../../gfx/ModelBank.h"
 #include "../../gfx/RenderQueue.h"
+#include "ClickDot.h"
 
 class UVTranslation
 {
