@@ -20,6 +20,10 @@ void ClickDot::Initialize()
 	m_clickedThisFrame = false;
 	m_clickedLastFrame = false;
 	m_moveableDot = false;
+
+	float width = m_dot.GetSizeFlt().x * gfx::g_GFXEngine.GetWidth();
+	float height = m_dot.GetSizeFlt().y * gfx::g_GFXEngine.GetHeight();
+	m_radius = (width + height) * 0.5f;
 }
 
 void ClickDot::Update(const float deltaTime)
@@ -38,11 +42,10 @@ void ClickDot::Update(const float deltaTime)
 		{
 			float x = X();
 			float y = Y();
-			float width = m_dot.GetSizeFlt().x * gfx::g_GFXEngine.GetWidth();
-			float height = m_dot.GetSizeFlt().y * gfx::g_GFXEngine.GetHeight();
+			float distance = sqrtf((mPos.x - x) * (mPos.x - x) + (mPos.y - y) * (mPos.y - y));
+
 			// Clicked inside dot
-			if (mPos.x < x + width && mPos.x > x - width &&
-				mPos.y < y + height && mPos.y > y - height)
+			if (distance < m_radius)
 			{
 				m_moveableDot = true;
 			}

@@ -21,6 +21,7 @@ private:
 	float Y();
 
 	gfx::Sprite m_dot;
+	float m_radius;
 
 	float m_winHeight;
 	float m_winWidth;
