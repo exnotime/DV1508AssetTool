@@ -10,12 +10,13 @@ public:
 	ClickDot();
 	~ClickDot();
 
-	void Initialize();
+	void Initialize(int index, int winWidth, int winHeight, const char* filename);
 	void Update(const float deltaTime);
 	void Draw(gfx::RenderQueue* renderQueue);
 
 	float U();
 	float V();
+	int Index();
 private:
 	float X();
 	float Y();
@@ -31,4 +32,6 @@ private:
 	bool m_clickedLastFrame;
 	bool m_clickedThisFrame;
 	bool m_moveableDot;
+
+	int m_index;
 };

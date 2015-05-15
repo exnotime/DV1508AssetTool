@@ -22,7 +22,7 @@ void Game::Initialize(int width, int height){
 	m_Scale = 1.0f;
 	m_RotateY = 0.0f;
 	m_VerticeTranslation.Initialize();
-	m_uvTranslation.Initialize(m_Model);
+	m_uvTranslation.Initialize(width, height);
 	m_VerticeSelection.Initialize();
 	m_TestSprite.SetTexture("asset/brush.png");
 

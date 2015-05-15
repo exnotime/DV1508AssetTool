@@ -7,14 +7,15 @@
 ClickDot::ClickDot(){}
 ClickDot::~ClickDot(){}
 
-void ClickDot::Initialize()
+void ClickDot::Initialize(int index, int winWidth, int winHeight, const char* filename)
 {
-	m_winHeight = 900.0f;
-	m_winWidth = 1600.0f;
+	m_index = index;
+	m_winHeight = (float)winHeight;
+	m_winWidth = (float)winWidth;
 	m_winHHeight = m_winHeight * 0.5f;
 	m_winHWidth = m_winWidth * 0.5f;
 
-	m_dot.SetTexture("asset/Cube/rDot.png");
+	m_dot.SetTexture(filename);
 	m_dot.SetPos(glm::vec2(m_winHWidth, 0.0f));
 
 	m_clickedThisFrame = false;
@@ -93,4 +94,9 @@ float ClickDot::U()
 float ClickDot::V()
 {
 	return Y() / m_winHeight;
+}
+
+int ClickDot::Index()
+{
+	return m_index;
 }
