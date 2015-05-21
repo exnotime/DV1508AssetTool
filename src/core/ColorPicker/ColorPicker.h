@@ -10,10 +10,11 @@ public:
 	ColorPicker();
 	~ColorPicker();
 
-	void Init();
+	void Init(glm::vec2 position, float scale = 1.0f, bool show = true);
 	void Update();
 	void Render(gfx::RenderQueue* rq);
 	
+	glm::vec4 GetColor()const;
 
 private:
 	void CalculateColor(glm::vec2 uv);
@@ -28,10 +29,12 @@ private:
 	gfx::Sprite	m_slide;
 	gfx::Sprite	m_pickerMarker;
 	gfx::Sprite m_sliderMarker;
+	gfx::Sprite m_background;
 	InteractiveArea m_pickerIarea;
 	InteractiveArea m_sliderIarea;
 	bool m_show;
 	float m_hue;
+	float m_scale;
 	glm::vec4 m_color;
 
 };

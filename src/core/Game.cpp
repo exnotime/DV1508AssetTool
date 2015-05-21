@@ -36,7 +36,7 @@ void Game::Initialize(int width, int height){
 	m_BrushGenerator.Init();
 	m_BrushGenerator.GenerateTexture(64, 0.5f, m_TestSprite.GetTexture());
 
-	m_colorPicker.Init();
+	m_colorPicker.Init(glm::vec2(0,0));
 
 	///////////////////////////////////////////////////////////////////////////////
 	m_TestArea2.Initialize(glm::vec2(width / 2, height), glm::vec2(0, 0));
