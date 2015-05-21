@@ -35,6 +35,9 @@ void Game::Initialize(int width, int height){
 
 	m_BrushGenerator.Init();
 	m_BrushGenerator.GenerateTexture(64, 0.5f, m_TestSprite.GetTexture());
+
+	m_colorPicker.Init();
+
 	///////////////////////////////////////////////////////////////////////////////
 	m_TestArea2.Initialize(glm::vec2(width / 2, height), glm::vec2(0, 0));
 	m_AutomaticRotate = false;
@@ -68,7 +71,6 @@ void Game::Update(float dt){
 			m_SelectedVertices.clear();
 		}
 	}
-
 	static float x = 0;
 	static float y = 0;
 	static float h = 0;
@@ -86,6 +88,8 @@ void Game::Update(float dt){
 	// UV
 	m_uvTranslation.Update(dt);
 	SetWireFrameState(m_VerticeSelection.Update(dt));
+
+	m_colorPicker.Update();
 }
 
 void Game::Render( gfx::RenderQueue* rq ){
@@ -119,6 +123,8 @@ void Game::Render( gfx::RenderQueue* rq ){
 	ImGui::SliderFloat("BrushSize", &brushSize, 1, 640);
 	m_BrushArea.SetBrushSize(brushSize);
 	m_BrushArea.PushStrokes(rq);
+
+	m_colorPicker.Render(rq);
 }
 
 void Game::Shutdown()

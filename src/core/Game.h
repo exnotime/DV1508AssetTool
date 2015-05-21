@@ -10,6 +10,7 @@
 #include "InteractiveArea\ModelInteraction.h"
 #include "verticeSelection/VerticeSelection.h"
 #include "Brush/BrushTexGenerator.h"
+#include "ColorPicker\ColorPicker.h"
 ///////////////////////////////////////////////////////////////////////////////
 class Camera;
 ///////////////////////////////////////////////////////////////////////////////
@@ -44,6 +45,7 @@ private:
 	std::vector<unsigned int>	m_SelectedVertices;
 	UVTranslation				m_uvTranslation;
 	BrushTexGenerator			m_BrushGenerator;
+	ColorPicker			m_colorPicker;
 
 	///////////////////////////////////////////////////////////////////////////////
 	void UpdateModelViewWindow(float p_deltaTime);
