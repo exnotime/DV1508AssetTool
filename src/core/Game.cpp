@@ -17,7 +17,7 @@ Game::~Game( )
 }
 
 void Game::Initialize(int width, int height){
-	m_Model = gfx::g_ModelBank.LoadModel("asset/LucinaResource/Lucina_posed.obj");
+	m_Model = gfx::g_ModelBank.LoadModel("asset/Bomb/model.obj");
 	m_VerticeTranslation.Initialize();
 	m_uvTranslation.Initialize(m_Model);
 	m_VerticeSelection.Initialize();
@@ -32,6 +32,9 @@ void Game::Initialize(int width, int height){
 
 	m_BrushGenerator.Init();
 	m_BrushGenerator.GenerateTexture(64, 0.5f, m_TestSprite.GetTexture());
+
+	m_LoadModelButton = Button(glm::vec2(0, 300), glm::vec2(50, 50), "asset/Icons/S_Load_Model.png");
+	m_LoadModelButton.SetTooltip("Load Model");
 	///////////////////////////////////////////////////////////////////////////////
 	m_TestArea2.Initialize(glm::vec2(width / 2, height), glm::vec2(0, 0));
 	m_AutomaticRotate = false;
@@ -39,6 +42,7 @@ void Game::Initialize(int width, int height){
 	m_MousePos = glm::vec2(0, 0);
 	m_PrevMousePos = glm::vec2(0, 0);
 	m_Camera = gfx::g_GFXEngine.GetCamera();
+	m_Camera->MoveWorld(glm::vec3(0, -8, -15));
 	m_StartPos = m_Camera->GetPosition();
 	m_StartScale = m_Camera->GetPosition().z;
 	///////////////////////////////////////////////////////////////////////////////
@@ -50,9 +54,9 @@ void Game::Update(float dt){
 	UpdateModelViewWindow(dt);	
 	///////////////////////////////////////////////////////////////////////////////
 	m_BrushArea.Update();
-
+	m_LoadModelButton.Update();
 	// Load model button
-	if (ImGui::Button("Load Model"))
+	if (m_LoadModelButton.IsClicked())
 	{
 		nfdchar_t *outPath = NULL;
 		nfdresult_t result = NFD_OpenDialog("obj,dae", "", &outPath);
@@ -118,6 +122,8 @@ void Game::Render( gfx::RenderQueue* rq ){
 	ImGuiIO io = ImGui::GetIO();
 	m_BrushGhost.SetPos(glm::vec2(io.MousePos.x - m_BrushGhost.GetSize().x * 0.5f, io.MousePos.y - m_BrushGhost.GetSize().y * 0.5f));
 	rq->Enqueue(m_BrushGhost);
+
+	m_LoadModelButton.Draw(rq);
 }
 
 void Game::Shutdown()

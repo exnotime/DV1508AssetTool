@@ -42,6 +42,8 @@ private:
 	UVTranslation				m_uvTranslation;
 	BrushTexGenerator			m_BrushGenerator;
 
+	Button						m_LoadModelButton;
+
 	///////////////////////////////////////////////////////////////////////////////
 	void UpdateModelViewWindow(float p_deltaTime);
 

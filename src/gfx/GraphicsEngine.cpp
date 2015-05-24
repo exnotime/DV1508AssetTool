@@ -172,7 +172,7 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 	glBindVertexArray(0);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
-	static bool additive = true; 
+	static bool additive = false; 
 	ImGui::Checkbox("Additive", &additive);
 	if (additive){
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE);
