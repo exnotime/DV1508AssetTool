@@ -41,13 +41,13 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	m_CameraModeSelection.SetTooltip("Select Camera Movement Mode");
 
 	m_FirstPersonModeButton = Button(glm::vec2(m_buttonXPos, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/T_Picker_Tool.png");
-	m_FirstPersonModeButton.SetTooltip("First Person Camera");
+	m_FirstPersonModeButton.SetTooltip(" First Person Camera \n Move camera using WASD \n Rotate camera using mouse");
 
 	m_LaptopModeButton = Button(glm::vec2(m_buttonXPos - 50, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/M_Cut_Face_Tool.png");
-	m_LaptopModeButton.SetTooltip("Laptop mode");
+	m_LaptopModeButton.SetTooltip(" Laptop mode \n Move camera using WASD \n Rotate Camera using arrow keys");
 
 	m_MouseModeButton = Button(glm::vec2(m_buttonXPos + 50, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/S_Grabber.png");
-	m_MouseModeButton.SetTooltip("Mouse mode");
+	m_MouseModeButton.SetTooltip(" Mouse mode \n Use left mouse button to orbit the model \n Use scroll to get closer or further away from the model");
 }
 void ModelInteraction::SetSpaceSize(const glm::vec2& p_size)
 {
