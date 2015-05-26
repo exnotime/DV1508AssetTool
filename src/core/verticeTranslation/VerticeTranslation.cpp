@@ -16,7 +16,7 @@ struct Ray {
 // TODO: Remove when real vertice selection is implemented.
 void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>& selectedVertices ) {
 	const gfx::Model& model = gfx::g_ModelBank.FetchModel( modelHandle );
-	static int meshIndex = 2;
+	static int meshIndex = 0;
 	static int prevMeshIndex = meshIndex + 1;
 	static bool unselect = false;
 
