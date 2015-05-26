@@ -34,12 +34,20 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	m_CMC = CMC_FirstPerson;
 	m_renderModeSelectionButtons = false;
 
-	int xPos = 300;
-	int yPos = 700;
-	m_CameraModeSelection = Button(glm::vec2(xPos, yPos), glm::vec2(50, 50), "asset/Icons/S_Load_Model.png");
-	m_FirstPersonModeButton = Button(glm::vec2(xPos, yPos - 50), glm::vec2(50, 50), "asset/Icons/T_Picker_Tool.png");
-	m_LaptopModeButton = Button(glm::vec2(xPos - 50, yPos - 50), glm::vec2(50, 50), "asset/Icons/M_Cut_Face_Tool.png");
-	m_MouseModeButton = Button(glm::vec2(xPos + 50, yPos - 50), glm::vec2(50, 50), "asset/Icons/S_Grabber.png");
+	m_buttonXPos = 300;
+	m_buttonYPos = 1000;
+
+	m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/T_Picker_Tool.png");
+	m_CameraModeSelection.SetTooltip("Select Camera Movement Mode");
+
+	m_FirstPersonModeButton = Button(glm::vec2(m_buttonXPos, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/T_Picker_Tool.png");
+	m_FirstPersonModeButton.SetTooltip("First Person Camera");
+
+	m_LaptopModeButton = Button(glm::vec2(m_buttonXPos - 50, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/M_Cut_Face_Tool.png");
+	m_LaptopModeButton.SetTooltip("Laptop mode");
+
+	m_MouseModeButton = Button(glm::vec2(m_buttonXPos + 50, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/S_Grabber.png");
+	m_MouseModeButton.SetTooltip("Mouse mode");
 }
 void ModelInteraction::SetSpaceSize(const glm::vec2& p_size)
 {
@@ -70,24 +78,24 @@ void ModelInteraction::Update()
 	}
 	MouseUpdate(io);
 
-
 	m_CameraModeSelection.Update();
+	if (m_CameraModeSelection.IsClicked())
+	{
+		if (m_renderModeSelectionButtons)
+		{
+			m_renderModeSelectionButtons = false;
+		}
+		else
+		{
+			m_renderModeSelectionButtons = true;
+		}
+	}
 
 	if (m_renderModeSelectionButtons)
 	{
 		m_LaptopModeButton.Update();
 		m_MouseModeButton.Update();
 		m_FirstPersonModeButton.Update();
-	}
-	if (m_CameraModeSelection.IsHovering() || m_CameraModeSelection.IsHovering() 
-		|| m_CameraModeSelection.IsHovering() || m_CameraModeSelection.IsHovering())
-	{
-		m_renderModeSelectionButtons = true;
-
-	}
-	else
-	{
-		m_renderModeSelectionButtons = false;
 	}
 }
 void ModelInteraction::MouseUpdate(ImGuiIO& p_io)
@@ -198,48 +206,23 @@ void ModelInteraction::KeyboardUpdate(ImGuiIO& p_io)
 }
 void ModelInteraction::UpdateSwitchInputType(ImGuiIO& p_io)
 {
-	//m_prevSwitchInputTypeState = m_switchInputTypeState;
-
-	//if (p_io.KeysDown[290])
-	//{
-	//	m_switchInputTypeState = true;
-	//}
-	//else
-	//{
-	//	m_switchInputTypeState = false;
-	//}
-	//if (m_prevSwitchInputTypeState)
-	//{
-	//	if (!m_switchInputTypeState)
-	//	{
-	//		if (m_CMC == CMC_FirstPerson)
-	//		{
-	//			m_CMC = CMC_LaptopMode;
-	//		}
-	//		else if (m_CMC == CMC_LaptopMode)
-	//		{
-	//			m_CMC = CMC_MouseOnly;
-	//		}
-	//		else if (m_CMC == CMC_MouseOnly)
-	//		{
-	//			m_CMC = CMC_FirstPerson;
-	//		}
-	//	}
-	//}
-	if (m_LaptopModeButton.IsClicked())
+	if (m_FirstPersonModeButton.IsClicked() && !m_CameraModeSelection.IsClicked())
 	{
-		m_renderModeSelectionButtons = false;
-		m_CMC = CMC_LaptopMode;
-	}
-	if (m_FirstPersonModeButton.IsClicked())
-	{
-		m_renderModeSelectionButtons = false;
+		//m_renderModeSelectionButtons = false;
 		m_CMC = CMC_FirstPerson;
+		m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/T_Picker_Tool.png");
 	}
-	if (m_MouseModeButton.IsClicked())
+	if (m_LaptopModeButton.IsClicked() && !m_CameraModeSelection.IsClicked())
 	{
-		m_renderModeSelectionButtons = false;
+		//m_renderModeSelectionButtons = false;
+		m_CMC = CMC_LaptopMode;
+		m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/M_Cut_Face_Tool.png");
+	}
+	if (m_MouseModeButton.IsClicked() && !m_CameraModeSelection.IsClicked())
+	{
+		//m_renderModeSelectionButtons = false;
 		m_CMC = CMC_MouseOnly;
+		m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/S_Grabber.png");
 	}
 }
 

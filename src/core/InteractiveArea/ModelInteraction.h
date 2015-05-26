@@ -101,8 +101,8 @@ private:
 	Button m_MouseModeButton;
 	Button m_CameraModeSelection;
 
-
-
+	int m_buttonXPos;
+	int m_buttonYPos;
 	bool m_renderModeSelectionButtons;
 };
 
