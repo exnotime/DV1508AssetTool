@@ -124,6 +124,15 @@ void Game::Render( gfx::RenderQueue* rq ){
 
 	m_LoadModelButton.Draw(rq);
 	m_TestArea2.RenderButtons(rq);
+
+	//test line
+	gfx::LineObject lo;
+	lo.Lines.push_back(glm::vec2(0));
+	lo.Lines.push_back(glm::vec2(1920,1080));
+	lo.Lines.push_back(glm::vec2(1920,0));
+	lo.Lines.push_back(glm::vec2(0, 1080));
+	lo.Color = glm::vec4(1,0,0,1);
+	rq->Enqueue(lo);
 }
 
 void Game::Shutdown()
