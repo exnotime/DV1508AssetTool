@@ -17,7 +17,6 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	m_rightMouseButtonDoubleClick = false;
 	m_leftMouseButtonDoubleClick = false;
 	m_mouseWheelClicked = false;
-	m_controlButtonPressed = false;
 	m_AddKeysForInput = true;
 	m_WIsPressed = false;
 	m_AIsPressed = false;
@@ -26,6 +25,29 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	m_QIsPressed = false;
 	m_EIsPressed = false;
 	m_SpaceIsPressed = false;
+	m_switchInputTypeState = false;
+	m_prevSwitchInputTypeState = false;
+	m_LeftArrowIsPressed = false;
+	m_RightArrowIsPressed = false;
+	m_UpArrowIsPressed = false;
+	m_DownArrowIsPressed = false;
+	m_CMC = CMC_FirstPerson;
+	m_renderModeSelectionButtons = false;
+
+	m_buttonXPos = 300;
+	m_buttonYPos = 1000;
+
+	m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/T_Picker_Tool.png");
+	m_CameraModeSelection.SetTooltip("Select Camera Movement Mode");
+
+	m_FirstPersonModeButton = Button(glm::vec2(m_buttonXPos, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/T_Picker_Tool.png");
+	m_FirstPersonModeButton.SetTooltip(" First Person Camera \n Move camera using WASD \n Rotate camera using mouse");
+
+	m_LaptopModeButton = Button(glm::vec2(m_buttonXPos - 50, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/M_Cut_Face_Tool.png");
+	m_LaptopModeButton.SetTooltip(" Laptop mode \n Move camera using WASD \n Rotate Camera using arrow keys");
+
+	m_MouseModeButton = Button(glm::vec2(m_buttonXPos + 50, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/S_Grabber.png");
+	m_MouseModeButton.SetTooltip(" Mouse mode \n Use left mouse button to orbit the model \n Use scroll to get closer or further away from the model");
 }
 void ModelInteraction::SetSpaceSize(const glm::vec2& p_size)
 {
@@ -43,19 +65,7 @@ glm::vec2 ModelInteraction::GetSpacePos()
 {
 	return m_SpacePosition;
 }
-void ModelInteraction::AddKeys(ImGuiIO& p_io)
-{
-	if (m_AddKeysForInput)
-	{
-		p_io.AddInputCharacter('w');
-		p_io.AddInputCharacter('a');
-		p_io.AddInputCharacter('s');
-		p_io.AddInputCharacter('d');
-		p_io.AddInputCharacter('q');
-		p_io.AddInputCharacter('e');
-		m_AddKeysForInput = false;
-	}
-}
+
 void ModelInteraction::Update()
 {
 	CheckMouseInsideWorkspace();
@@ -64,10 +74,29 @@ void ModelInteraction::Update()
 	io.WantCaptureKeyboard = true;
 	if (io.WantCaptureKeyboard)
 	{
-		AddKeys(io);
 		KeyboardUpdate(io);
 	}
 	MouseUpdate(io);
+
+	m_CameraModeSelection.Update();
+	if (m_CameraModeSelection.IsClicked())
+	{
+		if (m_renderModeSelectionButtons)
+		{
+			m_renderModeSelectionButtons = false;
+		}
+		else
+		{
+			m_renderModeSelectionButtons = true;
+		}
+	}
+
+	if (m_renderModeSelectionButtons)
+	{
+		m_LaptopModeButton.Update();
+		m_MouseModeButton.Update();
+		m_FirstPersonModeButton.Update();
+	}
 }
 void ModelInteraction::MouseUpdate(ImGuiIO& p_io)
 {
@@ -120,54 +149,87 @@ void ModelInteraction::MouseUpdate(ImGuiIO& p_io)
 }
 void ModelInteraction::KeyboardUpdate(ImGuiIO& p_io)
 {
-	if (p_io.KeyCtrl)
+	//Användes för att hitta vilken index en tangent har
+	for (int i = 0; i < 512; i++)
 	{
-		m_controlButtonPressed = true;
+		if (p_io.KeysDown[i] == true)
+		{
+			int a = 0;
+		}
 	}
-	else
-	{
-		m_controlButtonPressed = false;
-	}
-
-	//for (int i = 0; i < 512; i++)
-	//{
-	//	if (p_io.KeysDown[i] == true)
-	//	{
-	//		int a = 0;
-	//	}
-	//}
-	if (p_io.KeysDown[87])
+	if (p_io.KeysDown[87])//W 
 		m_WIsPressed = true;
 	else
 		m_WIsPressed = false;
-	if (p_io.KeysDown[65])
+	if (p_io.KeysDown[65])//A
 		m_AIsPressed = true;
 	else
 		m_AIsPressed = false;
-	if (p_io.KeysDown[83])
+	if (p_io.KeysDown[83])//S
 		m_SIsPressed = true;
 	else
 		m_SIsPressed = false;
-	if (p_io.KeysDown[68])
+	if (p_io.KeysDown[68])//D
 		m_DIsPressed = true;
 	else
 		m_DIsPressed = false;
-	if (p_io.KeysDown[81])
+	if (p_io.KeysDown[81])//Q
 		m_QIsPressed = true;
 	else
 		m_QIsPressed = false;
-	if (p_io.KeysDown[69])
+	if (p_io.KeysDown[69])//E
 		m_EIsPressed = true;
 	else
 		m_EIsPressed = false;
-	if (p_io.KeysDown[32])
+	if (p_io.KeysDown[32])//Space
 		m_SpaceIsPressed = true;
 	else
 		m_SpaceIsPressed = false;
+	if (p_io.KeysDown[263])//Left arrow
+		m_LeftArrowIsPressed = true;
+	else
+		m_LeftArrowIsPressed = false;
+	if (p_io.KeysDown[265])//Up arrow
+		m_UpArrowIsPressed = true;
+	else
+		m_UpArrowIsPressed = false;
+	if (p_io.KeysDown[264])//Down arrow
+		m_DownArrowIsPressed = true;
+	else
+		m_DownArrowIsPressed = false;
+	if (p_io.KeysDown[262])//Right arrow
+		m_RightArrowIsPressed = true;
+	else
+		m_RightArrowIsPressed = false;
 
-
+	UpdateSwitchInputType(p_io);
+}
+void ModelInteraction::UpdateSwitchInputType(ImGuiIO& p_io)
+{
+	if (m_FirstPersonModeButton.IsClicked() && !m_CameraModeSelection.IsClicked())
+	{
+		//m_renderModeSelectionButtons = false;
+		m_CMC = CMC_FirstPerson;
+		m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/T_Picker_Tool.png");
+	}
+	if (m_LaptopModeButton.IsClicked() && !m_CameraModeSelection.IsClicked())
+	{
+		//m_renderModeSelectionButtons = false;
+		m_CMC = CMC_LaptopMode;
+		m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/M_Cut_Face_Tool.png");
+	}
+	if (m_MouseModeButton.IsClicked() && !m_CameraModeSelection.IsClicked())
+	{
+		//m_renderModeSelectionButtons = false;
+		m_CMC = CMC_MouseOnly;
+		m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/S_Grabber.png");
+	}
 }
 
+CameraMovementControls ModelInteraction::GetCMC()
+{
+	return m_CMC;
+}
 glm::vec2 ModelInteraction::GetMousePos()
 {
 	return m_MousePos;
@@ -285,12 +347,6 @@ bool ModelInteraction::GetMouseWheelClicked()
 	return false;
 }
 
-bool ModelInteraction::GetCtrlButtonPressed()
-{
-	return m_controlButtonPressed;
-}
-
-
 bool ModelInteraction::GetWState()
 {
 	return m_WIsPressed;
@@ -318,4 +374,30 @@ bool ModelInteraction::GetEState()
 bool ModelInteraction::GetSpaceState()
 {
 	return m_SpaceIsPressed;
+}
+bool ModelInteraction::GetLeftArrowState()
+{
+	return m_LeftArrowIsPressed;
+}
+bool ModelInteraction::GetUpArrowState()
+{
+	return m_UpArrowIsPressed;
+}
+bool ModelInteraction::GetDownArrowState()
+{
+	return m_DownArrowIsPressed;
+}
+bool ModelInteraction::GetRightArrowState()
+{
+	return m_RightArrowIsPressed;
+}
+void ModelInteraction::RenderButtons(gfx::RenderQueue* rq)
+{
+	m_CameraModeSelection.Draw(rq);
+	if (m_renderModeSelectionButtons)
+	{
+		m_FirstPersonModeButton.Draw(rq);
+		m_LaptopModeButton.Draw(rq);
+		m_MouseModeButton.Draw(rq);
+	}
 }

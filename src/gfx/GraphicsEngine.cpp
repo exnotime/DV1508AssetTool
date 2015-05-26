@@ -62,9 +62,7 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	m_Shader = g_ShaderBank.LoadShaderProgram( "shader/CombinedShader.glsl" );
 	m_SpriteShader = g_ShaderBank.LoadShaderProgram("shader/SpriteShader.glsl");
 	m_GizmoProgram = g_ShaderBank.LoadShaderProgram("shader/GizmoProgram.glsl");
-	//Test Texture
-	m_TestTex = new Texture();
-	m_TestTex->Init("asset/rockman_teeth.png", TEXTURE_COLOR);
+	m_LineProgram = g_ShaderBank.LoadShaderProgram("shader/LineShader.glsl");
 	//Load cubeTex
 	m_SkyTex = new Texture();
 	m_SkyTex->Init("asset/CubeMaps/square.dds", TEXTURE_CUBE);
@@ -72,6 +70,15 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	m_IrradianceTex->Init("asset/CubeMaps/square_irr.dds", TEXTURE_CUBE);
 
 	m_FrameBuffer.Init();
+
+	glGenBuffers(1, &m_LineVBO);
+	glGenVertexArrays(1, &m_LineVAO);
+	glBindVertexArray(m_LineVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, m_LineVBO);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * 100000, nullptr, GL_DYNAMIC_DRAW); //allocate buffer
+
 	return m_Window;
 }
 
@@ -90,7 +97,7 @@ void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 	RenderGeometry(drawQueue);
 	RenderGizmos(drawQueue);
 	RenderSprites(drawQueue);
-	
+	RenderLines(drawQueue);
 	glUseProgram(0);
 }
 
@@ -105,19 +112,8 @@ void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 	prog->SetUniformMat4("g_ViewProj", m_Camera.GetViewProjection());
 	prog->SetUniformVec3("g_Campos", m_Camera.GetPosition());
 	static float metal = 0.001f;
-	static float roughness = 0.001f;
 	glm::vec3 lightDir = glm::vec3(0.5f,-1,0.5f);
 	static float lightangle = 4.0f;
-	ImGui::Begin("Lighting");
-	ImGui::SliderFloat("Roughness", &roughness, 0.001f, 1);
-	ImGui::SliderFloat("Metallic", &metal, 0.001f, 1);
-	ImGui::SliderFloat("LightDir", &lightangle, 0, 2 * glm::pi<float>());
-	if (ImGui::Button("Recompile Shader")){
-		g_ShaderBank.RecompileAllShaders();
-	}
-	ImGui::End();
-	prog->SetUniformFloat("g_Roughness", roughness);
-	prog->SetUniformFloat("g_Metallic", metal);
 
 	glm::vec4 temp = glm::vec4(lightDir, 0) * glm::rotate(lightangle, glm::vec3(0, 1, 0));
 	prog->SetUniformVec3("g_LightDir", glm::vec3(temp.x, temp.y, temp.z));
@@ -162,6 +158,7 @@ void gfx::GraphicsEngine::RenderSprites(RenderQueue* drawQueue){
 		}
 	}
 }
+
 void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 	TextureHandle target = drawQueue->GetTargetTexture();
 	m_FrameBuffer.SetTexture(target);
@@ -256,4 +253,34 @@ void gfx::GraphicsEngine::RenderGizmos(RenderQueue* drawQueue){
 		}
 	}
 	glEnable(GL_DEPTH_TEST);
+}
+
+void gfx::GraphicsEngine::RenderLines(RenderQueue* drawQueue){
+	//Fill vertex buffer
+	int bufferSize = 0;
+	for (auto& it : drawQueue->GetLineQueue()){
+		bufferSize += it.Lines.size();
+	}
+	int i = 0;
+	for (auto& it : drawQueue->GetLineQueue()){
+		memcpy(m_LineBuffer + i * sizeof(glm::vec2), it.Lines.data(), it.Lines.size() * sizeof(glm::vec2));
+		i += it.Lines.size();
+	}
+	glBindBuffer(GL_ARRAY_BUFFER, m_LineVBO);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, bufferSize * sizeof(glm::vec2), m_LineBuffer);
+	glBindVertexArray(m_LineVAO);
+	//set shader
+	ShaderProgram* prog = g_ShaderBank.GetProgramFromHandle(m_LineProgram);
+	prog->Apply();
+	prog->SetUniformVec2("g_ScreenSize", glm::vec2(m_Width, m_Height));
+	prog->SetUniformVec2("g_ScreenPos", glm::vec2(0, 0));
+	//issue draw calls
+	i = 0;
+	glViewport(0, 0,m_Width,m_Height);
+	for (auto& it : drawQueue->GetLineQueue()){
+		prog->SetUniformVec4("g_Color", it.Color);
+		glDrawArrays(GL_LINES, i, it.Lines.size());
+		i += it.Lines.size();
+	}
+	
 }

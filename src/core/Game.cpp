@@ -5,7 +5,6 @@
 #include "../gfx/Material.h"
 #include <nfd/nfd.h>
 #include "../gfx/GraphicsEngine.h"
-#include "../gfx/Camera.h"
 Game::Game( )
 {
 }
@@ -44,7 +43,7 @@ void Game::Initialize(int width, int height){
 	m_Camera = gfx::g_GFXEngine.GetCamera();
 	m_Camera->MoveWorld(glm::vec3(0, -8, -15));
 	m_StartPos = m_Camera->GetPosition();
-	m_StartScale = m_Camera->GetPosition().z;
+	m_StartOrientation = m_Camera->GetOrientation();
 	///////////////////////////////////////////////////////////////////////////////
 }
 
@@ -124,6 +123,16 @@ void Game::Render( gfx::RenderQueue* rq ){
 	rq->Enqueue(m_BrushGhost);
 
 	m_LoadModelButton.Draw(rq);
+	m_TestArea2.RenderButtons(rq);
+
+	//test line
+	gfx::LineObject lo;
+	lo.Lines.push_back(glm::vec2(0));
+	lo.Lines.push_back(glm::vec2(1920,1080));
+	lo.Lines.push_back(glm::vec2(1920,0));
+	lo.Lines.push_back(glm::vec2(0, 1080));
+	lo.Color = glm::vec4(1,0,0,1);
+	rq->Enqueue(lo);
 }
 
 void Game::Shutdown()
@@ -133,11 +142,31 @@ void Game::Shutdown()
 void Game::UpdateModelViewWindow(float p_deltaTime)
 {
 	m_TestArea2.Update();
-	float moveSpeed = p_deltaTime * 5.0f;
-	float rotationSpeed = p_deltaTime * 1.0f;
+
+	if (m_TestArea2.GetCMC() == CMC_FirstPerson)
+	{
+		UpdateFirstPersonCamera(p_deltaTime);
+	}
+	else if (m_TestArea2.GetCMC() == CMC_LaptopMode)
+	{
+		UpdateCameraLaptopMode(p_deltaTime);
+	}
+	else if (m_TestArea2.GetCMC() == CMC_MouseOnly)
+	{
+		UpdateMouseInput(p_deltaTime);
+	}
+	if (m_TestArea2.GetLeftMouseDoubleClicked())
+	{
+		ResetCamera();
+	}
+}
+void Game::UpdateFirstPersonCamera(float p_deltaTime)
+{
+	float moveSpeed = p_deltaTime * 3.0f;
+	float rotationSpeed = p_deltaTime * 0.75f;
 	if (m_TestArea2.GetSpaceState())
 	{
-		glm::vec3 newPos = glm::vec3(0.0f,0.0f,0.0f);
+		glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
 		if (m_TestArea2.GetWState())
 		{
 			newPos.z -= moveSpeed;
@@ -163,43 +192,179 @@ void Game::UpdateModelViewWindow(float p_deltaTime)
 			newPos.y += moveSpeed;
 		}
 		m_Camera->MoveRelative(newPos);
-
 		m_Camera->PitchRelative(ImGui::GetIO().MouseDelta.y * -0.005f);
 		m_Camera->RotateAroundNormalizedAxis(glm::vec3(0, 1, 0), ImGui::GetIO().MouseDelta.x * -0.005f);
 	}
-	else
+}
+void Game::UpdateMouseInput(float p_deltaTime)
+{
+	float moveSpeed = p_deltaTime * 3.0f;
+	float rotationSpeed = p_deltaTime * 1.0f;
+	m_PrevMousePos = m_MousePos;
+	m_MousePos = m_TestArea2.GetMousePos();
+	//Rotate the model around Y
+	if (m_TestArea2.GetSpaceState())
 	{
-		//if (m_TestArea2.GetWState())
+		if (m_TestArea2.GetLeftMousePressed())
+		{
+			glm::vec3 newPos = m_Camera->GetPosition();
+			glm::vec3 currentPos = m_Camera->GetPosition();
+
+			float x = m_PrevMousePos.x - m_MousePos.x;
+			float y = m_PrevMousePos.y - m_MousePos.y;
+			float moveCameraSpeed = moveSpeed * 8.0f;
+			float rotateCameraSpeed = rotationSpeed * 1.2f;
+			if (x != 0.0f)
+			{
+				if (x < 0.0f)
+				{
+					m_Camera->YawRelative(-rotateCameraSpeed);
+					newPos.x -= (moveCameraSpeed);
+				}
+				else
+				{
+					m_Camera->YawRelative(rotateCameraSpeed);
+					newPos.x += (moveCameraSpeed);
+				}
+			}
+			if (y != 0.0f)
+			{
+				if (y < 0.0f)
+				{
+					m_Camera->PitchRelative(-rotateCameraSpeed);
+					newPos.y += (moveCameraSpeed);
+				}
+				else
+				{
+					m_Camera->PitchRelative(rotateCameraSpeed);
+					newPos.y -= (moveCameraSpeed);
+				}
+			}
+
+			glm::vec3 finalPosition = glm::vec3(newPos.x - currentPos.x, newPos.y - currentPos.y, newPos.z - currentPos.z);
+			m_Camera->MoveRelative(finalPosition);
+
+
+		}
+		//Move the model around in the viewspace
+		if (m_TestArea2.GetRightMousePressed())
+		{
+			float x = 0, y = 0;
+			x = m_PrevMousePos.x - m_MousePos.x;
+			y = m_PrevMousePos.y - m_MousePos.y;
+			glm::vec3 newPos = m_Camera->GetPosition();
+			newPos.x += x * p_deltaTime;
+			newPos.y -= y * p_deltaTime;
+
+			glm::vec3 currentPos = m_Camera->GetPosition();
+			glm::vec3 finalPosition = glm::vec3(newPos.x - currentPos.x, newPos.y - currentPos.y, newPos.z - currentPos.z);
+			m_Camera->MoveRelative(finalPosition);
+		}
+		//Manipulate scale by scrolling the mouse wheel
+		m_Camera->MoveRelative(glm::vec3(0, 0, -m_TestArea2.GetMouseWheelState() * p_deltaTime * 20));
+
+		////Reset position, rotation and scale
+		//if (m_TestArea2.GetMouseWheelClicked())
 		//{
-		//	m_Camera->PitchRelative(rotationSpeed);
+		//	ResetCamera();
 		//}
-		//if (m_TestArea2.GetSState())
+
+		//if (m_TestArea2.GetRightMouseDoubleClicked())
 		//{
-		//	m_Camera->PitchRelative(-rotationSpeed);
+		//	ResetCamera();
 		//}
-		//if (m_TestArea2.GetAState())
-		//{
-		//	m_Camera->YawRelative(rotationSpeed);
-		//}
-		//if (m_TestArea2.GetDState())
-		//{
-		//	m_Camera->YawRelative(-rotationSpeed);
-		//}
-		//if (m_TestArea2.GetQState())
-		//{
-		//	m_Camera->YawRelative(-rotationSpeed);
-		//	glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
-		//	newPos.x -= moveSpeed;
-		//	m_Camera->MoveRelative(newPos);
-		//}
-		//if (m_TestArea2.GetEState())
-		//{
-		//	m_Camera->YawRelative(rotationSpeed);
-		//	glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
-		//	newPos.x += moveSpeed;
-		//	m_Camera->MoveRelative(newPos);
-		//}
+
+		if (m_TestArea2.GetLeftMouseDoubleClicked() && m_StartPos == m_Camera->GetPosition() && !m_AutomaticRotate)
+		{
+			m_AutomaticRotate = true;
+		}
+		else if (m_TestArea2.GetLeftMouseDoubleClicked() && m_AutomaticRotate)
+		{
+			m_AutomaticRotate = false;
+		}
+		else if (m_TestArea2.GetLeftMouseDoubleClicked())
+		{
+			ResetCamera();
+		}
 	}
+	//Rotates automatically
+	if (m_AutomaticRotate)
+	{
+		glm::vec3 newPos = m_Camera->GetPosition();
+		glm::vec3 currentPos = m_Camera->GetPosition();
+
+		if (m_AutomaticRotateLeft)
+		{
+			m_Camera->YawRelative(-rotationSpeed * 0.3f);
+			newPos.x -= (moveSpeed * 2.0f);
+			glm::vec3 finalPosition = glm::vec3(newPos.x - currentPos.x, newPos.y - currentPos.y, newPos.z - currentPos.z);
+			m_Camera->MoveRelative(finalPosition);
+		}
+		else
+		{
+			m_Camera->YawRelative(rotationSpeed * 0.3f);
+			newPos.x += (moveSpeed * 2.0f);
+			glm::vec3 finalPosition = glm::vec3(newPos.x - currentPos.x, newPos.y - currentPos.y, newPos.z - currentPos.z);
+			m_Camera->MoveRelative(finalPosition);
+		}
+	}
+}
+void Game::UpdateCameraLaptopMode(float p_deltaTime)
+{
+	float moveSpeed = p_deltaTime * 3.0f;
+	float rotationSpeed = p_deltaTime * 0.75f;
+	if (!m_TestArea2.GetSpaceState())
+	{
+		glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
+		if (m_TestArea2.GetWState())
+		{
+			newPos.z -= moveSpeed;
+		}
+		if (m_TestArea2.GetAState())
+		{
+			newPos.x -= moveSpeed;
+		}
+		if (m_TestArea2.GetSState())
+		{
+			newPos.z += moveSpeed;
+		}
+		if (m_TestArea2.GetDState())
+		{
+			newPos.x += moveSpeed;
+		}
+		if (m_TestArea2.GetQState())
+		{
+			newPos.y -= moveSpeed;
+		}
+		if (m_TestArea2.GetEState())
+		{
+			newPos.y += moveSpeed;
+		}
+
+		m_Camera->MoveRelative(newPos);
+
+		if (m_TestArea2.GetUpArrowState())
+		{
+			m_Camera->PitchRelative(rotationSpeed);
+		}
+		if (m_TestArea2.GetDownArrowState())
+		{
+			m_Camera->PitchRelative(-rotationSpeed);
+		}
+		if (m_TestArea2.GetLeftArrowState())
+		{
+			m_Camera->YawRelative(rotationSpeed);
+		}
+		if (m_TestArea2.GetRightArrowState())
+		{
+			m_Camera->YawRelative(-rotationSpeed);
+		}
+	}
+}
+void Game::ResetCamera()
+{
+	m_Camera->SetPosition(m_StartPos);
+	m_Camera->SetOrientation(m_StartOrientation);
 }
 
 gfx::RenderObject Game::GetWireFrameModel(){

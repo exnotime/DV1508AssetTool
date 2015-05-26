@@ -13,6 +13,8 @@ Button::Button(glm::vec2 pos, glm::vec2 size, const char* filename){
 	m_Sprite.SetPos(pos);
 	m_IntArea.SetSize(size);
 	m_Sprite.SetSize(size);
+	m_Clicked = false;
+	m_Hovering = false;
 }
 
 Button::~Button(){

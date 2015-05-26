@@ -10,9 +10,7 @@
 #include "InteractiveArea\ModelInteraction.h"
 #include "verticeSelection/VerticeSelection.h"
 #include "Brush/BrushTexGenerator.h"
-///////////////////////////////////////////////////////////////////////////////
-class Camera;
-///////////////////////////////////////////////////////////////////////////////
+#include "../gfx/Camera.h"
 
 class Game
 {
@@ -46,13 +44,15 @@ private:
 
 	///////////////////////////////////////////////////////////////////////////////
 	void UpdateModelViewWindow(float p_deltaTime);
-
+	void UpdateFirstPersonCamera(float p_deltaTime);
+	void UpdateMouseInput(float p_deltaTime);
+	void UpdateCameraLaptopMode(float p_deltaTime);
+	void ResetCamera();
 	Camera* m_Camera;
 	glm::vec3			m_StartPos;
 	ModelInteraction 				m_TestArea2;
 	glm::vec2 m_clickedPos;
-	//float m_StartRotationY;
-	float m_StartScale;
+	glm::quat m_StartOrientation;
 	bool m_AutomaticRotate;
 	bool m_AutomaticRotateLeft;
 
