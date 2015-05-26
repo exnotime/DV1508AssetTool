@@ -15,8 +15,18 @@ void ClickDot::Initialize(int index, int winWidth, int winHeight, const char* fi
 	m_winHHeight = m_winHeight * 0.5f;
 	m_winHWidth = m_winWidth * 0.5f;
 
+	std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
+
 	m_dot.SetTexture(filename);
 	m_dot.SetPos(glm::vec2(m_winHWidth, 0.0f));
+	if (index >= 0 && index < vertices.size())
+	{
+		float u = vertices[index].TexCoord.x;
+		float v = vertices[index].TexCoord.y;
+		
+		m_dot.SetPos(glm::vec2(m_winHWidth + m_winHWidth * u, m_winHeight * v));
+	}
+
 
 	m_clickedThisFrame = false;
 	m_clickedLastFrame = false;
@@ -62,11 +72,20 @@ void ClickDot::Update(const float deltaTime)
 					mPosX = m_winHWidth;
 				}
 				m_dot.SetPos(glm::vec2(mPosX, mPosY));
+
+				// U
+				// V
+				std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
+				float u = (mPosX - m_winHWidth) / m_winHWidth;
+				float v = mPosY / m_winHeight;
+				vertices[m_index].TexCoord.x = u;
+				vertices[m_index].TexCoord.y = v;
 			}
 		}
 	}
 	else
 	{
+		m_moveableDot = false;
 		m_clickedThisFrame = false;
 	}
 }

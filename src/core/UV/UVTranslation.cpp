@@ -18,8 +18,11 @@ void UVTranslation::Initialize(int winWidth, int winHeight)
 	m_selectedFace = glm::vec3(0, 1, 2);
 
 	//const gfx::Model& model = gfx::g_ModelBank.FetchModel(modelHandle);
-	std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
+	//std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
 
+	AddVertex(0);
+	AddVertex(1);
+	AddVertex(2);
 	// 0 {1 1}
 	// 1 {0 0}
 	// 2 {0 1}
