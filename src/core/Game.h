@@ -53,7 +53,7 @@ private:
 	glm::vec3			m_StartPos;
 	ModelInteraction 				m_TestArea2;
 	glm::vec2 m_clickedPos;
-	//float m_StartRotationY;
+
 	float m_StartScale;
 	bool m_AutomaticRotate;
 	bool m_AutomaticRotateLeft;

@@ -26,6 +26,9 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	m_QIsPressed = false;
 	m_EIsPressed = false;
 	m_SpaceIsPressed = false;
+	m_switchInputTypeState = false;
+	m_prevSwitchInputTypeState = false;
+	m_InputTypeIsKeyboard = true;
 }
 void ModelInteraction::SetSpaceSize(const glm::vec2& p_size)
 {
@@ -128,46 +131,77 @@ void ModelInteraction::KeyboardUpdate(ImGuiIO& p_io)
 	{
 		m_controlButtonPressed = false;
 	}
-
-	//for (int i = 0; i < 512; i++)
-	//{
-	//	if (p_io.KeysDown[i] == true)
-	//	{
-	//		int a = 0;
-	//	}
-	//}
-	if (p_io.KeysDown[87])
+	//Användes för att hitta vilken index en tangent har
+	for (int i = 0; i < 512; i++)
+	{
+		if (p_io.KeysDown[i] == true)
+		{
+			int a = 0;
+		}
+	}
+	if (p_io.KeysDown[87])//W 
 		m_WIsPressed = true;
 	else
 		m_WIsPressed = false;
-	if (p_io.KeysDown[65])
+	if (p_io.KeysDown[65])//A
 		m_AIsPressed = true;
 	else
 		m_AIsPressed = false;
-	if (p_io.KeysDown[83])
+	if (p_io.KeysDown[83])//S
 		m_SIsPressed = true;
 	else
 		m_SIsPressed = false;
-	if (p_io.KeysDown[68])
+	if (p_io.KeysDown[68])//D
 		m_DIsPressed = true;
 	else
 		m_DIsPressed = false;
-	if (p_io.KeysDown[81])
+	if (p_io.KeysDown[81])//Q
 		m_QIsPressed = true;
 	else
 		m_QIsPressed = false;
-	if (p_io.KeysDown[69])
+	if (p_io.KeysDown[69])//E
 		m_EIsPressed = true;
 	else
 		m_EIsPressed = false;
-	if (p_io.KeysDown[32])
+	if (p_io.KeysDown[32])//Space
 		m_SpaceIsPressed = true;
 	else
 		m_SpaceIsPressed = false;
 
+	UpdateSwitchInputType(p_io);
+}
+void ModelInteraction::UpdateSwitchInputType(ImGuiIO& p_io)
+{
+	m_prevSwitchInputTypeState = m_switchInputTypeState;
 
+	if (p_io.KeysDown[290])
+	{
+		m_switchInputTypeState = true;
+	}
+	else
+	{
+		m_switchInputTypeState = false;
+	}
+	if (m_prevSwitchInputTypeState)
+	{
+		if (!m_switchInputTypeState)
+		{
+			if (m_InputTypeIsKeyboard)
+			{
+				m_InputTypeIsKeyboard = false;
+			}
+			else
+			{
+				m_InputTypeIsKeyboard = true;
+			}
+		}
+	}
 }
 
+bool ModelInteraction::GetInputTypeIsKeyboard()
+{
+	return m_InputTypeIsKeyboard;
+}
 glm::vec2 ModelInteraction::GetMousePos()
 {
 	return m_MousePos;

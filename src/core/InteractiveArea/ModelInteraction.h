@@ -35,11 +35,14 @@ public:
 	bool GetEState();
 	bool GetSpaceState();
 
+	bool GetInputTypeIsKeyboard();
+
 private:
 	void MouseUpdate(ImGuiIO& p_io);
 	void KeyboardUpdate(ImGuiIO& p_io);
 	void CheckMouseInsideWorkspace();
 	void AddKeys(ImGuiIO& p_io);
+	void UpdateSwitchInputType(ImGuiIO& p_io);
 
 	glm::vec2 m_SpacePosition;
 	glm::vec2 m_SpaceSize;
@@ -64,14 +67,16 @@ private:
 
 	bool m_AddKeysForInput;
 
-
-
 	bool m_WIsPressed;
 	bool m_AIsPressed;
 	bool m_SIsPressed;
 	bool m_DIsPressed;
 	bool m_QIsPressed;
 	bool m_EIsPressed;
-	bool m_SpaceIsPressed;	
+	bool m_SpaceIsPressed;
+
+	bool m_switchInputTypeState;
+	bool m_prevSwitchInputTypeState;
+	bool m_InputTypeIsKeyboard;
 };
 

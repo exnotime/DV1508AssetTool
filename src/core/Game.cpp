@@ -332,7 +332,7 @@ void Game::UpdateMouseInput(float p_deltaTime)
 void Game::ResetCamera()
 {
 	m_Camera->SetPosition(m_StartPos);
-	m_Camera->SetOrientation(m_StartOrientation);
+	//m_Camera->SetOrientation(m_StartOrientation);
 }
 
 gfx::RenderObject Game::GetWireFrameModel(){
