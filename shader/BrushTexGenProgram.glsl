@@ -13,7 +13,7 @@ void main(){
 
 	vec4 color;
 	if(dist <= 0.5){
-		color = vec4(1,1,1, hardness * ((0.5 - dist) / 0.5));
+		color = vec4(1,1,1, hardness * (0.5 - dist) * 2);
 		color.xyz *= color.a; //use premultiplied alpha
 	} else {
 		color = vec4(0);

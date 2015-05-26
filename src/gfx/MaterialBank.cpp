@@ -61,7 +61,7 @@ void gfx::MaterialBank::LoadMaterials(Model& model, std::string filename, const 
 			}
 		}
 		else {
-			modelMat->SetRoughnessTexture(LoadTexture("asset/roughness.tga", TEXTURE_GREYSCALE));
+			modelMat->SetRoughnessTexture(LoadTexture("asset/roughness.png", TEXTURE_GREYSCALE));
 		}
 		m_Materials.push_back(modelMat);
 	}
