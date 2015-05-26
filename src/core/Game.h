@@ -44,8 +44,9 @@ private:
 
 	///////////////////////////////////////////////////////////////////////////////
 	void UpdateModelViewWindow(float p_deltaTime);
-	void UpdateKeyboardInput(float p_deltaTime);
+	void UpdateFirstPersonCamera(float p_deltaTime);
 	void UpdateMouseInput(float p_deltaTime);
+	void UpdateCameraLaptopMode(float p_deltaTime);
 	void ResetCamera();
 	Camera* m_Camera;
 	glm::vec3			m_StartPos;

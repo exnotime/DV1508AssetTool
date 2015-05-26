@@ -123,6 +123,7 @@ void Game::Render( gfx::RenderQueue* rq ){
 	rq->Enqueue(m_BrushGhost);
 
 	m_LoadModelButton.Draw(rq);
+	m_TestArea2.RenderButtons(rq);
 }
 
 void Game::Shutdown()
@@ -133,20 +134,28 @@ void Game::UpdateModelViewWindow(float p_deltaTime)
 {
 	m_TestArea2.Update();
 
-	if (m_TestArea2.GetInputTypeIsKeyboard())
+	if (m_TestArea2.GetCMC() == CMC_FirstPerson)
 	{
-		UpdateKeyboardInput(p_deltaTime);
+		UpdateFirstPersonCamera(p_deltaTime);
 	}
-	else
+	else if (m_TestArea2.GetCMC() == CMC_LaptopMode)
+	{
+		UpdateCameraLaptopMode(p_deltaTime);
+	}
+	else if (m_TestArea2.GetCMC() == CMC_MouseOnly)
 	{
 		UpdateMouseInput(p_deltaTime);
 	}
+	if (m_TestArea2.GetLeftMouseDoubleClicked())
+	{
+		ResetCamera();
+	}
 }
-void Game::UpdateKeyboardInput(float p_deltaTime)
+void Game::UpdateFirstPersonCamera(float p_deltaTime)
 {
 	float moveSpeed = p_deltaTime * 3.0f;
 	float rotationSpeed = p_deltaTime * 0.75f;
-	if (!m_TestArea2.GetSpaceState())
+	if (m_TestArea2.GetSpaceState())
 	{
 		glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
 		if (m_TestArea2.GetWState())
@@ -177,43 +186,6 @@ void Game::UpdateKeyboardInput(float p_deltaTime)
 		m_Camera->PitchRelative(ImGui::GetIO().MouseDelta.y * -0.005f);
 		m_Camera->RotateAroundNormalizedAxis(glm::vec3(0, 1, 0), ImGui::GetIO().MouseDelta.x * -0.005f);
 	}
-	else
-	{
-		if (m_TestArea2.GetWState())
-		{
-			m_Camera->PitchRelative(rotationSpeed);
-		}
-		if (m_TestArea2.GetSState())
-		{
-			m_Camera->PitchRelative(-rotationSpeed);
-		}
-		if (m_TestArea2.GetAState())
-		{
-			m_Camera->YawRelative(rotationSpeed);
-		}
-		if (m_TestArea2.GetDState())
-		{
-			m_Camera->YawRelative(-rotationSpeed);
-		}
-		if (m_TestArea2.GetQState())
-		{
-			m_Camera->YawRelative(-rotationSpeed * 0.25f);
-			glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
-			newPos.x -= moveSpeed;
-			m_Camera->MoveRelative(newPos);
-		}
-		if (m_TestArea2.GetEState())
-		{
-			m_Camera->YawRelative(rotationSpeed * 0.25f);
-			glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
-			newPos.x += moveSpeed;
-			m_Camera->MoveRelative(newPos);
-		}
-	}
-	if (m_TestArea2.GetLeftMouseDoubleClicked())
-	{
-		ResetCamera();
-	}
 }
 void Game::UpdateMouseInput(float p_deltaTime)
 {
@@ -222,7 +194,7 @@ void Game::UpdateMouseInput(float p_deltaTime)
 	m_PrevMousePos = m_MousePos;
 	m_MousePos = m_TestArea2.GetMousePos();
 	//Rotate the model around Y
-	if (m_TestArea2.GetCtrlButtonPressed())
+	if (m_TestArea2.GetSpaceState())
 	{
 		if (m_TestArea2.GetLeftMousePressed())
 		{
@@ -325,6 +297,58 @@ void Game::UpdateMouseInput(float p_deltaTime)
 			newPos.x += (moveSpeed * 2.0f);
 			glm::vec3 finalPosition = glm::vec3(newPos.x - currentPos.x, newPos.y - currentPos.y, newPos.z - currentPos.z);
 			m_Camera->MoveRelative(finalPosition);
+		}
+	}
+}
+void Game::UpdateCameraLaptopMode(float p_deltaTime)
+{
+	float moveSpeed = p_deltaTime * 3.0f;
+	float rotationSpeed = p_deltaTime * 0.75f;
+	if (!m_TestArea2.GetSpaceState())
+	{
+		glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
+		if (m_TestArea2.GetWState())
+		{
+			newPos.z -= moveSpeed;
+		}
+		if (m_TestArea2.GetAState())
+		{
+			newPos.x -= moveSpeed;
+		}
+		if (m_TestArea2.GetSState())
+		{
+			newPos.z += moveSpeed;
+		}
+		if (m_TestArea2.GetDState())
+		{
+			newPos.x += moveSpeed;
+		}
+		if (m_TestArea2.GetQState())
+		{
+			newPos.y -= moveSpeed;
+		}
+		if (m_TestArea2.GetEState())
+		{
+			newPos.y += moveSpeed;
+		}
+
+		m_Camera->MoveRelative(newPos);
+
+		if (m_TestArea2.GetUpArrowState())
+		{
+			m_Camera->PitchRelative(rotationSpeed);
+		}
+		if (m_TestArea2.GetDownArrowState())
+		{
+			m_Camera->PitchRelative(-rotationSpeed);
+		}
+		if (m_TestArea2.GetLeftArrowState())
+		{
+			m_Camera->YawRelative(rotationSpeed);
+		}
+		if (m_TestArea2.GetRightArrowState())
+		{
+			m_Camera->YawRelative(-rotationSpeed);
 		}
 	}
 }
