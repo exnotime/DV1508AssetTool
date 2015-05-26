@@ -17,10 +17,10 @@ public:
 	float U();
 	float V();
 	int Index();
-private:
+
 	float X();
 	float Y();
-
+private:
 	gfx::Sprite m_dot;
 	float m_radius;
 

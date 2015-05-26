@@ -17,6 +17,8 @@ public:
 
 	void AddVertex(int vertex);
 	void RemoveVertex(int vertex);
+
+	std::vector<glm::vec2> GetLinePositions();
 	
 private:
 	bool ListContains(int vertex);

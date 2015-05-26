@@ -102,3 +102,28 @@ bool UVTranslation::ListContains(int vertex)
 
 	return false;
 }
+
+std::vector<glm::vec2> UVTranslation::GetLinePositions()
+{
+	std::vector<glm::vec2> positions = std::vector<glm::vec2>();
+
+	for (unsigned int i = 0; i < m_dots.size(); i++)
+	{
+		glm::vec2 pos = glm::vec2(m_dots[i].X(), m_dots[i].Y());
+		
+		glm::vec2 pos2;
+		if (i >= m_dots.size() - 1)
+		{
+			pos2 = glm::vec2(m_dots[0].X(), m_dots[0].Y());
+		}
+		else
+		{
+			pos2 = glm::vec2(m_dots[i + 1].X(), m_dots[i + 1].Y());
+		}
+
+		positions.push_back(pos);
+		positions.push_back(pos2);
+	}
+
+	return positions;
+}
