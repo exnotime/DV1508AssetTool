@@ -133,11 +133,23 @@ void Game::Shutdown()
 void Game::UpdateModelViewWindow(float p_deltaTime)
 {
 	m_TestArea2.Update();
-	float moveSpeed = p_deltaTime * 5.0f;
-	float rotationSpeed = p_deltaTime * 1.0f;
-	if (m_TestArea2.GetSpaceState())
+
+	if (m_TestArea2.GetInputTypeIsKeyboard())
 	{
-		glm::vec3 newPos = glm::vec3(0.0f,0.0f,0.0f);
+		UpdateKeyboardInput(p_deltaTime);
+	}
+	else
+	{
+		UpdateMouseInput(p_deltaTime);
+	}
+}
+void Game::UpdateKeyboardInput(float p_deltaTime)
+{
+	float moveSpeed = p_deltaTime * 3.0f;
+	float rotationSpeed = p_deltaTime * 0.75f;
+	if (!m_TestArea2.GetSpaceState())
+	{
+		glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
 		if (m_TestArea2.GetWState())
 		{
 			newPos.z -= moveSpeed;
@@ -163,43 +175,164 @@ void Game::UpdateModelViewWindow(float p_deltaTime)
 			newPos.y += moveSpeed;
 		}
 		m_Camera->MoveRelative(newPos);
-
 		m_Camera->PitchRelative(ImGui::GetIO().MouseDelta.y * -0.005f);
 		m_Camera->RotateAroundNormalizedAxis(glm::vec3(0, 1, 0), ImGui::GetIO().MouseDelta.x * -0.005f);
 	}
 	else
 	{
-		//if (m_TestArea2.GetWState())
-		//{
-		//	m_Camera->PitchRelative(rotationSpeed);
-		//}
-		//if (m_TestArea2.GetSState())
-		//{
-		//	m_Camera->PitchRelative(-rotationSpeed);
-		//}
-		//if (m_TestArea2.GetAState())
-		//{
-		//	m_Camera->YawRelative(rotationSpeed);
-		//}
-		//if (m_TestArea2.GetDState())
-		//{
-		//	m_Camera->YawRelative(-rotationSpeed);
-		//}
-		//if (m_TestArea2.GetQState())
-		//{
-		//	m_Camera->YawRelative(-rotationSpeed);
-		//	glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
-		//	newPos.x -= moveSpeed;
-		//	m_Camera->MoveRelative(newPos);
-		//}
-		//if (m_TestArea2.GetEState())
-		//{
-		//	m_Camera->YawRelative(rotationSpeed);
-		//	glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
-		//	newPos.x += moveSpeed;
-		//	m_Camera->MoveRelative(newPos);
-		//}
+		if (m_TestArea2.GetWState())
+		{
+			m_Camera->PitchRelative(rotationSpeed);
+		}
+		if (m_TestArea2.GetSState())
+		{
+			m_Camera->PitchRelative(-rotationSpeed);
+		}
+		if (m_TestArea2.GetAState())
+		{
+			m_Camera->YawRelative(rotationSpeed);
+		}
+		if (m_TestArea2.GetDState())
+		{
+			m_Camera->YawRelative(-rotationSpeed);
+		}
+		if (m_TestArea2.GetQState())
+		{
+			m_Camera->YawRelative(-rotationSpeed * 0.25f);
+			glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
+			newPos.x -= moveSpeed;
+			m_Camera->MoveRelative(newPos);
+		}
+		if (m_TestArea2.GetEState())
+		{
+			m_Camera->YawRelative(rotationSpeed * 0.25f);
+			glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
+			newPos.x += moveSpeed;
+			m_Camera->MoveRelative(newPos);
+		}
 	}
+	if (m_TestArea2.GetLeftMouseDoubleClicked())
+	{
+		ResetCamera();
+	}
+}
+void Game::UpdateMouseInput(float p_deltaTime)
+{
+	float moveSpeed = p_deltaTime * 3.0f;
+	float rotationSpeed = p_deltaTime * 1.0f;
+	m_PrevMousePos = m_MousePos;
+	m_MousePos = m_TestArea2.GetMousePos();
+	//Rotate the model around Y
+	if (m_TestArea2.GetCtrlButtonPressed())
+	{
+		if (m_TestArea2.GetLeftMousePressed())
+		{
+			glm::vec3 newPos = m_Camera->GetPosition();
+			glm::vec3 currentPos = m_Camera->GetPosition();
+
+			float x = m_PrevMousePos.x - m_MousePos.x;
+			float y = m_PrevMousePos.y - m_MousePos.y;
+			float moveCameraSpeed = moveSpeed * 8.0f;
+			float rotateCameraSpeed = rotationSpeed * 1.2f;
+			if (x != 0.0f)
+			{
+				if (x < 0.0f)
+				{
+					m_Camera->YawRelative(-rotateCameraSpeed);
+					newPos.x -= (moveCameraSpeed);
+				}
+				else
+				{
+					m_Camera->YawRelative(rotateCameraSpeed);
+					newPos.x += (moveCameraSpeed);
+				}
+			}
+			if (y != 0.0f)
+			{
+				if (y < 0.0f)
+				{
+					m_Camera->PitchRelative(-rotateCameraSpeed);
+					newPos.y += (moveCameraSpeed);
+				}
+				else
+				{
+					m_Camera->PitchRelative(rotateCameraSpeed);
+					newPos.y -= (moveCameraSpeed);
+				}
+			}
+
+			glm::vec3 finalPosition = glm::vec3(newPos.x - currentPos.x, newPos.y - currentPos.y, newPos.z - currentPos.z);
+			m_Camera->MoveRelative(finalPosition);
+
+
+		}
+		//Move the model around in the viewspace
+		if (m_TestArea2.GetRightMousePressed())
+		{
+			float x = 0, y = 0;
+			x = m_PrevMousePos.x - m_MousePos.x;
+			y = m_PrevMousePos.y - m_MousePos.y;
+			glm::vec3 newPos = m_Camera->GetPosition();
+			newPos.x += x * p_deltaTime;
+			newPos.y -= y * p_deltaTime;
+
+			glm::vec3 currentPos = m_Camera->GetPosition();
+			glm::vec3 finalPosition = glm::vec3(newPos.x - currentPos.x, newPos.y - currentPos.y, newPos.z - currentPos.z);
+			m_Camera->MoveRelative(finalPosition);
+		}
+		//Manipulate scale by scrolling the mouse wheel
+		m_Camera->MoveRelative(glm::vec3(0, 0, -m_TestArea2.GetMouseWheelState() * p_deltaTime * 20));
+
+		////Reset position, rotation and scale
+		//if (m_TestArea2.GetMouseWheelClicked())
+		//{
+		//	ResetCamera();
+		//}
+
+		//if (m_TestArea2.GetRightMouseDoubleClicked())
+		//{
+		//	ResetCamera();
+		//}
+
+		if (m_TestArea2.GetLeftMouseDoubleClicked() && m_StartPos == m_Camera->GetPosition() && !m_AutomaticRotate)
+		{
+			m_AutomaticRotate = true;
+		}
+		else if (m_TestArea2.GetLeftMouseDoubleClicked() && m_AutomaticRotate)
+		{
+			m_AutomaticRotate = false;
+		}
+		else if (m_TestArea2.GetLeftMouseDoubleClicked())
+		{
+			ResetCamera();
+		}
+	}
+	//Rotates automatically
+	if (m_AutomaticRotate)
+	{
+		glm::vec3 newPos = m_Camera->GetPosition();
+		glm::vec3 currentPos = m_Camera->GetPosition();
+
+		if (m_AutomaticRotateLeft)
+		{
+			m_Camera->YawRelative(-rotationSpeed * 0.3f);
+			newPos.x -= (moveSpeed * 2.0f);
+			glm::vec3 finalPosition = glm::vec3(newPos.x - currentPos.x, newPos.y - currentPos.y, newPos.z - currentPos.z);
+			m_Camera->MoveRelative(finalPosition);
+		}
+		else
+		{
+			m_Camera->YawRelative(rotationSpeed * 0.3f);
+			newPos.x += (moveSpeed * 2.0f);
+			glm::vec3 finalPosition = glm::vec3(newPos.x - currentPos.x, newPos.y - currentPos.y, newPos.z - currentPos.z);
+			m_Camera->MoveRelative(finalPosition);
+		}
+	}
+}
+void Game::ResetCamera()
+{
+	m_Camera->SetPosition(m_StartPos);
+	m_Camera->SetOrientation(m_StartOrientation);
 }
 
 gfx::RenderObject Game::GetWireFrameModel(){

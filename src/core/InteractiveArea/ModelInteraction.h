@@ -73,8 +73,5 @@ private:
 	bool m_QIsPressed;
 	bool m_EIsPressed;
 	bool m_SpaceIsPressed;	
-	
-
-
 };
 
