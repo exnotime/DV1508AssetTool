@@ -5,7 +5,6 @@
 #include "../gfx/Material.h"
 #include <nfd/nfd.h>
 #include "../gfx/GraphicsEngine.h"
-#include "../gfx/Camera.h"
 Game::Game( )
 {
 }
@@ -44,7 +43,7 @@ void Game::Initialize(int width, int height){
 	m_Camera = gfx::g_GFXEngine.GetCamera();
 	m_Camera->MoveWorld(glm::vec3(0, -8, -15));
 	m_StartPos = m_Camera->GetPosition();
-	m_StartScale = m_Camera->GetPosition().z;
+	m_StartOrientation = m_Camera->GetOrientation();
 	///////////////////////////////////////////////////////////////////////////////
 }
 
@@ -332,7 +331,7 @@ void Game::UpdateMouseInput(float p_deltaTime)
 void Game::ResetCamera()
 {
 	m_Camera->SetPosition(m_StartPos);
-	//m_Camera->SetOrientation(m_StartOrientation);
+	m_Camera->SetOrientation(m_StartOrientation);
 }
 
 gfx::RenderObject Game::GetWireFrameModel(){

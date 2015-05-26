@@ -10,9 +10,7 @@
 #include "InteractiveArea\ModelInteraction.h"
 #include "verticeSelection/VerticeSelection.h"
 #include "Brush/BrushTexGenerator.h"
-///////////////////////////////////////////////////////////////////////////////
-class Camera;
-///////////////////////////////////////////////////////////////////////////////
+#include "../gfx/Camera.h"
 
 class Game
 {
@@ -53,8 +51,7 @@ private:
 	glm::vec3			m_StartPos;
 	ModelInteraction 				m_TestArea2;
 	glm::vec2 m_clickedPos;
-
-	float m_StartScale;
+	glm::quat m_StartOrientation;
 	bool m_AutomaticRotate;
 	bool m_AutomaticRotateLeft;
 
