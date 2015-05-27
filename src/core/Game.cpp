@@ -35,14 +35,14 @@ void Game::Initialize(int width, int height){
 	m_LoadModelButton = Button(glm::vec2(0, height - BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Load_Model.png");
 	m_LoadModelButton.SetTooltip("Load Model");
 
-	m_CloseProgramButton = Button(glm::vec2(width - BUTTON_SIZE, 0), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Redo.png");
+	m_CloseProgramButton = Button(glm::vec2(width - BUTTON_SIZE, 0), glm::vec2(BUTTON_SIZE), "asset/Icons/P_Exit.png");
 	m_CloseProgramButton.SetTooltip("Close program");
 
 	m_ColorPickerButton = Button(glm::vec2(width - BUTTON_SIZE, height - BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Picker_Tool.png");
 	m_ColorPickerButton.SetTooltip("Color Picker");
 
 	m_ColorPickerButtonOverlay.SetPos(glm::vec2(width - BUTTON_SIZE, height - BUTTON_SIZE));
-	m_ColorPickerButtonOverlay.SetTexture("asset/ColorPicker/ColorPreview.png");
+	m_ColorPickerButtonOverlay.SetTexture("asset/Icons/T_Palette.png");
 	m_ColorPickerButtonOverlay.SetSize(glm::vec2(BUTTON_SIZE));
 
 	m_colorPicker.Init(glm::vec2(width - 312.0f, height - 322.0f));
