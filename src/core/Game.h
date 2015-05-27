@@ -55,6 +55,8 @@ private:
 	Button						m_ColorPickerButton;
 	gfx::Sprite					m_ColorPickerButtonOverlay;
 
+	Button						m_uvButton;
+
 	///////////////////////////////////////////////////////////////////////////////
 	void UpdateModelViewWindow(float p_deltaTime);
 	void UpdateFirstPersonCamera(float p_deltaTime);

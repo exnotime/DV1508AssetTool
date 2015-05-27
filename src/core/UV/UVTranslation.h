@@ -17,13 +17,15 @@ public:
 
 	void AddVertex(int vertex);
 	void RemoveVertex(int vertex);
-
-	std::vector<glm::vec2> GetLinePositions();
+	void ResetList();
+	
+	void Enable();
+	void Disable();
+	void Toggle();
 	
 private:
 	bool ListContains(int vertex);
-
-	glm::vec3 m_selectedFace;
+	std::vector<glm::vec2> GetLinePositions();
 
 	int m_winWidth;
 	int m_winHeight;

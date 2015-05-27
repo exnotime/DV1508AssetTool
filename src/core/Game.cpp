@@ -64,6 +64,9 @@ void Game::Initialize(int width, int height){
 	m_RelationsButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Relations.png");
 	m_RelationsButton.SetTooltip("Open the relations manager, \n here you can edit relations \n between models and textures.");
 
+	m_uvButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, height - BUTTON_SIZE * 2 - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/M_UV_Picker_Tool.png");
+	m_uvButton.SetTooltip("UV Picker:\nTranslate the UV coordinates");
+
 	///////////////////////////////////////////////////////////////////////////////
 	m_TestArea2.Initialize(glm::vec2(width / 2, height - BUTTON_SIZE), glm::vec2(0, BUTTON_SIZE));
 	m_AutomaticRotate = false;
@@ -99,6 +102,8 @@ void Game::Update(float dt){
 			m_Model = gfx::g_ModelBank.LoadModel(outPath);
 			gfx::g_ModelBank.BuildBuffers();
 			m_SelectedVertices.clear();
+
+			m_uvTranslation.ResetList();
 		}
 	}
 	m_ColorPickerButton.Update();
@@ -116,6 +121,12 @@ void Game::Update(float dt){
 
 	// UV
 	m_uvTranslation.Update(dt);
+	m_uvButton.Update();
+	if (m_uvButton.IsClicked())
+	{
+		m_uvTranslation.Toggle();
+	}
+
 	SetWireFrameState(m_VerticeSelection.Update(dt));
 
 	m_colorPicker.Update();
@@ -166,8 +177,10 @@ void Game::Render( gfx::RenderQueue* rq )
 	}
 
 	m_VerticeTranslation.Draw( rq );
-	m_uvTranslation.Draw(rq);
 	m_VerticeSelection.Draw(rq, ro);
+
+	m_uvTranslation.Draw(rq);
+	m_uvButton.Draw(rq);
 
 	static float brushSize = 64;
 	ImGui::SliderFloat("BrushSize", &brushSize, 1, 640);
