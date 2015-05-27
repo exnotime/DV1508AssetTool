@@ -39,24 +39,24 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	m_buttonYPos = 1000;
 	glm::vec2 mouseSpriteSize = glm::vec2(25, 25);
 
-	m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/T_Picker_Tool.png");
+	m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/S_Camera_Mode.png");
 	m_CameraModeSelection.SetTooltip("Select Camera Movement Mode");
-	m_DrawnSprite.SetTexture("asset/Icons/T_Picker_Tool.png");
+	m_DrawnSprite.SetTexture("asset/Icons/CameraModes/Mode_FPS.png");
 	m_DrawnSprite.SetSize(mouseSpriteSize);
 
-	m_FirstPersonModeButton = Button(glm::vec2(m_buttonXPos, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/T_Picker_Tool.png");
+	m_FirstPersonModeButton = Button(glm::vec2(m_buttonXPos, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/S_FPS.png");
 	m_FirstPersonModeButton.SetTooltip(" First Person Camera \n Move camera using WASD \n Rotate camera using mouse");
-	m_FirstPersonModeSprite.SetTexture("asset/Icons/T_Picker_Tool.png");
+	m_FirstPersonModeSprite.SetTexture("asset/Icons/CameraModes/Mode_FPS.png");
 	m_FirstPersonModeSprite.SetSize(mouseSpriteSize);
 
-	m_LaptopModeButton = Button(glm::vec2(m_buttonXPos - 50, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/M_Cut_Face_Tool.png");
+	m_LaptopModeButton = Button(glm::vec2(m_buttonXPos - 50, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/S_Keyboard.png");
 	m_LaptopModeButton.SetTooltip(" Laptop mode \n Move camera using WASD \n Rotate Camera using arrow keys");
-	m_LaptopModeSprite.SetTexture("asset/Icons/M_Cut_Face_Tool.png");
+	m_LaptopModeSprite.SetTexture("asset/Icons/CameraModes/Mode_Keys.png");
 	m_LaptopModeSprite.SetSize(mouseSpriteSize);
 
 	m_MouseModeButton = Button(glm::vec2(m_buttonXPos + 50, m_buttonYPos - 50), glm::vec2(50, 50), "asset/Icons/S_Grabber.png");
 	m_MouseModeButton.SetTooltip(" Mouse mode \n Use left mouse button to orbit the model \n Use scroll to get closer or further away from the model");
-	m_MouseModeSprite.SetTexture("asset/Icons/S_Grabber.png");
+	m_MouseModeSprite.SetTexture("asset/Icons/CameraModes/Mode_Drag.png");
 	m_MouseModeSprite.SetSize(mouseSpriteSize);
 }
 void ModelInteraction::SetSpaceSize(const glm::vec2& p_size)
@@ -224,14 +224,14 @@ void ModelInteraction::UpdateSwitchInputType(ImGuiIO& p_io)
 	{
 		//m_renderModeSelectionButtons = false;
 		m_CMC = CMC_FirstPerson;
-		m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/T_Picker_Tool.png");
+		m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/S_FPS.png");
 		m_DrawnSprite = m_FirstPersonModeSprite;
 	}
 	if (m_LaptopModeButton.IsClicked() && !m_CameraModeSelection.IsClicked())
 	{
 		//m_renderModeSelectionButtons = false;
 		m_CMC = CMC_LaptopMode;
-		m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/M_Cut_Face_Tool.png");
+		m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/S_Keyboard.png");
 		m_DrawnSprite = m_LaptopModeSprite;
 	}
 	if (m_MouseModeButton.IsClicked() && !m_CameraModeSelection.IsClicked())
