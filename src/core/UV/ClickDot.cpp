@@ -10,21 +10,28 @@ ClickDot::~ClickDot(){}
 void ClickDot::Initialize(int index, int winWidth, int winHeight, const char* filename)
 {
 	m_index = index;
-	m_winHeight = (float)winHeight;
-	m_winWidth = (float)winWidth;
+	//m_winHeight = (float)winHeight;
+	//m_winWidth = (float)winWidth;
+	m_winHeight = gfx::g_GFXEngine.GetHeight();
+	m_winWidth = gfx::g_GFXEngine.GetWidth();
 	m_winHHeight = m_winHeight * 0.5f;
 	m_winHWidth = m_winWidth * 0.5f;
+
+
 
 	std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
 
 	m_dot.SetTexture(filename);
 	m_dot.SetPos(glm::vec2(m_winHWidth, 0.0f));
+	float width = m_dot.GetSizeFlt().x * gfx::g_GFXEngine.GetWidth();
+	float height = m_dot.GetSizeFlt().y * gfx::g_GFXEngine.GetHeight();
+	m_radius = (width + height) * 0.5f * 0.5f;
 	if (index >= 0 && index < vertices.size())
 	{
 		float u = vertices[index].TexCoord.x;
 		float v = vertices[index].TexCoord.y;
 		
-		m_dot.SetPos(glm::vec2(m_winHWidth + m_winHWidth * u, m_winHeight * v));
+		m_dot.SetPos(glm::vec2((m_winHWidth + m_winHWidth * u) - m_radius, (m_winHeight * v) - m_radius));
 	}
 
 
@@ -32,9 +39,7 @@ void ClickDot::Initialize(int index, int winWidth, int winHeight, const char* fi
 	m_clickedLastFrame = false;
 	m_moveableDot = false;
 
-	float width = m_dot.GetSizeFlt().x * gfx::g_GFXEngine.GetWidth();
-	float height = m_dot.GetSizeFlt().y * gfx::g_GFXEngine.GetHeight();
-	m_radius = (width + height) * 0.5f;
+	
 }
 
 void ClickDot::Update(const float deltaTime)
@@ -71,7 +76,19 @@ void ClickDot::Update(const float deltaTime)
 				{
 					mPosX = m_winHWidth;
 				}
-				m_dot.SetPos(glm::vec2(mPosX, mPosY));
+				if (mPosX > m_winWidth)
+				{
+					mPosX = m_winWidth;
+				}
+				if (mPosY < 0)
+				{
+					mPosY = 0;
+				}
+				if (mPosY > m_winHeight)
+				{
+					mPosY = m_winHeight;
+				}
+				m_dot.SetPos(glm::vec2(mPosX - m_radius, mPosY - m_radius));
 
 				// U
 				// V
@@ -80,6 +97,8 @@ void ClickDot::Update(const float deltaTime)
 				float v = mPosY / m_winHeight;
 				vertices[m_index].TexCoord.x = u;
 				vertices[m_index].TexCoord.y = v;
+
+				gfx::g_ModelBank.BuildBuffers();
 			}
 		}
 	}
@@ -97,12 +116,12 @@ void ClickDot::Draw(gfx::RenderQueue* renderQueue)
 
 float ClickDot::X()
 {
-	return m_dot.GetPos().x;
+	return m_dot.GetPos().x + m_radius;
 }
 
 float ClickDot::Y()
 {
-	return gfx::g_GFXEngine.GetHeight() - m_dot.GetPos().y;
+	return gfx::g_GFXEngine.GetHeight() - m_dot.GetPos().y + m_radius;
 }
 
 float ClickDot::U()

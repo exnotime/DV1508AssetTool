@@ -2,6 +2,7 @@
 
 #include <glm/gtx/transform.hpp>
 #include <imgui/imgui.h>
+#include "GraphicsEngine.h"
 
 //UVTranslation::UVTranslation(){}
 //UVTranslation::~UVTranslation(){}
@@ -60,6 +61,11 @@ void UVTranslation::Draw(gfx::RenderQueue* renderQueue)
 		{
 			m_dots[i].Draw(renderQueue);
 		}
+
+		gfx::LineObject lo;
+		lo.Lines = GetLinePositions();
+		lo.Color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f);
+		renderQueue->Enqueue(lo);
 	}
 }
 
@@ -72,7 +78,7 @@ void UVTranslation::AddVertex(int vertex)
 	if (!ListContains(vertex))
 	{
 		ClickDot cd = ClickDot();
-		cd.Initialize(vertex, m_winWidth, m_winHeight, "asset/Cube/rDot.png");
+		cd.Initialize(vertex, m_winWidth, m_winHeight, "asset/Cube/rDot3.png");
 		
 		m_dots.push_back(cd);
 	}
@@ -109,16 +115,16 @@ std::vector<glm::vec2> UVTranslation::GetLinePositions()
 
 	for (unsigned int i = 0; i < m_dots.size(); i++)
 	{
-		glm::vec2 pos = glm::vec2(m_dots[i].X(), m_dots[i].Y());
+		glm::vec2 pos = glm::vec2(m_dots[i].X(), gfx::g_GFXEngine.GetHeight() - m_dots[i].Y());
 		
 		glm::vec2 pos2;
 		if (i >= m_dots.size() - 1)
 		{
-			pos2 = glm::vec2(m_dots[0].X(), m_dots[0].Y());
+			pos2 = glm::vec2(m_dots[0].X(), gfx::g_GFXEngine.GetHeight() - m_dots[0].Y());
 		}
 		else
 		{
-			pos2 = glm::vec2(m_dots[i + 1].X(), m_dots[i + 1].Y());
+			pos2 = glm::vec2(m_dots[i + 1].X(), gfx::g_GFXEngine.GetHeight() - m_dots[i + 1].Y());
 		}
 
 		positions.push_back(pos);
