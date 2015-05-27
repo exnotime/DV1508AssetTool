@@ -20,10 +20,12 @@ void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>
 	static int prevMeshIndex = meshIndex + 1;
 	static bool unselect = false;
 
-	ImGui::Begin( "VerticeTranslation" );
-	ImGui::SliderInt( "Mesh", &meshIndex, 0, (int)(model.Meshes.size() - 1));
-	ImGui::Checkbox( "Unselect", &unselect );
-	ImGui::End();
+	if ( OLA_DEBUG_GUI ) {
+		ImGui::Begin( "VerticeTranslation" );
+		ImGui::SliderInt( "Mesh", &meshIndex, 0, (int)(model.Meshes.size() - 1));
+		ImGui::Checkbox( "Unselect", &unselect );
+		ImGui::End();
+	}
 
 	if ( unselect )
 		selectedVertices.clear();

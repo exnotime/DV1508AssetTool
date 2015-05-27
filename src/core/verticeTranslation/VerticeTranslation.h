@@ -14,6 +14,7 @@ struct OBB {
 	float		HalfSizes	[OBB_DIRECTIONS];	// Half length of their respective directions.
 };
 
+#define OLA_DEBUG_GUI	false																			// TODO: Remove when real vertice selection is implemented.
 void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>& selectedVertices );	// TODO: Remove when real vertice selection is implemented.
 
 class VerticeTranslation {
