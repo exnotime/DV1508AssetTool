@@ -230,8 +230,15 @@ void Game::UpdateFirstPersonCamera(float p_deltaTime)
 }
 void Game::UpdateMouseInput(float p_deltaTime)
 {
-	float moveSpeed = p_deltaTime * 3.0f;
-	float rotationSpeed = p_deltaTime * 1.0f;
+	float distanceToModel = m_Camera->GetPosition().z;
+	if (distanceToModel < 0)
+		distanceToModel *= -1;
+	float rotationVariable = m_StartPos.z/distanceToModel;
+	if (rotationVariable < 1.0)
+		rotationVariable = 1.0f;
+
+	float moveSpeed = p_deltaTime * 3.0f * rotationVariable;
+	float rotationSpeed = p_deltaTime * 4.0f*rotationVariable;
 	m_PrevMousePos = m_MousePos;
 	m_MousePos = m_TestArea2.GetMousePos();
 	//Rotate the model around Y
@@ -293,7 +300,7 @@ void Game::UpdateMouseInput(float p_deltaTime)
 			m_Camera->MoveRelative(finalPosition);
 		}
 		//Manipulate scale by scrolling the mouse wheel
-		m_Camera->MoveRelative(glm::vec3(0, 0, -m_TestArea2.GetMouseWheelState() * p_deltaTime * 20));
+		m_Camera->MoveRelative(glm::vec3(0, 0, -m_TestArea2.GetMouseWheelState() * p_deltaTime * 100));
 
 		if (m_TestArea2.GetLeftMouseDoubleClicked() && m_StartPos == m_Camera->GetPosition() && !m_AutomaticRotate)
 		{
@@ -333,7 +340,13 @@ void Game::UpdateMouseInput(float p_deltaTime)
 void Game::UpdateCameraLaptopMode(float p_deltaTime)
 {
 	float moveSpeed = p_deltaTime * 3.0f;
-	float rotationSpeed = p_deltaTime * 0.75f;
+	float distanceToModel = m_Camera->GetPosition().z;
+	if (distanceToModel < 0)
+		distanceToModel *= -1;
+	float rotationVariable = distanceToModel / m_StartPos.z;
+	if (rotationVariable < 1.0)
+		rotationVariable = 1.0f;
+	float rotationSpeed = p_deltaTime * 0.75f * rotationVariable;
 	if (!m_TestArea2.GetSpaceState())
 	{
 		glm::vec3 newPos = glm::vec3(0.0f, 0.0f, 0.0f);
