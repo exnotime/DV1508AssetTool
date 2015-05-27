@@ -11,6 +11,8 @@
 #include "verticeSelection/VerticeSelection.h"
 #include "Brush/BrushTexGenerator.h"
 #include "../gfx/Camera.h"
+#include "ColorPicker\ColorPicker.h"
+
 
 class Game
 {
@@ -39,8 +41,12 @@ private:
 	std::vector<unsigned int>	m_SelectedVertices;
 	UVTranslation				m_uvTranslation;
 	BrushTexGenerator			m_BrushGenerator;
+	ColorPicker					m_colorPicker;
 
 	Button						m_LoadModelButton;
+
+	Button						m_ColorPickerButton;
+	gfx::Sprite					m_ColorPickerButtonOverlay;
 
 	///////////////////////////////////////////////////////////////////////////////
 	void UpdateModelViewWindow(float p_deltaTime);
@@ -58,7 +64,7 @@ private:
 
 	glm::vec2 m_MousePos;
 	glm::vec2 m_PrevMousePos;
-	
+
 	///////////////////////////////////////////////////////////////////////////////
 
 	bool m_wfState;

@@ -4,6 +4,7 @@
 #include <glm/gtx/transform.hpp>
 #include "MaterialBank.h"
 #include "Material.h"
+#include "../core/ColorPicker/ColorPicker.h"
 
 gfx::GraphicsEngine::GraphicsEngine(){
 
@@ -177,8 +178,8 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 	else {
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	}
-	static glm::vec4 color = glm::vec4(1);
-	ImGui::ColorEdit4("BrushColor", &color[0], true);
+	//static glm::vec4 color = glm::vec4(1);
+	//ImGui::ColorEdit4("BrushColor", &color[0], true);
 
 	for (auto& brush : drawQueue->GetBrushQueue()){
 		Texture* brushTex = g_MaterialBank.GetTexture(brush.Texture);
@@ -186,7 +187,7 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 
 		spriteProg->SetUniformVec4("g_Pos", glm::vec4(glm::vec2(brush.Position.x - brushSize.x * 0.5f, 1.0f - brush.Position.y + brushSize.y * 0.5f), 0, 0));
 		spriteProg->SetUniformVec4("g_Size", glm::vec4(brushSize.x, brushSize.y, 1, 1));
-		spriteProg->SetUniformVec4("g_Color", color);
+		spriteProg->SetUniformVec4("g_Color", ColorPicker::m_color);
 		brushTex->Apply(spriteProg->FetchUniform("g_Texture"), 0);
 		glDrawArrays(GL_POINTS, 0, 1);
 	}
