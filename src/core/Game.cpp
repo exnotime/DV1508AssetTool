@@ -23,7 +23,7 @@ void Game::Initialize(int width, int height){
 	m_TestSprite.SetTexture("asset/brush.png");
 	m_BrushGhost.SetTexture("asset/BrushGhost.png");
 	m_TestArea.SetPos(glm::vec2(width / 2, BUTTON_SIZE));
-	m_TestArea.SetSize(glm::vec2(width / 2 , height - BUTTON_SIZE));
+	m_TestArea.SetSize(glm::vec2(width / 2 , height - BUTTON_SIZE * 2));
 
 	m_BrushArea.SetArea(m_TestArea);
 	m_BrushArea.SetBrushSize(64);
