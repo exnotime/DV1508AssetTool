@@ -101,6 +101,12 @@ private:
 	Button m_MouseModeButton;
 	Button m_CameraModeSelection;
 
+
+	gfx::Sprite m_DrawnSprite;
+	gfx::Sprite m_LaptopModeSprite;
+	gfx::Sprite m_FirstPersonModeSprite;
+	gfx::Sprite m_MouseModeSprite;
+
 	int m_buttonXPos;
 	int m_buttonYPos;
 	bool m_renderModeSelectionButtons;

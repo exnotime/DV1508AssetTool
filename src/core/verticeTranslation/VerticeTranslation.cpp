@@ -70,7 +70,7 @@ void VerticeTranslation::Update( const float deltaTime ) {
 
 	Ray		mouseRay;
 	Camera*	camera		= gfx::g_GFXEngine.GetCamera();
-	CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y ), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
+	CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
 
 	if ( io.MouseClicked[0] ) {
 		const float hitboxHalfSize = 0.11f;
@@ -191,7 +191,7 @@ glm::vec3 VerticeTranslation::ClosestPointOnFirstRay( const Ray& first, const Ra
 void VerticeTranslation::CalculateRayFromPixel( const glm::ivec2& pixel, const glm::ivec2& windowSize, const glm::mat4& invViewProj, Ray* outRay ) const {
 	// Clip space coordinates for the pixel. (-1,-1) in lower left corner, (-1,1) upper left corner, (1,-1) lower right corner. 
 	const glm::vec2	mousePosNorm	= glm::vec2( -1.0f + 2.0f * (pixel.x / static_cast<float>(windowSize.x)),
-											1.0f - 2.0f * (pixel.y / static_cast<float>(windowSize.y)) );
+											1.0f - 2.0f * ((pixel.y) / static_cast<float>(windowSize.y)) );
 
 	// Translating pixel at near plane and far plane to world coordinates. Z-coordinate is depth into the screen (values between -1 and 1 are in view of camera).
 	const glm::vec4 nearHomogeneous	= invViewProj * glm::vec4( mousePosNorm.x, mousePosNorm.y, 0.0f, 1.0f );

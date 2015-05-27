@@ -4,6 +4,7 @@
 #include <glm/gtx/transform.hpp>
 #include "MaterialBank.h"
 #include "Material.h"
+#include "../core/ColorPicker/ColorPicker.h"
 
 gfx::GraphicsEngine::GraphicsEngine(){
 
@@ -22,6 +23,7 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 		return nullptr;
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+	//glfwWindowHint(GLFW_DECORATED, GL_FALSE);
 	if(fullscreen){
 		m_Window = glfwCreateWindow( width, height, "ModelViewer", glfwGetPrimaryMonitor( ), nullptr );
 	}else{
@@ -53,8 +55,8 @@ GLFWwindow* gfx::GraphicsEngine::Initialize( int width, int height, bool vsync, 
 	m_Camera.GetEditableLens( ).Near = 0.1f;
 	m_Camera.GetEditableLens( ).Far = 100.0f;
 	m_Camera.GetEditableLens( ).VerticalFOV = ( ( 90.0f / ( aspectRatio ) ) / 360.0f ) * 2 * glm::pi<float>( ); // calc FOV as horisontal FOV 90 degrees
-	m_Camera.GetEditableLens( ).WindowHeight = height;
-	m_Camera.GetEditableLens( ).WindowWidth = (int)(width * 0.5f);
+	m_Camera.GetEditableLens().WindowHeight = height - BUTTON_SIZE * 2;
+	m_Camera.GetEditableLens().WindowWidth = (int)(width * 0.5f);
 	m_Camera.SetPosition(glm::vec3(0.0f, 10.0f, 20.0f));
 
 	m_Camera.CalculateViewProjection();
@@ -102,7 +104,7 @@ void gfx::GraphicsEngine::Render( RenderQueue* drawQueue ){
 }
 
 void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
-	glViewport(0, 0, (GLsizei)(m_Width * 0.5f), (GLsizei)m_Height);
+	glViewport(0, BUTTON_SIZE, (GLsizei)(m_Width * 0.5f), (GLsizei)m_Height - BUTTON_SIZE * 2);
 	//glDisable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_DEPTH_TEST);
@@ -177,8 +179,8 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 	else {
 		glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 	}
-	static glm::vec4 color = glm::vec4(1);
-	ImGui::ColorEdit4("BrushColor", &color[0], true);
+	//static glm::vec4 color = glm::vec4(1);
+	//ImGui::ColorEdit4("BrushColor", &color[0], true);
 
 	for (auto& brush : drawQueue->GetBrushQueue()){
 		Texture* brushTex = g_MaterialBank.GetTexture(brush.Texture);
@@ -186,7 +188,7 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 
 		spriteProg->SetUniformVec4("g_Pos", glm::vec4(glm::vec2(brush.Position.x - brushSize.x * 0.5f, 1.0f - brush.Position.y + brushSize.y * 0.5f), 0, 0));
 		spriteProg->SetUniformVec4("g_Size", glm::vec4(brushSize.x, brushSize.y, 1, 1));
-		spriteProg->SetUniformVec4("g_Color", color);
+		spriteProg->SetUniformVec4("g_Color", ColorPicker::m_color);
 		brushTex->Apply(spriteProg->FetchUniform("g_Texture"), 0);
 		glDrawArrays(GL_POINTS, 0, 1);
 	}
@@ -194,7 +196,7 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 }
 
 void gfx::GraphicsEngine::RenderActiveTarget(){
-	glViewport((GLint)(m_Width * 0.5f), 0, (GLint)(m_Width * 0.5f), m_Height);
+	glViewport((GLint)(m_Width * 0.5f), BUTTON_SIZE, (GLint)(m_Width * 0.5f), m_Height - BUTTON_SIZE * 2);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
