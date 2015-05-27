@@ -218,8 +218,14 @@ void Game::UpdateFirstPersonCamera(float p_deltaTime)
 			newPos.y += moveSpeed;
 		}
 		m_Camera->MoveRelative(newPos);
-		m_Camera->PitchRelative(ImGui::GetIO().MouseDelta.y * -0.005f);
-		m_Camera->RotateAroundNormalizedAxis(glm::vec3(0, 1, 0), ImGui::GetIO().MouseDelta.x * -0.005f);
+		float distanceToModel = m_Camera->GetPosition().z;
+		if (distanceToModel < 0)
+			distanceToModel *= -1;
+		float rotationVariable = distanceToModel / m_StartPos.z;
+		if (rotationVariable < 1.0)
+			rotationVariable = 1.0f;
+		m_Camera->PitchRelative(ImGui::GetIO().MouseDelta.y * -0.005f * rotationVariable);
+		m_Camera->RotateAroundNormalizedAxis(glm::vec3(0, 1, 0), ImGui::GetIO().MouseDelta.x * -0.005f * rotationVariable);
 	}
 }
 void Game::UpdateMouseInput(float p_deltaTime)
