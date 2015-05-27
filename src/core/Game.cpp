@@ -247,8 +247,8 @@ void Game::UpdateMouseInput(float p_deltaTime)
 					m_Camera->YawRelative(-rotateCameraSpeed);
 					newPos.x -= (moveCameraSpeed);
 				}
-	else
-	{
+				else
+				{
 					m_Camera->YawRelative(rotateCameraSpeed);
 					newPos.x += (moveCameraSpeed);
 				}
@@ -288,17 +288,6 @@ void Game::UpdateMouseInput(float p_deltaTime)
 		}
 		//Manipulate scale by scrolling the mouse wheel
 		m_Camera->MoveRelative(glm::vec3(0, 0, -m_TestArea2.GetMouseWheelState() * p_deltaTime * 20));
-
-		////Reset position, rotation and scale
-		//if (m_TestArea2.GetMouseWheelClicked())
-		//{
-		//	ResetCamera();
-		//}
-
-		//if (m_TestArea2.GetRightMouseDoubleClicked())
-		//{
-		//	ResetCamera();
-		//}
 
 		if (m_TestArea2.GetLeftMouseDoubleClicked() && m_StartPos == m_Camera->GetPosition() && !m_AutomaticRotate)
 		{

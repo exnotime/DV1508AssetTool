@@ -40,7 +40,7 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	glm::vec2 mouseSpriteSize = glm::vec2(25, 25);
 
 	m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/S_Camera_Mode.png");
-	m_CameraModeSelection.SetTooltip("Select Camera Movement Mode");
+	m_CameraModeSelection.SetTooltip("Select Camera Movement Mode \n Double click the model to reset the camera position");
 	m_DrawnSprite.SetTexture("asset/Icons/CameraModes/Mode_FPS.png");
 	m_DrawnSprite.SetSize(mouseSpriteSize);
 
