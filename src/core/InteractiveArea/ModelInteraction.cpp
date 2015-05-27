@@ -35,8 +35,8 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	m_CMC = CMC_FirstPerson;
 	m_renderModeSelectionButtons = false;
 
-	m_buttonXPos = (int)(p_pos.x + 300);
-	m_buttonYPos = (int)(p_pos.y + p_size.y - 50);
+	m_buttonXPos = p_pos.x + 300;
+	m_buttonYPos = p_pos.y + p_size.y - 50;
 	glm::vec2 mouseSpriteSize = glm::vec2(25, 25);
 
 	m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/S_Camera_Mode.png");

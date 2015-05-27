@@ -107,8 +107,8 @@ private:
 	gfx::Sprite m_FirstPersonModeSprite;
 	gfx::Sprite m_MouseModeSprite;
 
-	int m_buttonXPos;
-	int m_buttonYPos;
+	float m_buttonXPos;
+	float m_buttonYPos;
 	bool m_renderModeSelectionButtons;
 };
 
