@@ -42,9 +42,12 @@ private:
 	std::vector<unsigned int>	m_SelectedVertices;
 	UVTranslation				m_uvTranslation;
 	BrushTexGenerator			m_BrushGenerator;
-	ColorPicker			m_colorPicker;
+	ColorPicker					m_colorPicker;
 
 	Button						m_LoadModelButton;
+	
+	Button						m_ColorPickerButton;
+	gfx::Sprite					m_ColorPickerButtonOverlay;
 
 	///////////////////////////////////////////////////////////////////////////////
 	void UpdateModelViewWindow(float p_deltaTime);

@@ -2,6 +2,8 @@
 #include "../gfx/MaterialBank.h"
 #include "imgui\imgui.h"
 
+glm::vec4 ColorPicker::m_color;
+
 ColorPicker::ColorPicker(){}
 ColorPicker::~ColorPicker(){}
 
@@ -16,7 +18,7 @@ void ColorPicker::Init(glm::vec2 position, float scale, bool show)
 	glm::vec2 size;
 	glm::vec2 pos;
 
-	// Big window
+	// Picker
 	m_picker.SetTexture("asset/ColorPicker/ColorPicker.png");
 	size = glm::vec2(256.0f, 256.0f)*m_scale;
 	pos = glm::vec2(8.0f, 8.0f)*m_scale;
@@ -25,7 +27,7 @@ void ColorPicker::Init(glm::vec2 position, float scale, bool show)
 	m_pickerIarea.SetPos(position+pos);
 	m_pickerIarea.SetSize(size);
 
-	// Small window
+	// Slider
 	m_slide.SetTexture("asset/ColorPicker/ColorPickerSlide.png");
 	size = glm::vec2(32.0f, 256.0f)*m_scale;
 	pos = glm::vec2(272.0f, 8.0f)*m_scale;
@@ -35,11 +37,12 @@ void ColorPicker::Init(glm::vec2 position, float scale, bool show)
 	m_sliderIarea.SetSize(size);
 
 	// Markers
+	m_pickerMarker.SetTexture("asset/ColorPicker/ColorPickerMarkerInv.png");
 	m_pickerMarker.SetTexture("asset/ColorPicker/ColorPickerMarker.png");
 	size = glm::vec2(16.0f, 16.0f)*m_scale;
 	m_pickerMarker.SetSize(size);
 	m_sliderMarker.SetTexture("asset/ColorPicker/ColorPickerSliderMarker.png");
-	size = glm::vec2(8.0f, 8.0f)*m_scale;
+	size = glm::vec2(48.0f, 8.0f)*m_scale;
 	m_sliderMarker.SetSize(size);
 
 	// Background
@@ -51,6 +54,7 @@ void ColorPicker::Init(glm::vec2 position, float scale, bool show)
 
 	m_show = show;
 	m_hue = 0;
+	m_lastClick = glm::vec2(0, 0);
 
 	CalculateSliderMarkerPos(glm::vec2(0, 0));
 	CalculateMarkerPos(glm::vec2(0, 0));
@@ -62,45 +66,55 @@ void ColorPicker::Init(glm::vec2 position, float scale, bool show)
 
 void ColorPicker::Update()
 {
-	ImGui::Begin("Color Picker");
 	if (m_show)
 	{
 		m_pickerIarea.Update();
 		glm::vec2 clickPos;
+		ImGuiIO& io = ImGui::GetIO();
+		
+		// Update Picker
 		if (m_pickerIarea.IsClicked(clickPos))
 		{
+			m_pickerActive = true;
+		}
+		if (m_pickerActive)
+		{
+			if (!io.MouseDown[0])
+			{
+				m_pickerActive = false;
+			}
+			clickPos = glm::vec2(io.MousePos.x, io.MousePos.y);
+			clickPos = (clickPos - m_pickerIarea.GetPos()) / m_pickerIarea.GetSize();
+			clickPos = glm::clamp(clickPos, 0.0f, 1.0f);
+			m_lastClick = clickPos;
 			CalculateColor(clickPos);
 			CalculateMarkerPos(clickPos);
 		}
 
+		// Update Slider
 		m_sliderIarea.Update();
 		if (m_sliderIarea.IsClicked(clickPos))
 		{
+			m_sliderActive = true;
+		}
+		if (m_sliderActive)
+		{
+			if (!io.MouseDown[0])
+			{
+				m_sliderActive = false;
+			}
+			clickPos = glm::vec2(io.MousePos.x, io.MousePos.y);
+			clickPos = (clickPos - m_pickerIarea.GetPos()) / m_pickerIarea.GetSize();
+			clickPos = glm::clamp(clickPos, 0.0f, 1.0f);
 			CalculateSliderMarkerPos(clickPos);
-			m_hue = (1.0f-clickPos.y) * 360;
-			CalculateColor(clickPos);
+			m_hue = (1.0f - clickPos.y) * 360;
+			CalculateColor(m_lastClick);
 			GeneratePicker();
 		}
-		if (ImGui::Button("Hide"))
-		{
-			m_show = false;
-		}
 	}
-	else
-	{
-		if (ImGui::Button("Show"))
-		{
-			m_show = true;
-		}
-	}
-
-	
-	glm::vec4 color = m_color;
-	ImGui::ColorButton(ImVec4(color.x, color.y, color.z, color.w));
-	ImGui::End();
 }
 
-void ColorPicker::Render(gfx::RenderQueue* rq)
+void ColorPicker::Draw(gfx::RenderQueue* rq)
 {
 	if (m_show)
 	{
@@ -178,7 +192,7 @@ void ColorPicker::CalculateColor(glm::vec2 uv)
 		m_color.z = c + m;
 		m_color.x = x + m;
 	}
-	else if (h < 360)
+	else if (h <= 360)
 	{
 		m_color.x = c + m;
 		m_color.z = x + m;
@@ -193,6 +207,15 @@ void ColorPicker::CalculateMarkerPos(glm::vec2 uv)
 
 	glm::vec2 position = pickerPos + pickerSize*uv - markerSize*0.5f;
 	m_pickerMarker.SetPos(position);
+
+	if (uv.y > 0.75f)
+	{
+		m_pickerMarker.SetTexture("asset/ColorPicker/ColorPickerMarkerInv.png");
+	}
+	else
+	{
+		m_pickerMarker.SetTexture("asset/ColorPicker/ColorPickerMarker.png");
+	}
 }
 
 void ColorPicker::CalculateSliderMarkerPos(glm::vec2 uv)
@@ -202,14 +225,19 @@ void ColorPicker::CalculateSliderMarkerPos(glm::vec2 uv)
 	glm::vec2 markerSize = glm::vec2(8, 8)*m_scale;
 
 	glm::vec2 position;
-	position.x = sliderPos.x + sliderSize.x;
+	position.x = sliderPos.x-8;
 	position.y = sliderPos.y + sliderSize.y*uv.y-markerSize.y*0.5f;
 	m_sliderMarker.SetPos(position);
 }
 
-glm::vec4 ColorPicker::GetColor()const
+void ColorPicker::TogglePicker()
 {
-	return m_color;
+	m_show = !m_show;
 }
+
+//glm::vec4 ColorPicker::GetColor()
+//{
+//	return m_color;
+//}
 
 

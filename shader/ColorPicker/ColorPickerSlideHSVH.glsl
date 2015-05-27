@@ -43,7 +43,7 @@ void main(){
 		color.z = c + m;
 		color.x = x + m;
 	}
-	else if (h < 360)
+	else if (h <= 360)
 	{
 		color.x = c + m;
 		color.z = x + m;
