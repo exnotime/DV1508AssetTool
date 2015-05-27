@@ -39,22 +39,22 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	m_buttonYPos = p_pos.y + p_size.y - 50;
 	glm::vec2 mouseSpriteSize = glm::vec2(25, 25);
 
-	m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/S_Camera_Mode.png");
+	m_CameraModeSelection = Button(glm::vec2(m_buttonXPos, m_buttonYPos), glm::vec2(50, 50), "asset/Icons/M_Camera_Mode.png");
 	m_CameraModeSelection.SetTooltip("Select Camera Movement Mode \n Double click the model to reset the camera position");
 	m_DrawnSprite.SetTexture("asset/Icons/CameraModes/Mode_FPS.png");
 	m_DrawnSprite.SetSize(mouseSpriteSize);
 
-	m_FirstPersonModeButton = Button(glm::vec2(m_buttonXPos, m_buttonYPos - 50 + 1), glm::vec2(50, 50), "asset/Icons/S_FPS.png");
+	m_FirstPersonModeButton = Button(glm::vec2(m_buttonXPos, m_buttonYPos - 50 + 1), glm::vec2(50, 50), "asset/Icons/M_FPS.png");
 	m_FirstPersonModeButton.SetTooltip(" First Person Camera \n Move camera using WASD \n Rotate camera using mouse \n Hold space to enable movement");
 	m_FirstPersonModeSprite.SetTexture("asset/Icons/CameraModes/Mode_FPS.png");
 	m_FirstPersonModeSprite.SetSize(mouseSpriteSize);
 
-	m_LaptopModeButton = Button(glm::vec2(m_buttonXPos - 50 + 1, m_buttonYPos - 50 + 1), glm::vec2(50, 50), "asset/Icons/S_Keyboard.png");
+	m_LaptopModeButton = Button(glm::vec2(m_buttonXPos - 50 + 1, m_buttonYPos - 50 + 1), glm::vec2(50, 50), "asset/Icons/M_Keyboard.png");
 	m_LaptopModeButton.SetTooltip(" Laptop mode \n Move camera using WASD \n Rotate Camera using arrow keys");
 	m_LaptopModeSprite.SetTexture("asset/Icons/CameraModes/Mode_Keys.png");
 	m_LaptopModeSprite.SetSize(mouseSpriteSize);
 
-	m_MouseModeButton = Button(glm::vec2(m_buttonXPos + 50 - 1, m_buttonYPos - 50 + 1), glm::vec2(50, 50), "asset/Icons/S_Grabber.png");
+	m_MouseModeButton = Button(glm::vec2(m_buttonXPos + 50 - 1, m_buttonYPos - 50 + 1), glm::vec2(50, 50), "asset/Icons/M_Grabber.png");
 	m_MouseModeButton.SetTooltip(" Mouse mode \n Use left mouse button to orbit the model \n Use scroll to get closer or further away from the model\n Hold space to enable movement");
 	m_MouseModeSprite.SetTexture("asset/Icons/CameraModes/Mode_Drag.png");
 	m_MouseModeSprite.SetSize(mouseSpriteSize);
