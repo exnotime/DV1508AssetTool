@@ -5,6 +5,8 @@
 #include "Camera.h"
 #include "ShaderBank.h"
 #include "FrameBuffer.h"
+
+#define BUTTON_SIZE 50
 namespace gfx{
 
 #define g_GFXEngine GraphicsEngine::GetInstance()
@@ -21,6 +23,7 @@ namespace gfx{
 		Camera* GetCamera( ) { return &m_Camera; }
 		float GetWidth() { return (float)m_Width; }
 		float GetHeight(){ return (float)m_Height; }
+		GLFWwindow* GetWindow(){ return m_Window; }
 	private:
 		void RenderGeometry(RenderQueue* drawQueue);
 		void RenderSprites(RenderQueue* drawQueue);

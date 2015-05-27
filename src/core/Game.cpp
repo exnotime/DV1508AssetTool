@@ -22,8 +22,8 @@ void Game::Initialize(int width, int height){
 	m_VerticeSelection.Initialize();
 	m_TestSprite.SetTexture("asset/brush.png");
 	m_BrushGhost.SetTexture("asset/BrushGhost.png");
-	m_TestArea.SetPos(glm::vec2(width / 2, 0));
-	m_TestArea.SetSize(glm::vec2(width / 2 , height));
+	m_TestArea.SetPos(glm::vec2(width / 2, BUTTON_SIZE));
+	m_TestArea.SetSize(glm::vec2(width / 2 , height - BUTTON_SIZE));
 
 	m_BrushArea.SetArea(m_TestArea);
 	m_BrushArea.SetBrushSize(64);
@@ -32,8 +32,11 @@ void Game::Initialize(int width, int height){
 	m_BrushGenerator.Init();
 	m_BrushGenerator.GenerateTexture(64, 0.5f, m_TestSprite.GetTexture());
 
-	m_LoadModelButton = Button(glm::vec2(0, 300), glm::vec2(50, 50), "asset/Icons/S_Load_Model.png");
+	m_LoadModelButton = Button(glm::vec2(0, height - BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Load_Model.png");
 	m_LoadModelButton.SetTooltip("Load Model");
+
+	m_CloseProgramButton = Button(glm::vec2(width - BUTTON_SIZE, 0), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Redo.png");
+	m_CloseProgramButton.SetTooltip("Close program");
 	///////////////////////////////////////////////////////////////////////////////
 	m_TestArea2.Initialize(glm::vec2(width / 2, height), glm::vec2(0, 0));
 	m_AutomaticRotate = false;
@@ -54,6 +57,9 @@ void Game::Update(float dt){
 	///////////////////////////////////////////////////////////////////////////////
 	m_BrushArea.Update();
 	m_LoadModelButton.Update();
+	//check if we should close
+	m_CloseProgramButton.Update();
+	if (m_CloseProgramButton.IsClicked()) glfwSetWindowShouldClose(gfx::g_GFXEngine.GetWindow(), GL_TRUE);
 	// Load model button
 	if (m_LoadModelButton.IsClicked())
 	{
@@ -76,7 +82,6 @@ void Game::Update(float dt){
 	TempSelectVertices( m_Model, m_SelectedVertices );	// TODO: Remove when real vertice selection is implemented.
 	m_VerticeTranslation.SetSelectedVertices( m_SelectedVertices );
 	m_VerticeTranslation.Update( dt );
-
 
 	// UV
 	m_uvTranslation.Update(dt);
@@ -124,15 +129,15 @@ void Game::Render( gfx::RenderQueue* rq ){
 
 	m_LoadModelButton.Draw(rq);
 	m_TestArea2.RenderButtons(rq);
-
+	m_CloseProgramButton.Draw(rq);
 	//test line
-	gfx::LineObject lo;
-	lo.Lines.push_back(glm::vec2(0));
-	lo.Lines.push_back(glm::vec2(1920,1080));
-	lo.Lines.push_back(glm::vec2(1920,0));
-	lo.Lines.push_back(glm::vec2(0, 1080));
-	lo.Color = glm::vec4(1,0,0,1);
-	rq->Enqueue(lo);
+	//gfx::LineObject lo;
+	//lo.Lines.push_back(glm::vec2(0));
+	//lo.Lines.push_back(glm::vec2(1920,1080));
+	//lo.Lines.push_back(glm::vec2(1920,0));
+	//lo.Lines.push_back(glm::vec2(0, 1080));
+	//lo.Color = glm::vec4(1,0,0,1);
+	//rq->Enqueue(lo);
 }
 
 void Game::Shutdown()

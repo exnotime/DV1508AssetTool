@@ -41,6 +41,7 @@ private:
 	BrushTexGenerator			m_BrushGenerator;
 
 	Button						m_LoadModelButton;
+	Button						m_CloseProgramButton;
 
 	///////////////////////////////////////////////////////////////////////////////
 	void UpdateModelViewWindow(float p_deltaTime);

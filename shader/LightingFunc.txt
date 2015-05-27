@@ -160,6 +160,6 @@ vec4 CalcDLight(Light light, vec3 inNormal, vec3 posw, vec3 campos, vec3 baseCol
 	spec = mix(spec, spec * baseColor, metal);
 
 	vec3 iblColor = mix(iblSpec.xyz , iblDiff.xyz, roughness);
-	lightColor.xyz = vec3(light.Color.xyz) * (diff + spec) * iblColor;
+	lightColor.xyz = vec3(light.Color.xyz) * (diff * iblDiff.xyz + spec * iblSpec.xyz);
 	return lightColor;
 }

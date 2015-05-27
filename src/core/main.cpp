@@ -14,7 +14,7 @@ int main( ){
 
 	int width = 1920;
 	int height = 1080;
-	bool vsync = true;
+	bool vsync = false;
 	bool fullscreen = false;
 
 	GLFWwindow* window = gfx::g_GFXEngine.Initialize( width, height, vsync, fullscreen );
