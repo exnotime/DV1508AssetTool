@@ -37,8 +37,18 @@ void Game::Initialize(int width, int height){
 
 	m_CloseProgramButton = Button(glm::vec2(width - BUTTON_SIZE, 0), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Redo.png");
 	m_CloseProgramButton.SetTooltip("Close program");
+
+	m_ColorPickerButton = Button(glm::vec2(width - BUTTON_SIZE, height - BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Picker_Tool.png");
+	m_ColorPickerButton.SetTooltip("Color Picker");
+
+	m_ColorPickerButtonOverlay.SetPos(glm::vec2(width - BUTTON_SIZE, height - BUTTON_SIZE));
+	m_ColorPickerButtonOverlay.SetTexture("asset/ColorPicker/ColorPreview.png");
+	m_ColorPickerButtonOverlay.SetSize(glm::vec2(BUTTON_SIZE));
+
+	m_colorPicker.Init(glm::vec2(width - 312.0f, height - 322.0f));
+
 	///////////////////////////////////////////////////////////////////////////////
-	m_TestArea2.Initialize(glm::vec2(width / 2, height), glm::vec2(0, 0));
+	m_TestArea2.Initialize(glm::vec2(width / 2, height - BUTTON_SIZE), glm::vec2(0, BUTTON_SIZE));
 	m_AutomaticRotate = false;
 	m_AutomaticRotateLeft = false;
 	m_MousePos = glm::vec2(0, 0);
@@ -74,6 +84,10 @@ void Game::Update(float dt){
 			m_SelectedVertices.clear();
 		}
 	}
+	m_ColorPickerButton.Update();
+	if (m_ColorPickerButton.IsClicked()){
+		m_colorPicker.TogglePicker();
+	}
 	static float h = 0;
 	ImGui::SliderFloat("Hardness", &h, 0, 1);
 	if (ImGui::Button("GenBrush")){
@@ -86,6 +100,8 @@ void Game::Update(float dt){
 	// UV
 	m_uvTranslation.Update(dt);
 	SetWireFrameState(m_VerticeSelection.Update(dt));
+
+	m_colorPicker.Update();
 }
 
 void Game::Render( gfx::RenderQueue* rq ){
@@ -128,6 +144,11 @@ void Game::Render( gfx::RenderQueue* rq ){
 	rq->Enqueue(m_BrushGhost);
 
 	m_LoadModelButton.Draw(rq);
+	m_ColorPickerButton.Draw(rq);
+	m_ColorPickerButtonOverlay.SetColor(ColorPicker::m_color);
+	rq->Enqueue(m_ColorPickerButtonOverlay);
+
+	m_colorPicker.Draw(rq);
 	m_TestArea2.RenderButtons(rq);
 	m_CloseProgramButton.Draw(rq);
 	//test line
@@ -226,8 +247,8 @@ void Game::UpdateMouseInput(float p_deltaTime)
 					m_Camera->YawRelative(-rotateCameraSpeed);
 					newPos.x -= (moveCameraSpeed);
 				}
-				else
-				{
+	else
+	{
 					m_Camera->YawRelative(rotateCameraSpeed);
 					newPos.x += (moveCameraSpeed);
 				}
@@ -365,7 +386,7 @@ void Game::UpdateCameraLaptopMode(float p_deltaTime)
 			m_Camera->YawRelative(-rotationSpeed);
 		}
 	}
-}
+	}
 void Game::ResetCamera()
 {
 	m_Camera->SetPosition(m_StartPos);

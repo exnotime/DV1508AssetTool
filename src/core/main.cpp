@@ -12,8 +12,8 @@ void RenderImgui( );
 void UpdateWindow(GLFWwindow* window, int w, int h);
 int main( ){
 
-	int width = 1920;
-	int height = 1080;
+	int width = 1280;
+	int height = 720;
 	bool vsync = false;
 	bool fullscreen = false;
 
