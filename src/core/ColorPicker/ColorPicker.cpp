@@ -37,7 +37,6 @@ void ColorPicker::Init(glm::vec2 position, float scale, bool show)
 	m_sliderIarea.SetSize(size);
 
 	// Markers
-	m_pickerMarker.SetTexture("asset/ColorPicker/ColorPickerMarkerInv.png");
 	m_pickerMarker.SetTexture("asset/ColorPicker/ColorPickerMarker.png");
 	size = glm::vec2(16.0f, 16.0f)*m_scale;
 	m_pickerMarker.SetSize(size);
@@ -210,11 +209,11 @@ void ColorPicker::CalculateMarkerPos(glm::vec2 uv)
 
 	if (uv.y > 0.75f)
 	{
-		m_pickerMarker.SetTexture("asset/ColorPicker/ColorPickerMarkerInv.png");
+		m_pickerMarker.SetColor(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	}
 	else
 	{
-		m_pickerMarker.SetTexture("asset/ColorPicker/ColorPickerMarker.png");
+		m_pickerMarker.SetColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 }
 
