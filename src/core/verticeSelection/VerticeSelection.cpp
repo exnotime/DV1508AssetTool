@@ -18,7 +18,7 @@ void VerticeSelection::Initialize(){
 }
 
 bool VerticeSelection::Update(const float deltaTime){
-	ImGui::Begin("VerticeSelection");
+	ImGui::Begin("Vertex Selection");
 
 	ImGui::Checkbox("Enabled", &m_Checked);
 

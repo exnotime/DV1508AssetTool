@@ -13,7 +13,7 @@ void UpdateWindow(GLFWwindow* window, int w, int h);
 int main( ){
 
 	int width = 1280;
-	int height = 720;
+	int height = 770;
 	bool vsync = false;
 	bool fullscreen = false;
 
