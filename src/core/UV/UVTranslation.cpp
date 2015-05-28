@@ -7,12 +7,9 @@
 //UVTranslation::UVTranslation(){}
 //UVTranslation::~UVTranslation(){}
 
-void UVTranslation::Initialize(int winWidth, int winHeight)
+void UVTranslation::Initialize()
 {
 	m_uvModeOn = false;
-
-	m_winWidth = winWidth;
-	m_winHeight = winHeight;
 
 	m_dots = std::vector<ClickDot>();
 
@@ -68,7 +65,7 @@ void UVTranslation::AddVertex(int vertex)
 	if (!ListContains(vertex))
 	{
 		ClickDot cd = ClickDot();
-		cd.Initialize(vertex, m_winWidth, m_winHeight, "asset/Cube/rDot3.png");
+		cd.Initialize(vertex, "asset/Cube/rDot3.png");
 		
 		m_dots.push_back(cd);
 	}

@@ -18,7 +18,7 @@ Game::~Game( )
 void Game::Initialize(int width, int height){
 	m_Model = gfx::g_ModelBank.LoadModel("asset/Bomb/model.obj");
 	m_VerticeTranslation.Initialize();
-	m_uvTranslation.Initialize(width, height);
+	m_uvTranslation.Initialize();
 	m_VerticeSelection.Initialize();
 	m_TestSprite.SetTexture("asset/brush.png");
 	m_BrushGhost.SetTexture("asset/BrushGhost.png");

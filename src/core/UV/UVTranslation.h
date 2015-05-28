@@ -10,7 +10,7 @@ public:
 	//UVTranslation();
 	//~UVTranslation();
 
-	void Initialize(int winWidth, int winHeight);
+	void Initialize();
 	void Update(const float deltaTime);
 	void Draw(gfx::RenderQueue* renderQueue);
 	void Shutdown();
@@ -26,9 +26,6 @@ public:
 private:
 	bool ListContains(int vertex);
 	std::vector<glm::vec2> GetLinePositions();
-
-	int m_winWidth;
-	int m_winHeight;
 
 	std::vector<ClickDot> m_dots;
 
