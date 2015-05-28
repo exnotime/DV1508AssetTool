@@ -36,7 +36,7 @@ void Game::Initialize(int width, int height){
 	m_CloseProgramButton.SetTooltip("Close the program.");
 
 	m_ColorPickerButton = Button(glm::vec2(width - BUTTON_SIZE * 2.0f - 30.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Palette.png");
-	m_ColorPickerButton.SetTooltip("Color Picker");
+	m_ColorPickerButton.SetTooltip("Color Picker\nDouble-Right click: Move Color Picker to your mouse position\nRight click: Reset position");
 
 	m_ColorPickerButtonOverlay.SetPos(glm::vec2(width - BUTTON_SIZE - 25.0f, height - BUTTON_SIZE - 25.0f));
 	m_ColorPickerButtonOverlay.SetTexture("asset/Icons/T_Chosen_Color.png");
