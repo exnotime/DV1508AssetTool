@@ -7,16 +7,11 @@
 //UVTranslation::UVTranslation(){}
 //UVTranslation::~UVTranslation(){}
 
-void UVTranslation::Initialize(int winWidth, int winHeight)
+void UVTranslation::Initialize()
 {
 	m_uvModeOn = false;
 
-	m_winWidth = winWidth;
-	m_winHeight = winHeight;
-
 	m_dots = std::vector<ClickDot>();
-
-	m_selectedFace = glm::vec3(0, 1, 2);
 
 	//const gfx::Model& model = gfx::g_ModelBank.FetchModel(modelHandle);
 	//std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
@@ -32,14 +27,6 @@ void UVTranslation::Initialize(int winWidth, int winHeight)
 
 void UVTranslation::Update(const float deltaTime)
 {
-
-	ImGui::Begin("UV");
-
-	ImGui::Checkbox("Enable", &m_uvModeOn);
-
-	ImGui::End();
-
-
 	if (m_uvModeOn)
 	{
 		std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
@@ -78,7 +65,7 @@ void UVTranslation::AddVertex(int vertex)
 	if (!ListContains(vertex))
 	{
 		ClickDot cd = ClickDot();
-		cd.Initialize(vertex, m_winWidth, m_winHeight, "asset/Cube/rDot3.png");
+		cd.Initialize(vertex, "asset/Cube/rDot3.png");
 		
 		m_dots.push_back(cd);
 	}
@@ -132,4 +119,28 @@ std::vector<glm::vec2> UVTranslation::GetLinePositions()
 	}
 
 	return positions;
+}
+
+void UVTranslation::ResetList()
+{
+	m_dots.clear();
+
+	AddVertex(0);
+	AddVertex(1);
+	AddVertex(2);
+}
+
+void UVTranslation::Enable()
+{
+	m_uvModeOn = true;
+}
+
+void UVTranslation::Disable()
+{
+	m_uvModeOn = false;
+}
+
+void UVTranslation::Toggle()
+{
+	m_uvModeOn = !m_uvModeOn;
 }

@@ -5,7 +5,7 @@
 #include "../gfx/GraphicsEngine.h"
 #include "../gfx/Camera.h"
 
-
+#define SHOW_IMGUI_VERTICE_TRANSLATION	false
 #define EPSILON 1.0e-14f
 
 struct Ray {
@@ -20,10 +20,12 @@ void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>
 	static int prevMeshIndex = meshIndex + 1;
 	static bool unselect = false;
 
-	ImGui::Begin( "VerticeTranslation" );
-	ImGui::SliderInt( "Mesh", &meshIndex, 0, (int)(model.Meshes.size() - 1));
-	ImGui::Checkbox( "Unselect", &unselect );
-	ImGui::End();
+	if ( SHOW_IMGUI_VERTICE_TRANSLATION ) {
+		ImGui::Begin( "VerticeTranslation" );
+		ImGui::SliderInt( "Mesh", &meshIndex, 0, (int)(model.Meshes.size() - 1));
+		ImGui::Checkbox( "Unselect", &unselect );
+		ImGui::End();
+	}
 
 	if ( unselect )
 		selectedVertices.clear();
@@ -70,7 +72,7 @@ void VerticeTranslation::Update( const float deltaTime ) {
 
 	Ray		mouseRay;
 	Camera*	camera		= gfx::g_GFXEngine.GetCamera();
-	CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
+	CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y - BUTTON_SIZE), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
 
 	if ( io.MouseClicked[0] ) {
 		const float hitboxHalfSize = 0.11f;

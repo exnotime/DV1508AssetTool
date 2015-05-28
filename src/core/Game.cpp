@@ -18,7 +18,7 @@ Game::~Game( )
 void Game::Initialize(int width, int height){
 	m_Model = gfx::g_ModelBank.LoadModel("asset/Bomb/model.obj");
 	m_VerticeTranslation.Initialize();
-	m_uvTranslation.Initialize(width, height);
+	m_uvTranslation.Initialize();
 	m_VerticeSelection.Initialize();
 	m_TestSprite.SetTexture("asset/brush.png");
 	m_BrushGhost.SetTexture("asset/BrushGhost.png");
@@ -32,20 +32,40 @@ void Game::Initialize(int width, int height){
 	m_BrushGenerator.Init();
 	m_BrushGenerator.GenerateTexture(64, 0.5f, m_TestSprite.GetTexture());
 
-	m_LoadModelButton = Button(glm::vec2(0, height - BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Load_Model.png");
+	m_LoadModelButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, 25.0f + BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Load_Model.png");
 	m_LoadModelButton.SetTooltip("Load Model");
 
 	m_CloseProgramButton = Button(glm::vec2(width - BUTTON_SIZE, 0), glm::vec2(BUTTON_SIZE), "asset/Icons/P_Exit.png");
 	m_CloseProgramButton.SetTooltip("Close program");
 
-	m_ColorPickerButton = Button(glm::vec2(width - BUTTON_SIZE, height - BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Picker_Tool.png");
+	m_ColorPickerButton = Button(glm::vec2(width - BUTTON_SIZE * 2.0f - 30.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Palette.png");
 	m_ColorPickerButton.SetTooltip("Color Picker");
 
-	m_ColorPickerButtonOverlay.SetPos(glm::vec2(width - BUTTON_SIZE, height - BUTTON_SIZE));
-	m_ColorPickerButtonOverlay.SetTexture("asset/Icons/T_Palette.png");
+	m_ColorPickerButtonOverlay.SetPos(glm::vec2(width - BUTTON_SIZE - 25.0f, height - BUTTON_SIZE - 25.0f));
+	m_ColorPickerButtonOverlay.SetTexture("asset/Icons/T_Chosen_Color.png");
 	m_ColorPickerButtonOverlay.SetSize(glm::vec2(BUTTON_SIZE));
 
-	m_colorPicker.Init(glm::vec2(width - 312.0f, height - 322.0f));
+	m_colorPicker.Init(glm::vec2(width - 312.0f - 15.0f, height - 322.0f - 50.0f));
+
+	m_Background.SetTexture("asset/Backgrounds/Background.png");
+	m_Background.SetPos(glm::vec2(0.0f, BUTTON_SIZE));
+	m_Background.SetSize(glm::vec2(width, height - BUTTON_SIZE));
+
+	m_RelationsBackground.SetTexture("asset/Backgrounds/Relations_Background.png");
+	glm::vec2 size = glm::vec2(750, 500);  
+	m_RelationsBackground.SetPos(glm::vec2(width * 0.5f - size.x * 0.5f, height * 0.5f - size.y * 0.5f));
+	m_RelationsBackground.SetSize(size);
+
+	m_FakeRelations.SetTexture("asset/Backgrounds/Fake_Relations.png");
+	m_FakeRelations.SetPos(glm::vec2(width * 0.5f - size.x * 0.5f, height * 0.5f - size.y * 0.5f));
+	m_FakeRelations.SetSize(size);
+
+	m_RelationsToggled = false;
+	m_RelationsButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Relations.png");
+	m_RelationsButton.SetTooltip("Open the relations manager, \n here you can edit relations \n between models and textures.");
+
+	m_uvButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, height - BUTTON_SIZE * 2 - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/M_UV_Picker_Tool.png");
+	m_uvButton.SetTooltip("UV Picker:\nTranslate the UV coordinates");
 
 	///////////////////////////////////////////////////////////////////////////////
 	m_TestArea2.Initialize(glm::vec2(width / 2, height - BUTTON_SIZE), glm::vec2(0, BUTTON_SIZE));
@@ -82,6 +102,8 @@ void Game::Update(float dt){
 			m_Model = gfx::g_ModelBank.LoadModel(outPath);
 			gfx::g_ModelBank.BuildBuffers();
 			m_SelectedVertices.clear();
+
+			m_uvTranslation.ResetList();
 		}
 	}
 	m_ColorPickerButton.Update();
@@ -99,19 +121,44 @@ void Game::Update(float dt){
 
 	// UV
 	m_uvTranslation.Update(dt);
+	m_uvButton.Update();
+	if (m_uvButton.IsClicked())
+	{
+		m_uvTranslation.Toggle();
+	}
+
 	SetWireFrameState(m_VerticeSelection.Update(dt));
 
 	m_colorPicker.Update();
+
+	// Relations manager.
+	m_RelationsButton.Update();
+	if (m_RelationsButton.IsClicked())
+	{
+		if (m_RelationsToggled)
+		{
+			m_RelationsToggled = false;
+		}
+
+		else
+		{
+			m_RelationsToggled = true;
+		}
+	}
 }
 
-void Game::Render( gfx::RenderQueue* rq ){
+void Game::Render( gfx::RenderQueue* rq )
+{
 	gfx::RenderObject ro;
 	ro.Model = m_Model;
 	ro.world = glm::translate(glm::vec3(0));
 	SetWireFrameModel(ro);
 	rq->Enqueue(ro);
 
-	//Set texture
+	// Render background.
+	rq->Enqueue(m_Background);
+
+	// Set texture.
 	gfx::Model model = gfx::g_ModelBank.FetchModel(m_Model);
 
 	static int meshIndex = 0;
@@ -130,8 +177,10 @@ void Game::Render( gfx::RenderQueue* rq ){
 	}
 
 	m_VerticeTranslation.Draw( rq );
-	m_uvTranslation.Draw(rq);
 	m_VerticeSelection.Draw(rq, ro);
+
+	m_uvTranslation.Draw(rq);
+	m_uvButton.Draw(rq);
 
 	static float brushSize = 64;
 	ImGui::SliderFloat("BrushSize", &brushSize, 1, 640);
@@ -151,6 +200,14 @@ void Game::Render( gfx::RenderQueue* rq ){
 	m_colorPicker.Draw(rq);
 	m_TestArea2.RenderButtons(rq);
 	m_CloseProgramButton.Draw(rq);
+
+	m_RelationsButton.Draw(rq);
+	if (m_RelationsToggled)
+	{
+		rq->Enqueue(m_RelationsBackground);
+		rq->Enqueue(m_FakeRelations);
+	}
+
 	//test line
 	//gfx::LineObject lo;
 	//lo.Lines.push_back(glm::vec2(0));

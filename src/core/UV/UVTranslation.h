@@ -10,23 +10,22 @@ public:
 	//UVTranslation();
 	//~UVTranslation();
 
-	void Initialize(int winWidth, int winHeight);
+	void Initialize();
 	void Update(const float deltaTime);
 	void Draw(gfx::RenderQueue* renderQueue);
 	void Shutdown();
 
 	void AddVertex(int vertex);
 	void RemoveVertex(int vertex);
-
-	std::vector<glm::vec2> GetLinePositions();
+	void ResetList();
+	
+	void Enable();
+	void Disable();
+	void Toggle();
 	
 private:
 	bool ListContains(int vertex);
-
-	glm::vec3 m_selectedFace;
-
-	int m_winWidth;
-	int m_winHeight;
+	std::vector<glm::vec2> GetLinePositions();
 
 	std::vector<ClickDot> m_dots;
 

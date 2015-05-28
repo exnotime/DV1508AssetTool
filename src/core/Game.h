@@ -46,8 +46,16 @@ private:
 	Button						m_LoadModelButton;
 	Button						m_CloseProgramButton;
 
+	gfx::Sprite					m_Background;
+	gfx::Sprite					m_RelationsBackground;
+	gfx::Sprite					m_FakeRelations;
+	Button						m_RelationsButton;
+	bool						m_RelationsToggled;
+
 	Button						m_ColorPickerButton;
 	gfx::Sprite					m_ColorPickerButtonOverlay;
+
+	Button						m_uvButton;
 
 	///////////////////////////////////////////////////////////////////////////////
 	void UpdateModelViewWindow(float p_deltaTime);
