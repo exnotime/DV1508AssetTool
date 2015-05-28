@@ -51,7 +51,7 @@ void Game::Initialize(int width, int height){
 	m_ColorPickerButtonOverlay.SetTexture("asset/Icons/T_Chosen_Color.png");
 	m_ColorPickerButtonOverlay.SetSize(glm::vec2(BUTTON_SIZE));
 
-	m_colorPicker.Init(glm::vec2(width - 312.0f - 15.0f, height - 322.0f - 50.0f));
+	m_colorPicker.Init(glm::vec2(width - 156.0f - 15.0f, height - 136.0f - 100.0f), 0.5f);
 
 	m_Background.SetTexture("asset/Backgrounds/Background.png");
 	m_Background.SetPos(glm::vec2(0.0f, BUTTON_SIZE));
