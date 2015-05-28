@@ -158,11 +158,11 @@ void VerticeTranslation::Draw( gfx::RenderQueue* renderQueue ) {
 	const float			halfPi					= 0.50f * glm::pi<float>();
 	const float			quarterPi				= 0.25f * glm::pi<float>();
 	const glm::mat4x4	scaleTranslation		= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(m_TranslationToolScale) );
-	const glm::mat4x4	halfScaleTranslation	= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(0.7f * m_TranslationToolScale) );
+	const glm::mat4x4	halfScaleTranslation	= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(0.6f * m_TranslationToolScale) );
 
 	gfx::GizmoObject renderObject;
 	renderObject.Model	= m_TranslationToolModel;
-	float alpha = m_TranslationType == TranslationType::None ? 1.0f : 0.3f;
+	float alpha = m_TranslationType == TranslationType::None ? 0.7f : 0.3f;
 	if ( m_TranslationType == TranslationType::None || m_TranslationType == TranslationType::X || m_TranslationType == TranslationType::XY || m_TranslationType == TranslationType::XZ ) {
 		renderObject.world	= scaleTranslation * glm::rotate( -halfPi, glm::vec3(0.0f, 0.0f, 1.0f) );	// X
 		renderObject.Color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * alpha;
@@ -182,6 +182,8 @@ void VerticeTranslation::Draw( gfx::RenderQueue* renderQueue ) {
 	}
 
 	if ( m_TranslationType == TranslationType::None ) {
+		alpha = 0.5f;
+
 		renderObject.world	= halfScaleTranslation * glm::rotate( -quarterPi, glm::vec3(0.0f, 0.0f, 1.0f) );	// XY
 		renderObject.Color = glm::vec4(0.8f, 0.8f, 0.0f, 1.0f) * alpha;
 		renderQueue->Enqueue(renderObject);
