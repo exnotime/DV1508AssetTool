@@ -18,11 +18,11 @@ void VerticeSelection::Initialize(){
 }
 
 bool VerticeSelection::Update(const float deltaTime){
-	ImGui::Begin("Vertex Selection");
+	//ImGui::Begin("Vertex Selection");
 
-	ImGui::Checkbox("Enabled", &m_Checked);
+	//ImGui::Checkbox("Enabled", &m_Checked);
 
-	ImGui::End();
+	//ImGui::End();
 
 	return m_Checked;
 }
