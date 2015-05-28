@@ -237,14 +237,27 @@ void Game::Render( gfx::RenderQueue* rq )
 	// Set texture.
 	gfx::Model model = gfx::g_ModelBank.FetchModel(m_Model);
 
-	static int meshIndex = 0;
-	ImGui::SliderInt("Mesh Texture", &meshIndex, 0, (int)(model.Meshes.size() - 1));
+	static unsigned int meshIndex = 0;
+	//ImGui::SliderInt("Mesh Texture", &meshIndex, 0, (int)(model.Meshes.size() - 1));
 	//fixing error with imgui when min and max is the same
-	if (meshIndex < 0)
-		meshIndex = 0;
+	//if (meshIndex < 0)
+		//meshIndex = 0;
+	if (m_FakeButtons[12].IsClicked()){
+		meshIndex++;
+		meshIndex = meshIndex % (int)(model.Meshes.size());
+	}
+
 	gfx::Material* mat = gfx::g_MaterialBank.GetMaterial(model.MaterialOffset + model.Meshes[meshIndex].Material);
 	static int actTexture = 0;
-	ImGui::SliderInt("TextureType", &actTexture, 0, 2);
+	if (m_FakeButtons[9].IsClicked()){
+		actTexture = 0;
+	}
+	else if (m_FakeButtons[10].IsClicked()){
+		actTexture = 1;
+	}
+	else if (m_FakeButtons[11].IsClicked()){
+		actTexture = 2;
+	}
 	switch (actTexture){
 		case 0:
 			rq->SetTargetTexture(mat->GetAlbedoTexture());
@@ -286,17 +299,17 @@ void Game::Render( gfx::RenderQueue* rq )
 	m_CloseProgramButton.Draw(rq);
 
 	m_RelationsButton.Draw(rq);
-	if (m_RelationsToggled)
-	{
-		rq->Enqueue(m_RelationsBackground);
-		rq->Enqueue(m_FakeRelations);
-	}
-	
+
 	m_minimize.Draw(rq);
 
 	for (unsigned int i = 0; i < m_FakeButtons.size(); i++)
 	{
 		m_FakeButtons[i].Draw(rq);
+	}
+	if (m_RelationsToggled)
+	{
+		rq->Enqueue(m_RelationsBackground);
+		rq->Enqueue(m_FakeRelations);
 	}
 }
 
