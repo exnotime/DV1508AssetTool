@@ -64,8 +64,12 @@ void VerticeTranslation::Update( const float deltaTime ) {
 		return;
 	}
 
-	std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();	
 	ImGuiIO& io = ImGui::GetIO();
+
+	if ( io.KeyShift ) {
+		m_Translating = false;
+		return;
+	}
 
 	Ray line;
 	line.Position	= m_TranslationToolPosition;
@@ -110,7 +114,9 @@ void VerticeTranslation::Update( const float deltaTime ) {
 		m_TranslationToolOffset /= m_TranslationToolScale;
 		m_TranslatingDirection = line.Direction;
 	}
-	
+
+	std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
+
 	if ( m_Translating && io.MouseDown[0] ) {
 		line.Direction = m_TranslatingDirection;
 		const glm::vec3 diff = ClosestPointOnFirstRay( line, mouseRay ) - (m_TranslationToolPosition + (m_TranslationToolOffset * m_TranslationToolScale));
