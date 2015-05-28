@@ -156,6 +156,12 @@ void gfx::GraphicsEngine::RenderSprites(RenderQueue* drawQueue){
 			spriteProg->SetUniformVec4("g_Size", spr.GetSizeFlt());
 			spriteProg->SetUniformVec4("g_Color", spr.GetColor());
 			g_MaterialBank.GetTexture(spr.GetTexture())->Apply(spriteProg->FetchUniform("g_Texture"), 0);
+			if (g_MaterialBank.GetTexture(spr.GetTexture())->GetChannels() == 1){
+				spriteProg->SetUniformBool("g_GreyScale", true);
+			}
+			else{
+				spriteProg->SetUniformBool("g_GreyScale", false);
+			}
 			glDrawArrays(GL_POINTS, 0, 1);
 		}
 	}
@@ -190,6 +196,7 @@ void gfx::GraphicsEngine::RenderToTexture(RenderQueue* drawQueue){
 		spriteProg->SetUniformVec4("g_Size", glm::vec4(brushSize.x, brushSize.y, 1, 1));
 		spriteProg->SetUniformVec4("g_Color", ColorPicker::m_color);
 		brushTex->Apply(spriteProg->FetchUniform("g_Texture"), 0);
+		spriteProg->SetUniformBool("g_GreyScale", false);
 		glDrawArrays(GL_POINTS, 0, 1);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -210,6 +217,12 @@ void gfx::GraphicsEngine::RenderActiveTarget(){
 	spriteProg->SetUniformVec4("g_Color", glm::vec4(1));
 	spriteProg->SetUniformVec4("g_Pos", glm::vec4(0.0f, 0.5f + sizeH * 0.5f, 0.0f,0.0f));
 	spriteProg->SetUniformVec4("g_Size", glm::vec4(1.0f, sizeH, 1.0f, 1.0f));
+	if (tex->GetChannels() == 1){
+		spriteProg->SetUniformBool("g_GreyScale", true);
+	}
+	else{
+		spriteProg->SetUniformBool("g_GreyScale", false);
+	}
 	glDrawArrays(GL_POINTS, 0, 1);
 
 }
