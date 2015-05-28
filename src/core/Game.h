@@ -42,7 +42,7 @@ private:
 	UVTranslation				m_uvTranslation;
 	BrushTexGenerator			m_BrushGenerator;
 	ColorPicker					m_colorPicker;
-
+	bool						m_BrushBlock;
 	Button						m_LoadModelButton;
 	Button						m_CloseProgramButton;
 	Button						m_UndoButton;

@@ -42,9 +42,6 @@ void main(){
 	gl_Position = vec4( pos3.x, pos3.y, 0.0, 1.0 );
 	texcoord = tex3;
 	EmitVertex();
-
-
-
 	EndPrimitive();
 }
 #end_shader
@@ -54,8 +51,16 @@ in vec2 texcoord;
 out vec4 FragmentColor;
 uniform sampler2D g_Texture;
 uniform vec4 g_Color = vec4(1);
+uniform bool g_GreyScale;
 void main(){
-	FragmentColor = texture(g_Texture, texcoord) * g_Color;
+	if(g_GreyScale){
+		vec4 c = texture(g_Texture, texcoord);
+		FragmentColor = vec4(c.r,c.r,c.r,c.a);
+	}
+	else{
+		FragmentColor = texture(g_Texture, texcoord) * g_Color;
+	}
+	
 }
 
 #end_shader

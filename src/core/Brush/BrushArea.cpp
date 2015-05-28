@@ -85,3 +85,7 @@ TextureHandle BrushArea::GetTexture(){
 void BrushArea::SetTexture(TextureHandle handle){
 	m_BrushTexture = handle;
 }
+
+void BrushArea::ClearStrokes(){
+	m_BrushObjects.clear();
+}

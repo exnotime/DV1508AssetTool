@@ -233,6 +233,9 @@ void ColorPicker::TogglePicker()
 {
 	m_show = !m_show;
 }
+bool ColorPicker::IsActive(){
+	return m_pickerActive || m_sliderActive;
+}
 
 //glm::vec4 ColorPicker::GetColor()
 //{

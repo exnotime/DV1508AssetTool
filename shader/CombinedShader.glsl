@@ -33,11 +33,10 @@ in vec4 TangentW;
 uniform 	sampler2D 	g_DiffuseTex;
 uniform 	sampler2D 	g_NormalTex;
 uniform 	sampler2D 	g_RoughnessTex;
+uniform 	sampler2D 	g_MetallicTex;
 uniform		samplerCube	g_IrradianceCubeTex;
 uniform		samplerCube	g_SkyCubeTex;
 uniform  	vec3 		g_Campos;
-uniform 	float		g_Roughness;
-uniform 	float		g_Metallic;
 uniform 	vec3 		g_LightDir;
 uniform		vec3		g_CamDir;
 
@@ -61,6 +60,7 @@ vec3 CalcBumpedNormal(vec3 Normal, vec3 Tangent, sampler2D normalMap, vec2 uv){
 void main(){
 
 	float roughness = texture(g_RoughnessTex,TexOut.xy).r;
+	float metallic = texture(g_MetallicTex, TexOut.xy).r;
 	// Only things we need for a directional light
 	Light l;
 	l.Color = vec4(1.0f);
@@ -73,7 +73,7 @@ void main(){
 	}
 	vec3 baseColor = pow(albedo.xyz, vec3(2.2)); //raise to 2.2(gamma) to be in linear space
 
-	vec4 LightColor = CalcDLight(l, normal, PosW.xyz, g_Campos, baseColor, roughness, g_Metallic);
+	vec4 LightColor = CalcDLight(l, normal, PosW.xyz, g_Campos, baseColor, roughness, metallic);
 	FragmentColor = vec4(pow(LightColor.xyz, vec3(1.0 / 2.2)), albedo.a); 
 }
 #end_shader
