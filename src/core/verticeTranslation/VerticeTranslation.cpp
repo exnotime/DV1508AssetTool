@@ -6,6 +6,7 @@
 #include "../gfx/Camera.h"
 
 #define SHOW_IMGUI_VERTICE_TRANSLATION	false
+#define PLANE_ARROW_SCALE 0.6f
 #define EPSILON 1.0e-14f
 
 struct Ray {
@@ -57,6 +58,18 @@ void VerticeTranslation::Initialize() {
 	m_VolumeAxisZ.Directions[0]	= glm::vec3( 1.0f, 0.0f, 0.0f );
 	m_VolumeAxisZ.Directions[1]	= glm::vec3( 0.0f, 1.0f, 0.0f );
 	m_VolumeAxisZ.Directions[2]	= glm::vec3( 0.0f, 0.0f, 1.0f );
+
+	m_VolumeAxisXY.Directions[0] = glm::vec3(  0.71f, 0.71f, 0.0f );
+	m_VolumeAxisXY.Directions[1] = glm::vec3( -0.71f, 0.71f, 0.0f );
+	m_VolumeAxisXY.Directions[2] = glm::vec3(  0.0,   0.0f,  1.0f );
+
+	m_VolumeAxisXZ.Directions[0] = glm::vec3(  0.71f, 0.0f, 0.71f );
+	m_VolumeAxisXZ.Directions[1] = glm::vec3( -0.71f, 0.0f, 0.71f );
+	m_VolumeAxisXZ.Directions[2] = glm::vec3(  0.0,   1.0f,  0.0f );
+
+	m_VolumeAxisYZ.Directions[0] = glm::vec3( 0.0f,  0.71f, 0.71f );
+	m_VolumeAxisYZ.Directions[1] = glm::vec3( 0.0f, -0.71f, 0.71f );
+	m_VolumeAxisYZ.Directions[2] = glm::vec3( 1.0,   0.0f,  0.0f );
 }
 
 void VerticeTranslation::Update( const float deltaTime ) {
@@ -93,12 +106,40 @@ void VerticeTranslation::Update( const float deltaTime ) {
 		m_VolumeAxisZ.HalfSizes[1]	= m_TranslationToolScale * hitboxHalfSize;
 		m_VolumeAxisZ.HalfSizes[2]	= m_TranslationToolScale * 0.5f;
 
+		m_VolumeAxisXY.HalfSizes[0]	= m_TranslationToolScale * PLANE_ARROW_SCALE * 0.5f;
+		m_VolumeAxisXY.HalfSizes[1]	= m_TranslationToolScale * PLANE_ARROW_SCALE * hitboxHalfSize;
+		m_VolumeAxisXY.HalfSizes[2]	= m_TranslationToolScale * PLANE_ARROW_SCALE * hitboxHalfSize;
+
+		m_VolumeAxisXZ.HalfSizes[0]	= m_TranslationToolScale * PLANE_ARROW_SCALE * 0.5f;
+		m_VolumeAxisXZ.HalfSizes[1]	= m_TranslationToolScale * PLANE_ARROW_SCALE * hitboxHalfSize;
+		m_VolumeAxisXZ.HalfSizes[2]	= m_TranslationToolScale * PLANE_ARROW_SCALE * hitboxHalfSize;
+
+		m_VolumeAxisYZ.HalfSizes[0]	= m_TranslationToolScale * PLANE_ARROW_SCALE * 0.5f;
+		m_VolumeAxisYZ.HalfSizes[1]	= m_TranslationToolScale * PLANE_ARROW_SCALE * hitboxHalfSize;
+		m_VolumeAxisYZ.HalfSizes[2]	= m_TranslationToolScale * PLANE_ARROW_SCALE * hitboxHalfSize;
+
 		m_VolumeAxisX.Position = m_TranslationToolPosition + glm::vec3( m_VolumeAxisX.HalfSizes[0], 0.0f, 0.0f );
 		m_VolumeAxisY.Position = m_TranslationToolPosition + glm::vec3( 0.0f, m_VolumeAxisY.HalfSizes[1], 0.0f );
 		m_VolumeAxisZ.Position = m_TranslationToolPosition + glm::vec3( 0.0f, 0.0f, m_VolumeAxisZ.HalfSizes[2] );
 
+		m_VolumeAxisXY.Position = m_TranslationToolPosition + m_VolumeAxisXY.HalfSizes[0] * m_VolumeAxisXY.Directions[0];
+		m_VolumeAxisXZ.Position = m_TranslationToolPosition + m_VolumeAxisXZ.HalfSizes[0] * m_VolumeAxisXZ.Directions[0];
+		m_VolumeAxisYZ.Position = m_TranslationToolPosition + m_VolumeAxisYZ.HalfSizes[0] * m_VolumeAxisYZ.Directions[0];
+
 		glm::vec3 intersectionPoint;
-		if ( RayOBB( &mouseRay, &m_VolumeAxisX, &intersectionPoint ) ) {
+		if ( RayOBB( &mouseRay, &m_VolumeAxisXY, &intersectionPoint ) ) {
+			m_TranslationType = TranslationType::XY;
+			line.Direction	= m_VolumeAxisXY.Directions[0];
+			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
+		} else if ( RayOBB( &mouseRay, &m_VolumeAxisXZ, &intersectionPoint ) ) {
+			m_TranslationType = TranslationType::XZ;
+			line.Direction	= m_VolumeAxisXZ.Directions[0];
+			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
+		} else if ( RayOBB( &mouseRay, &m_VolumeAxisYZ, &intersectionPoint ) ) {
+			m_TranslationType = TranslationType::YZ;
+			line.Direction	= m_VolumeAxisYZ.Directions[0];
+			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
+		} else if ( RayOBB( &mouseRay, &m_VolumeAxisX, &intersectionPoint ) ) {
 			m_TranslationType = TranslationType::X;
 			line.Direction	= glm::vec3( 1.0f, 0.0f, 0.0f );
 			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
@@ -158,7 +199,7 @@ void VerticeTranslation::Draw( gfx::RenderQueue* renderQueue ) {
 	const float			halfPi					= 0.50f * glm::pi<float>();
 	const float			quarterPi				= 0.25f * glm::pi<float>();
 	const glm::mat4x4	scaleTranslation		= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(m_TranslationToolScale) );
-	const glm::mat4x4	halfScaleTranslation	= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(0.6f * m_TranslationToolScale) );
+	const glm::mat4x4	halfScaleTranslation	= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(PLANE_ARROW_SCALE * m_TranslationToolScale) );
 
 	gfx::GizmoObject renderObject;
 	renderObject.Model	= m_TranslationToolModel;

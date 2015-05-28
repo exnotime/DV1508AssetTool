@@ -51,4 +51,7 @@ private:
 	OBB							m_VolumeAxisX;
 	OBB							m_VolumeAxisY;
 	OBB							m_VolumeAxisZ;
+	OBB							m_VolumeAxisXY;
+	OBB							m_VolumeAxisXZ;
+	OBB							m_VolumeAxisYZ;
 };
