@@ -17,10 +17,10 @@ void ClickDot::Initialize(int index, const char* filename)
 	//m_winHHeight = m_winHeight * 0.5f;
 	//m_winHWidth = m_winWidth * 0.5f;
 
-	m_left = gfx::g_GFXEngine.GetWidth() * 0.5f;;
-	m_right = gfx::g_GFXEngine.GetWidth();
-	m_top = BUTTON_SIZE;
-	m_bottom = gfx::g_GFXEngine.GetHeight();;
+	m_left = gfx::g_GFXEngine.GetWidth() * 0.5f + BUTTON_SIZE;
+	m_right = gfx::g_GFXEngine.GetWidth() - 15.0f;
+	m_top = BUTTON_SIZE + 15.0f;
+	m_bottom = gfx::g_GFXEngine.GetHeight() - 2.0f * BUTTON_SIZE;
 
 	m_width = m_right - m_left;
 	m_height = m_bottom - m_top;
