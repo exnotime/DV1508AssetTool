@@ -6,6 +6,13 @@
 
 #define OBB_DIRECTIONS 3
 
+enum class TranslationType {
+	X,
+	Y,
+	Z,
+	None
+};
+
 struct Ray;
 
 struct OBB {
@@ -36,7 +43,7 @@ private:
 	glm::vec3					m_TranslationToolOffset;
 	float						m_TranslationToolScale;
 	gfx::ModelHandle			m_TranslationToolModel;
-	bool						m_Translating;
+	TranslationType				m_TranslationType;
 	glm::vec3					m_TranslatingDirection;
 	OBB							m_VolumeAxisX;
 	OBB							m_VolumeAxisY;

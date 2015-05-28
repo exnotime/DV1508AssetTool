@@ -44,7 +44,7 @@ void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>
 void VerticeTranslation::Initialize() {
 	m_TranslationToolPosition	= glm::vec3( 0.0f );
 	m_TranslationToolModel		= gfx::g_ModelBank.LoadModel("asset/UnitArrow/Unit_Arrow.obj");
-	m_Translating				= false;
+	m_TranslationType			= TranslationType::None;
 
 	m_VolumeAxisX.Directions[0]	= glm::vec3( 1.0f, 0.0f, 0.0f );
 	m_VolumeAxisX.Directions[1]	= glm::vec3( 0.0f, 1.0f, 0.0f );
@@ -67,7 +67,7 @@ void VerticeTranslation::Update( const float deltaTime ) {
 	ImGuiIO& io = ImGui::GetIO();
 
 	if ( io.KeyShift ) {
-		m_Translating = false;
+		m_TranslationType = TranslationType::None;
 		return;
 	}
 
@@ -99,15 +99,15 @@ void VerticeTranslation::Update( const float deltaTime ) {
 
 		glm::vec3 intersectionPoint;
 		if ( RayOBB( &mouseRay, &m_VolumeAxisX, &intersectionPoint ) ) {
-			m_Translating = true;
+			m_TranslationType = TranslationType::X;
 			line.Direction	= glm::vec3( 1.0f, 0.0f, 0.0f );
 			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
 		} else if ( RayOBB( &mouseRay, &m_VolumeAxisY, &intersectionPoint ) ) {
-			m_Translating = true;
+			m_TranslationType = TranslationType::Y;
 			line.Direction	= glm::vec3( 0.0f, 1.0f, 0.0f );
 			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
 		} else if ( RayOBB( &mouseRay, &m_VolumeAxisZ, &intersectionPoint ) ) {
-			m_Translating = true;
+			m_TranslationType = TranslationType::Z;
 			line.Direction	= glm::vec3( 0.0f, 0.0f, 1.0f );
 			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
 		}
@@ -117,7 +117,7 @@ void VerticeTranslation::Update( const float deltaTime ) {
 
 	std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
 
-	if ( m_Translating && io.MouseDown[0] ) {
+	if ( m_TranslationType != TranslationType::None && io.MouseDown[0] ) {
 		line.Direction = m_TranslatingDirection;
 		const glm::vec3 diff = ClosestPointOnFirstRay( line, mouseRay ) - (m_TranslationToolPosition + (m_TranslationToolOffset * m_TranslationToolScale));
 
@@ -129,7 +129,7 @@ void VerticeTranslation::Update( const float deltaTime ) {
 			gfx::g_ModelBank.BuildBuffers();
 		}
 	} else {
-		m_Translating = false;
+		m_TranslationType = TranslationType::None;
 	}
 
 	glm::vec3 avaragePosition( 0.0f );
@@ -160,18 +160,24 @@ void VerticeTranslation::Draw( gfx::RenderQueue* renderQueue ) {
 
 	gfx::GizmoObject renderObject;
 	renderObject.Model	= m_TranslationToolModel;
-	float alpha = 0.7f;
-	renderObject.world	= scaleTranslation * glm::rotate( -halfPi, glm::vec3(0.0f, 0.0f, 1.0f) );	// X
-	renderObject.Color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * alpha;
-	renderQueue->Enqueue(renderObject);
+	float alpha = m_TranslationType == TranslationType::None ? 0.7f : 0.3f;
+	if ( m_TranslationType == TranslationType::None || m_TranslationType == TranslationType::X ) {
+		renderObject.world	= scaleTranslation * glm::rotate( -halfPi, glm::vec3(0.0f, 0.0f, 1.0f) );	// X
+		renderObject.Color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * alpha;
+		renderQueue->Enqueue(renderObject);
+	}
 
-	renderObject.world	= scaleTranslation;	// Y
-	renderObject.Color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) * alpha;
-	renderQueue->Enqueue(renderObject);
+	if ( m_TranslationType == TranslationType::None || m_TranslationType == TranslationType::Y ) {
+		renderObject.world	= scaleTranslation;	// Y
+		renderObject.Color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) * alpha;
+		renderQueue->Enqueue(renderObject);
+	}
 
-	renderObject.world	= scaleTranslation * glm::rotate( halfPi, glm::vec3(1.0f, 0.0f, 0.0f) );	// Z
-	renderObject.Color = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * alpha;
-	renderQueue->Enqueue(renderObject);
+	if ( m_TranslationType == TranslationType::None || m_TranslationType == TranslationType::Z ) {
+		renderObject.world	= scaleTranslation * glm::rotate( halfPi, glm::vec3(1.0f, 0.0f, 0.0f) );	// Z
+		renderObject.Color = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * alpha;
+		renderQueue->Enqueue(renderObject);
+	}
 }
 
 void VerticeTranslation::SetSelectedVertices( const std::vector<unsigned int>& newSelectedVertices ) {
