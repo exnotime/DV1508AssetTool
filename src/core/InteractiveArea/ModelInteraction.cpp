@@ -44,20 +44,22 @@ void ModelInteraction::Initialize(const glm::vec2& p_size, const glm::vec2& p_po
 	m_DrawnSprite.SetTexture("asset/Icons/CameraModes/Mode_FPS.png");
 	m_DrawnSprite.SetSize(mouseSpriteSize);
 
-	m_FirstPersonModeButton = Button(glm::vec2(m_buttonXPos, m_buttonYPos - 50 + 1), glm::vec2(50, 50), "asset/Icons/M_FPS.png");
+	m_MouseModeButton = Button(glm::vec2(m_buttonXPos, m_buttonYPos - 49), glm::vec2(50, 50), "asset/Icons/M_Grabber.png");
+	m_MouseModeButton.SetTooltip(" Mouse mode \n Use left mouse button to orbit the model \n Use scroll to get closer or further away from the model\n Hold space to enable movement");
+	m_MouseModeSprite.SetTexture("asset/Icons/CameraModes/Mode_Drag.png");
+	m_MouseModeSprite.SetSize(mouseSpriteSize);
+
+	m_FirstPersonModeButton = Button(glm::vec2(m_buttonXPos, m_buttonYPos - 98), glm::vec2(50, 50), "asset/Icons/M_FPS.png");
 	m_FirstPersonModeButton.SetTooltip(" First Person Camera \n Move camera using WASD \n Rotate camera using mouse \n Hold space to enable movement");
 	m_FirstPersonModeSprite.SetTexture("asset/Icons/CameraModes/Mode_FPS.png");
 	m_FirstPersonModeSprite.SetSize(mouseSpriteSize);
 
-	m_LaptopModeButton = Button(glm::vec2(m_buttonXPos - 50 + 1, m_buttonYPos - 50 + 1), glm::vec2(50, 50), "asset/Icons/M_Keyboard.png");
+	m_LaptopModeButton = Button(glm::vec2(m_buttonXPos, m_buttonYPos - 147), glm::vec2(50, 50), "asset/Icons/M_Keyboard.png");
 	m_LaptopModeButton.SetTooltip(" Laptop mode \n Move camera using WASD \n Rotate Camera using arrow keys");
 	m_LaptopModeSprite.SetTexture("asset/Icons/CameraModes/Mode_Keys.png");
 	m_LaptopModeSprite.SetSize(mouseSpriteSize);
 
-	m_MouseModeButton = Button(glm::vec2(m_buttonXPos + 50 - 1, m_buttonYPos - 50 + 1), glm::vec2(50, 50), "asset/Icons/M_Grabber.png");
-	m_MouseModeButton.SetTooltip(" Mouse mode \n Use left mouse button to orbit the model \n Use scroll to get closer or further away from the model\n Hold space to enable movement");
-	m_MouseModeSprite.SetTexture("asset/Icons/CameraModes/Mode_Drag.png");
-	m_MouseModeSprite.SetSize(mouseSpriteSize);
+	
 }
 void ModelInteraction::SetSpaceSize(const glm::vec2& p_size)
 {

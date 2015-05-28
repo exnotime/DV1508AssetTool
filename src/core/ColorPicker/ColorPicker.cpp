@@ -224,7 +224,7 @@ void ColorPicker::CalculateSliderMarkerPos(glm::vec2 uv)
 	glm::vec2 markerSize = glm::vec2(8, 8)*m_scale;
 
 	glm::vec2 position;
-	position.x = sliderPos.x-8;
+	position.x = sliderPos.x-8*m_scale;
 	position.y = sliderPos.y + sliderSize.y*uv.y-markerSize.y*0.5f;
 	m_sliderMarker.SetPos(position);
 }
