@@ -10,6 +10,9 @@ enum class TranslationType {
 	X,
 	Y,
 	Z,
+	XY,
+	XZ,
+	YZ,
 	None
 };
 

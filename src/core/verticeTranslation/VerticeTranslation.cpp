@@ -155,27 +155,43 @@ void VerticeTranslation::Draw( gfx::RenderQueue* renderQueue ) {
 
 	m_TranslationToolScale			= glm::distance( farWorld, m_TranslationToolPosition );
 
-	const float			halfPi				= 0.5f * glm::pi<float>();
-	const glm::mat4x4	scaleTranslation	= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(m_TranslationToolScale) );
+	const float			halfPi					= 0.50f * glm::pi<float>();
+	const float			quarterPi				= 0.25f * glm::pi<float>();
+	const glm::mat4x4	scaleTranslation		= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(m_TranslationToolScale) );
+	const glm::mat4x4	halfScaleTranslation	= glm::translate( m_TranslationToolPosition ) * glm::scale( glm::vec3(0.7f * m_TranslationToolScale) );
 
 	gfx::GizmoObject renderObject;
 	renderObject.Model	= m_TranslationToolModel;
-	float alpha = m_TranslationType == TranslationType::None ? 0.7f : 0.3f;
-	if ( m_TranslationType == TranslationType::None || m_TranslationType == TranslationType::X ) {
+	float alpha = m_TranslationType == TranslationType::None ? 1.0f : 0.3f;
+	if ( m_TranslationType == TranslationType::None || m_TranslationType == TranslationType::X || m_TranslationType == TranslationType::XY || m_TranslationType == TranslationType::XZ ) {
 		renderObject.world	= scaleTranslation * glm::rotate( -halfPi, glm::vec3(0.0f, 0.0f, 1.0f) );	// X
 		renderObject.Color = glm::vec4(1.0f, 0.0f, 0.0f, 1.0f) * alpha;
 		renderQueue->Enqueue(renderObject);
 	}
 
-	if ( m_TranslationType == TranslationType::None || m_TranslationType == TranslationType::Y ) {
+	if ( m_TranslationType == TranslationType::None || m_TranslationType == TranslationType::Y || m_TranslationType == TranslationType::XY || m_TranslationType == TranslationType::YZ ) {
 		renderObject.world	= scaleTranslation;	// Y
 		renderObject.Color = glm::vec4(0.0f, 1.0f, 0.0f, 1.0f) * alpha;
 		renderQueue->Enqueue(renderObject);
 	}
 
-	if ( m_TranslationType == TranslationType::None || m_TranslationType == TranslationType::Z ) {
+	if ( m_TranslationType == TranslationType::None || m_TranslationType == TranslationType::Z || m_TranslationType == TranslationType::XZ || m_TranslationType == TranslationType::YZ ) {
 		renderObject.world	= scaleTranslation * glm::rotate( halfPi, glm::vec3(1.0f, 0.0f, 0.0f) );	// Z
 		renderObject.Color = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) * alpha;
+		renderQueue->Enqueue(renderObject);
+	}
+
+	if ( m_TranslationType == TranslationType::None ) {
+		renderObject.world	= halfScaleTranslation * glm::rotate( -quarterPi, glm::vec3(0.0f, 0.0f, 1.0f) );	// XY
+		renderObject.Color = glm::vec4(0.8f, 0.8f, 0.0f, 1.0f) * alpha;
+		renderQueue->Enqueue(renderObject);
+
+		renderObject.world	= halfScaleTranslation * glm::rotate( halfPi, glm::vec3(1.0f, 0.0f, -1.0f) );	// XZ
+		renderObject.Color = glm::vec4(0.8f, 0.0f, 0.8f, 1.0f) * alpha;
+		renderQueue->Enqueue(renderObject);
+
+		renderObject.world	= halfScaleTranslation * glm::rotate( quarterPi, glm::vec3(1.0f, 0.0f, 0.0f) );	// YZ
+		renderObject.Color = glm::vec4(0.0f, 0.8f, 0.8f, 1.0f) * alpha;
 		renderQueue->Enqueue(renderObject);
 	}
 }
