@@ -15,7 +15,7 @@ public:
 	void Draw(gfx::RenderQueue* rq);
 	
 	void TogglePicker();
-
+	bool IsActive();
 	//glm::vec4 GetColor()const;
 	static glm::vec4 m_color;
 

@@ -113,7 +113,6 @@ void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 	prog->Apply();
 	prog->SetUniformMat4("g_ViewProj", m_Camera.GetViewProjection());
 	prog->SetUniformVec3("g_Campos", m_Camera.GetPosition());
-	static float metal = 0.001f;
 	glm::vec3 lightDir = glm::vec3(0.5f,-1,0.5f);
 	static float lightangle = 4.0f;
 
@@ -127,14 +126,15 @@ void gfx::GraphicsEngine::RenderGeometry(RenderQueue* drawQueue){
 		Model model = g_ModelBank.FetchModel(object.Model);
 		prog->SetUniformMat4("g_World", object.world);
 		for (auto& mesh : model.Meshes){
-
 			Material* mat = g_MaterialBank.GetMaterial(model.MaterialOffset + mesh.Material);
 			Texture* albedoTex = g_MaterialBank.GetTexture(mat->GetAlbedoTexture());
 			Texture* normalTex = g_MaterialBank.GetTexture(mat->GetNormalTexture());
 			Texture* roughnessTex = g_MaterialBank.GetTexture(mat->GetRoughnessTexture());
+			Texture* metalTex = g_MaterialBank.GetTexture(mat->GetMetalTexture());
 			prog->SetUniformTextureHandle("g_DiffuseTex", albedoTex->GetHandle(), 0);
 			prog->SetUniformTextureHandle("g_NormalTex", normalTex->GetHandle(), 3);
 			prog->SetUniformTextureHandle("g_RoughnessTex", roughnessTex->GetHandle(), 4);
+			prog->SetUniformTextureHandle("g_MetallicTex", metalTex->GetHandle(), 5);
 			glDrawElements(GL_TRIANGLES, mesh.Indices, GL_UNSIGNED_INT,
 				(GLvoid*)(0 + ((model.IndexHandle + mesh.IndexBufferOffset) * sizeof(unsigned int))));
 		}

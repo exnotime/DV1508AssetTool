@@ -81,7 +81,7 @@ void Game::Initialize(int width, int height){
 }
 
 void Game::Update(float dt){
-
+	m_BrushBlock = false;
 	///////////////////////////////////////////////////////////////////////////////
 	UpdateModelViewWindow(dt);	
 	///////////////////////////////////////////////////////////////////////////////
@@ -111,10 +111,12 @@ void Game::Update(float dt){
 		m_colorPicker.TogglePicker();
 	}
 	static float h = 0;
+	static float oldh = 0;
 	ImGui::SliderFloat("Hardness", &h, 0, 1);
-	if (ImGui::Button("GenBrush")){
+	if (h != oldh){
 		m_BrushGenerator.GenerateTexture(64, h, m_TestSprite.GetTexture());
 	}
+	oldh = h;
 	TempSelectVertices( m_Model, m_SelectedVertices );	// TODO: Remove when real vertice selection is implemented.
 	m_VerticeTranslation.SetSelectedVertices( m_SelectedVertices );
 	m_VerticeTranslation.Update( dt );
@@ -145,6 +147,7 @@ void Game::Update(float dt){
 			m_RelationsToggled = true;
 		}
 	}
+	m_BrushBlock = m_colorPicker.IsActive();
 }
 
 void Game::Render( gfx::RenderQueue* rq )
@@ -167,14 +170,19 @@ void Game::Render( gfx::RenderQueue* rq )
 	if (meshIndex < 0)
 		meshIndex = 0;
 	gfx::Material* mat = gfx::g_MaterialBank.GetMaterial(model.MaterialOffset + model.Meshes[meshIndex].Material);
-	static bool useRoughness = false;
-	ImGui::Checkbox("roughness", &useRoughness);
-	if (useRoughness){
-		rq->SetTargetTexture(mat->GetRoughnessTexture());
-	}
-	else {
-		rq->SetTargetTexture(mat->GetAlbedoTexture());
-	}
+	static int actTexture = 0;
+	ImGui::SliderInt("TextureType", &actTexture, 0, 2);
+	switch (actTexture){
+		case 0:
+			rq->SetTargetTexture(mat->GetAlbedoTexture());
+		break;
+		case 1:
+			rq->SetTargetTexture(mat->GetRoughnessTexture());
+		break;
+		case 2:
+			rq->SetTargetTexture(mat->GetMetalTexture());
+		break;
+	};
 
 	m_VerticeTranslation.Draw( rq );
 	m_VerticeSelection.Draw(rq, ro);
@@ -185,7 +193,10 @@ void Game::Render( gfx::RenderQueue* rq )
 	static float brushSize = 64;
 	ImGui::SliderFloat("BrushSize", &brushSize, 1, 640);
 	m_BrushArea.SetBrushSize(brushSize);
-	m_BrushArea.PushStrokes(rq);
+	if (!m_BrushBlock)
+		m_BrushArea.PushStrokes(rq);
+	else
+		m_BrushArea.ClearStrokes();
 
 	m_BrushGhost.SetSize(glm::vec2(brushSize));
 	ImGuiIO io = ImGui::GetIO();
@@ -207,15 +218,7 @@ void Game::Render( gfx::RenderQueue* rq )
 		rq->Enqueue(m_RelationsBackground);
 		rq->Enqueue(m_FakeRelations);
 	}
-
-	//test line
-	//gfx::LineObject lo;
-	//lo.Lines.push_back(glm::vec2(0));
-	//lo.Lines.push_back(glm::vec2(1920,1080));
-	//lo.Lines.push_back(glm::vec2(1920,0));
-	//lo.Lines.push_back(glm::vec2(0, 1080));
-	//lo.Color = glm::vec4(1,0,0,1);
-	//rq->Enqueue(lo);
+	
 }
 
 void Game::Shutdown()

@@ -63,6 +63,17 @@ void gfx::MaterialBank::LoadMaterials(Model& model, std::string filename, const 
 		else {
 			modelMat->SetRoughnessTexture(LoadTexture("asset/roughness.png", TEXTURE_GREYSCALE));
 		}
+		//Metal map
+		if (mat->GetTextureCount(aiTextureType_AMBIENT) > 0){ //use ambient texture as metal map for now
+			aiString path;
+			if (mat->GetTexture(aiTextureType_AMBIENT, 0, &path, NULL, NULL, NULL, NULL, NULL) == AI_SUCCESS){
+				std::string fullpath = GetDir(filename) + path.data;
+				modelMat->SetMetalTexture(LoadTexture(fullpath.c_str(), TEXTURE_GREYSCALE));
+			}
+		}
+		else {
+			modelMat->SetMetalTexture(LoadTexture("asset/metal.png", TEXTURE_GREYSCALE));
+		}
 		m_Materials.push_back(modelMat);
 	}
 }

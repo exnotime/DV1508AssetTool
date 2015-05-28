@@ -16,6 +16,7 @@ public:
 	TextureHandle GetTexture();
 	void SetTexture(TextureHandle handle);
 	void PushStrokes(gfx::RenderQueue* rq);
+	void ClearStrokes();
 private:
 	float m_BrushSize;
 	std::vector<gfx::BrushObject> m_BrushObjects;
