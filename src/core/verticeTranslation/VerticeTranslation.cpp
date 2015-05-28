@@ -72,7 +72,7 @@ void VerticeTranslation::Update( const float deltaTime ) {
 
 	Ray		mouseRay;
 	Camera*	camera		= gfx::g_GFXEngine.GetCamera();
-	CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
+	CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y - BUTTON_SIZE), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
 
 	if ( io.MouseClicked[0] ) {
 		const float hitboxHalfSize = 0.11f;
