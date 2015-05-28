@@ -45,6 +45,8 @@ private:
 
 	Button						m_LoadModelButton;
 	Button						m_CloseProgramButton;
+	Button						m_UndoButton;
+	Button						m_RedoButton;
 
 	gfx::Sprite					m_Background;
 	gfx::Sprite					m_RelationsBackground;

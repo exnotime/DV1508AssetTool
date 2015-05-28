@@ -35,6 +35,12 @@ void Game::Initialize(int width, int height){
 	m_LoadModelButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, 25.0f + BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Load_Model.png");
 	m_LoadModelButton.SetTooltip("Load Model");
 
+	m_UndoButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, 25.0f + 2 * BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Undo.png");
+	m_UndoButton.SetTooltip("Undo (Ctrl+Z)");
+
+	m_RedoButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, 25.0f + 3 * BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Redo.png");
+	m_RedoButton.SetTooltip("Redo (Ctrl+Y)");
+
 	m_CloseProgramButton = Button(glm::vec2(width - BUTTON_SIZE, 0), glm::vec2(BUTTON_SIZE), "asset/Icons/P_Exit.png");
 	m_CloseProgramButton.SetTooltip("Close program");
 
@@ -87,6 +93,8 @@ void Game::Update(float dt){
 	///////////////////////////////////////////////////////////////////////////////
 	m_BrushArea.Update();
 	m_LoadModelButton.Update();
+	m_UndoButton.Update();
+	m_RedoButton.Update();
 	//check if we should close
 	m_CloseProgramButton.Update();
 	if (m_CloseProgramButton.IsClicked()) glfwSetWindowShouldClose(gfx::g_GFXEngine.GetWindow(), GL_TRUE);
@@ -193,6 +201,8 @@ void Game::Render( gfx::RenderQueue* rq )
 	rq->Enqueue(m_BrushGhost);
 
 	m_LoadModelButton.Draw(rq);
+	m_UndoButton.Draw(rq);
+	m_RedoButton.Draw(rq);
 	m_ColorPickerButton.Draw(rq);
 	m_ColorPickerButtonOverlay.SetColor(ColorPicker::m_color);
 	rq->Enqueue(m_ColorPickerButtonOverlay);
