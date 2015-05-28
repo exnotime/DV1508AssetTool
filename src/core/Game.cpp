@@ -5,6 +5,7 @@
 #include "../gfx/Material.h"
 #include <nfd/nfd.h>
 #include "../gfx/GraphicsEngine.h"
+
 Game::Game( )
 {
 }
@@ -209,6 +210,7 @@ void Game::Shutdown()
 {
 	m_uvTranslation.Shutdown();
 }
+
 void Game::UpdateModelViewWindow(float p_deltaTime)
 {
 	m_TestArea2.Update();
