@@ -39,7 +39,7 @@ void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>
 		prevMeshIndex = meshIndex;
 		selectedVertices.clear();
 		int startIndex = model.VertexHandle + model.Meshes[meshIndex].VertexBufferOffset;
-		int endIndex = startIndex + model.Meshes[meshIndex].Size;
+		int endIndex = startIndex + model.Meshes[meshIndex].Size / 8;
 		for (int i = startIndex; i < endIndex; ++i) 
 		{
 			selectedVertices.push_back( i );
