@@ -16,6 +16,9 @@ public:
 	
 	void TogglePicker();
 	bool IsActive();
+	void SetPosition(glm::vec2 position);
+	bool IsShown()const;
+	void ResetPosition();
 	//glm::vec4 GetColor()const;
 	static glm::vec4 m_color;
 
@@ -44,6 +47,8 @@ private:
 	float m_hue;
 	float m_scale;
 	glm::vec2 m_lastClick;
+	glm::vec2 m_lastClickSlider;
+	glm::vec2 m_resetPosition;
 
 };
 

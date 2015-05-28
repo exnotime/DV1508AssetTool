@@ -10,6 +10,7 @@ ColorPicker::~ColorPicker(){}
 void ColorPicker::Init(glm::vec2 position, float scale, bool show)
 {
 	m_scale = scale;
+	m_resetPosition = position;
 
 	// Shaders
 	m_pickerProgram = gfx::g_ShaderBank.LoadShaderProgram("shader/ColorPicker/ColorPickerHSVH.glsl");
@@ -54,6 +55,7 @@ void ColorPicker::Init(glm::vec2 position, float scale, bool show)
 	m_show = show;
 	m_hue = 0;
 	m_lastClick = glm::vec2(0, 0);
+	m_lastClickSlider = glm::vec2(0, 0);
 
 	CalculateSliderMarkerPos(glm::vec2(0, 0));
 	CalculateMarkerPos(glm::vec2(0, 0));
@@ -105,10 +107,22 @@ void ColorPicker::Update()
 			clickPos = glm::vec2(io.MousePos.x, io.MousePos.y);
 			clickPos = (clickPos - m_pickerIarea.GetPos()) / m_pickerIarea.GetSize();
 			clickPos = glm::clamp(clickPos, 0.0f, 1.0f);
+			m_lastClickSlider = clickPos;
 			CalculateSliderMarkerPos(clickPos);
 			m_hue = (1.0f - clickPos.y) * 360;
 			CalculateColor(m_lastClick);
 			GeneratePicker();
+		}
+
+		if (ImGui::GetIO().MouseDoubleClicked[1])
+		{
+			ImVec2 pos = ImGui::GetIO().MousePos;
+			SetPosition(glm::vec2(pos.x, pos.y));
+		}
+
+		else if (ImGui::GetIO().MouseClicked[1])
+		{
+			ResetPosition();
 		}
 	}
 }
@@ -236,6 +250,36 @@ void ColorPicker::TogglePicker()
 bool ColorPicker::IsActive(){
 	return m_pickerActive || m_sliderActive;
 }
+
+void ColorPicker::SetPosition(glm::vec2 position)
+{
+	glm::vec2 pos;
+
+	pos = glm::vec2(8.0f, 8.0f)*m_scale;
+	m_picker.SetPos(position + pos);
+	m_pickerIarea.SetPos(position + pos);
+
+	pos = glm::vec2(272.0f, 8.0f)*m_scale;
+	m_slide.SetPos(position + pos);
+	m_sliderIarea.SetPos(position + pos);
+
+	pos = glm::vec2(0, 0)*m_scale;
+	m_background.SetPos(position + pos);
+
+	CalculateSliderMarkerPos(m_lastClickSlider);
+	CalculateMarkerPos(m_lastClick);
+}
+
+bool ColorPicker::IsShown()const
+{
+	return m_show;
+}
+
+void ColorPicker::ResetPosition()
+{
+	SetPosition(m_resetPosition);
+}
+
 
 //glm::vec4 ColorPicker::GetColor()
 //{
