@@ -17,6 +17,7 @@ enum class TranslationType {
 };
 
 struct Ray;
+struct Plane;
 
 struct OBB {
 	glm::vec3	Position;
@@ -38,6 +39,7 @@ public:
 
 private:
 	glm::vec3					ClosestPointOnFirstRay( const Ray& first, const Ray& second ) const;
+	glm::vec3					IntersectionRayPlane( const Ray& ray, const Plane& plane ) const;
 	void						CalculateRayFromPixel( const glm::ivec2& pixel, const glm::ivec2& windowSize, const glm::mat4& invViewProj, Ray* outRay ) const;
 	bool						RayOBB( const Ray* rayVolume, const OBB* obbVolume, glm::vec3* outIntersectionPoint ) const;
 

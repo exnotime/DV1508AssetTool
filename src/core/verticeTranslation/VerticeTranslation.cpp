@@ -14,6 +14,11 @@ struct Ray {
 	glm::vec3	Direction;
 };
 
+struct Plane {
+	glm::vec3	Position;
+	glm::vec3	Normal;
+};
+
 // TODO: Remove when real vertice selection is implemented.
 void TempSelectVertices( gfx::ModelHandle modelHandle, std::vector<unsigned int>& selectedVertices ) {
 	const gfx::Model& model = gfx::g_ModelBank.FetchModel( modelHandle );
@@ -87,6 +92,9 @@ void VerticeTranslation::Update( const float deltaTime ) {
 	Ray line;
 	line.Position	= m_TranslationToolPosition;
 
+	Plane plane;
+	plane.Position	= m_TranslationToolPosition;
+
 	Ray		mouseRay;
 	Camera*	camera		= gfx::g_GFXEngine.GetCamera();
 	CalculateRayFromPixel( glm::ivec2( io.MousePos.x, io.MousePos.y - BUTTON_SIZE), glm::ivec2( camera->GetLens().WindowWidth, camera->GetLens().WindowHeight ), glm::inverse( camera->GetViewProjection() ), &mouseRay );
@@ -129,16 +137,16 @@ void VerticeTranslation::Update( const float deltaTime ) {
 		glm::vec3 intersectionPoint;
 		if ( RayOBB( &mouseRay, &m_VolumeAxisXY, &intersectionPoint ) ) {
 			m_TranslationType = TranslationType::XY;
-			line.Direction	= m_VolumeAxisXY.Directions[0];
-			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
+			plane.Normal	= m_VolumeAxisXY.Directions[2];
+			m_TranslationToolOffset = IntersectionRayPlane( mouseRay, plane ) - m_TranslationToolPosition;
 		} else if ( RayOBB( &mouseRay, &m_VolumeAxisXZ, &intersectionPoint ) ) {
 			m_TranslationType = TranslationType::XZ;
-			line.Direction	= m_VolumeAxisXZ.Directions[0];
-			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
+			plane.Normal	= m_VolumeAxisXZ.Directions[2];
+			m_TranslationToolOffset = IntersectionRayPlane( mouseRay, plane ) - m_TranslationToolPosition;
 		} else if ( RayOBB( &mouseRay, &m_VolumeAxisYZ, &intersectionPoint ) ) {
 			m_TranslationType = TranslationType::YZ;
-			line.Direction	= m_VolumeAxisYZ.Directions[0];
-			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
+			plane.Normal	= m_VolumeAxisYZ.Directions[2];
+			m_TranslationToolOffset = IntersectionRayPlane( mouseRay, plane ) - m_TranslationToolPosition;
 		} else if ( RayOBB( &mouseRay, &m_VolumeAxisX, &intersectionPoint ) ) {
 			m_TranslationType = TranslationType::X;
 			line.Direction	= glm::vec3( 1.0f, 0.0f, 0.0f );
@@ -153,14 +161,25 @@ void VerticeTranslation::Update( const float deltaTime ) {
 			m_TranslationToolOffset = ClosestPointOnFirstRay( line, mouseRay ) - m_TranslationToolPosition;
 		}
 		m_TranslationToolOffset /= m_TranslationToolScale;
-		m_TranslatingDirection = line.Direction;
+
+		if ( m_TranslationType == TranslationType::X || m_TranslationType == TranslationType::Y || m_TranslationType == TranslationType::Z ) {
+			m_TranslatingDirection = line.Direction;
+		} else {
+			m_TranslatingDirection = plane.Normal;
+		}
 	}
 
 	std::vector<gfx::VertexPosNormalTexTangent>& vertices = gfx::g_ModelBank.GetVertices();
 
 	if ( m_TranslationType != TranslationType::None && io.MouseDown[0] ) {
-		line.Direction = m_TranslatingDirection;
-		const glm::vec3 diff = ClosestPointOnFirstRay( line, mouseRay ) - (m_TranslationToolPosition + (m_TranslationToolOffset * m_TranslationToolScale));
+		glm::vec3 diff( 0.0f );
+		if ( m_TranslationType == TranslationType::X || m_TranslationType == TranslationType::Y || m_TranslationType == TranslationType::Z ) {
+			line.Direction = m_TranslatingDirection;
+			diff = ClosestPointOnFirstRay( line, mouseRay ) - (m_TranslationToolPosition + (m_TranslationToolOffset * m_TranslationToolScale));
+		} else {
+			plane.Normal = m_TranslatingDirection;
+			diff = IntersectionRayPlane( mouseRay, plane ) - (m_TranslationToolPosition + (m_TranslationToolOffset * m_TranslationToolScale));
+		}
 
 		if ( diff != glm::vec3( 0.0f ) ) {
 			glm::vec4 diffVec4 = glm::vec4( diff, 0.0f );
@@ -259,6 +278,26 @@ glm::vec3 VerticeTranslation::ClosestPointOnFirstRay( const Ray& first, const Ra
 		return first.Position + first.Direction * s;
 	}
 	return first.Position;
+}
+
+glm::vec3 VerticeTranslation::IntersectionRayPlane( const Ray& ray, const Plane& plane ) const {
+	const float dirProjOnNorm	= glm::dot( ray.Direction, plane.Normal );
+
+	// No intersection if ray is turned away from plane.
+	if( dirProjOnNorm >= 0.0f ) {
+		return plane.Position;
+	}
+
+	const glm::vec3	distance	= plane.Position - ray.Position;
+	const float		penetration	= glm::dot( distance, plane.Normal );
+
+	// No intersection if ray starts out inside the plane.
+	if ( penetration > 0.0f ) {
+		return plane.Position;
+	}
+
+	// Calculate intersection point.
+	return ray.Position + (penetration / dirProjOnNorm) * ray.Direction;
 }
 
 void VerticeTranslation::CalculateRayFromPixel( const glm::ivec2& pixel, const glm::ivec2& windowSize, const glm::mat4& invViewProj, Ray* outRay ) const {
