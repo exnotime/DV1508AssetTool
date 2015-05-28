@@ -22,6 +22,7 @@ public:
 	void Enable();
 	void Disable();
 	void Toggle();
+	bool IsActive();
 	
 private:
 	bool ListContains(int vertex);

@@ -155,7 +155,15 @@ void Game::Update(float dt){
 			m_RelationsToggled = true;
 		}
 	}
-	m_BrushBlock = m_colorPicker.IsActive();
+
+	if (m_uvTranslation.IsActive())
+	{
+		m_BrushBlock = true;
+	}
+	else
+	{
+		m_BrushBlock = m_colorPicker.IsActive();
+	}
 }
 
 void Game::Render( gfx::RenderQueue* rq )

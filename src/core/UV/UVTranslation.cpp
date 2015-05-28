@@ -144,3 +144,8 @@ void UVTranslation::Toggle()
 {
 	m_uvModeOn = !m_uvModeOn;
 }
+
+bool UVTranslation::IsActive()
+{
+	return m_uvModeOn;
+}
