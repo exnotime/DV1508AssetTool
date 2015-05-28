@@ -32,17 +32,8 @@ void Game::Initialize(int width, int height){
 	m_BrushGenerator.Init();
 	m_BrushGenerator.GenerateTexture(64, 0.5f, m_TestSprite.GetTexture());
 
-	m_LoadModelButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, 25.0f + BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Load_Model.png");
-	m_LoadModelButton.SetTooltip("Load Model");
-
-	m_UndoButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, 25.0f + 2 * BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Undo.png");
-	m_UndoButton.SetTooltip("Undo (Ctrl+Z)");
-
-	m_RedoButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, 25.0f + 3 * BUTTON_SIZE), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Redo.png");
-	m_RedoButton.SetTooltip("Redo (Ctrl+Y)");
-
 	m_CloseProgramButton = Button(glm::vec2(width - BUTTON_SIZE, 0), glm::vec2(BUTTON_SIZE), "asset/Icons/P_Exit.png");
-	m_CloseProgramButton.SetTooltip("Close program");
+	m_CloseProgramButton.SetTooltip("Close the program.");
 
 	m_ColorPickerButton = Button(glm::vec2(width - BUTTON_SIZE * 2.0f - 30.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Palette.png");
 	m_ColorPickerButton.SetTooltip("Color Picker");
@@ -70,7 +61,67 @@ void Game::Initialize(int width, int height){
 	m_RelationsButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Relations.png");
 	m_RelationsButton.SetTooltip("Open the relations manager, \n here you can edit relations \n between models and textures.");
 
-	m_uvButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, height - BUTTON_SIZE * 2 - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/M_UV_Picker_Tool.png");
+	m_minimize = Button(glm::vec2(width - BUTTON_SIZE * 2.0f - 5.0f, 0), glm::vec2(BUTTON_SIZE), "asset/Icons/P_Minimize.png");
+	m_minimize.SetTooltip("Minimize the program.");
+
+	m_FakeButtons.clear();
+	Button button;
+
+	button = Button(glm::vec2(25.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/M_Vertex_Picker_Tool.png");
+	button.SetTooltip("Enable selection of vertices.");
+	m_FakeButtons.push_back(button);
+	button = Button(glm::vec2(80.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/M_Extrude_Tool.png");
+	button.SetTooltip("Extrude a model face.");
+	m_FakeButtons.push_back(button);
+	button = Button(glm::vec2(135.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/M_Cut_Face_Tool.png");
+	button.SetTooltip("Divide a model polygon into two polygons.");
+	m_FakeButtons.push_back(button);
+	button = Button(glm::vec2(190.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/M_Merge_Vertex.png");
+	button.SetTooltip("Merge two vertices into one.");
+	m_FakeButtons.push_back(button);
+
+	button = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, BUTTON_SIZE + 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Selector.png");
+	button.SetTooltip("Switch to selector tool.");
+	m_FakeButtons.push_back(button);
+	button = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, BUTTON_SIZE + 80.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/S_New_Model.png");
+	button.SetTooltip("Start a new model.");
+	m_FakeButtons.push_back(button);
+	m_LoadModelButton = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, BUTTON_SIZE + 135.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Load_Model.png");
+	m_LoadModelButton.SetTooltip("Load a model");
+	button = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, BUTTON_SIZE + 190.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Save.png");
+	button.SetTooltip("Save current model.");
+	m_FakeButtons.push_back(button);
+
+	button = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, height - BUTTON_SIZE * 2.0f - 30.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Redo.png");
+	button.SetTooltip("Redo the previous undone action.");
+	m_FakeButtons.push_back(button);
+	button = Button(glm::vec2(width * 0.5f - BUTTON_SIZE * 0.5f, height - BUTTON_SIZE * 3.0f - 35.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/S_Undo.png");
+	button.SetTooltip("Undo the previous action.");
+	m_FakeButtons.push_back(button);
+
+	button = Button(glm::vec2(width * 0.5f + BUTTON_SIZE * 0.5f + 35.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Pencil_Icon.png");
+	button.SetTooltip("Draw to texture with single pixel width.");
+	m_FakeButtons.push_back(button);
+	button = Button(glm::vec2(width * 0.5f + BUTTON_SIZE * 0.5f + 90.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Brush_Icon.png");
+	button.SetTooltip("Draw to texture with variable width.");
+	m_FakeButtons.push_back(button);
+	button = Button(glm::vec2(width * 0.5f + BUTTON_SIZE * 0.5f + 145.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Eraser_Icon.png");
+	button.SetTooltip("Erase from texture.");
+	m_FakeButtons.push_back(button);
+	button = Button(glm::vec2(width * 0.5f + BUTTON_SIZE * 0.5f + 200.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Picker_Tool.png");
+	button.SetTooltip("Pick color value from texture.");
+	m_FakeButtons.push_back(button);
+	button = Button(glm::vec2(width * 0.5f + BUTTON_SIZE * 0.5f + 255.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Fill_Tool.png");
+	button.SetTooltip("Fill area with single color.");
+	m_FakeButtons.push_back(button);
+	button = Button(glm::vec2(width * 0.5f + BUTTON_SIZE * 0.5f + 310.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Line_Tool.png");
+	button.SetTooltip("Draw a straight line between two points.");
+	m_FakeButtons.push_back(button);
+	button = Button(glm::vec2(width * 0.5f + BUTTON_SIZE * 0.5f + 365.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/T_Spline_Tool.png");
+	button.SetTooltip("Draw a spline between two points.");
+	m_FakeButtons.push_back(button);
+
+	m_uvButton = Button(glm::vec2(width * 0.5f + BUTTON_SIZE * 0.5f + 420.0f, height - BUTTON_SIZE - 25.0f), glm::vec2(BUTTON_SIZE), "asset/Icons/T_UV_Picker_Tool.png");
 	m_uvButton.SetTooltip("UV Picker:\nTranslate the UV coordinates");
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -93,8 +144,7 @@ void Game::Update(float dt){
 	///////////////////////////////////////////////////////////////////////////////
 	m_BrushArea.Update();
 	m_LoadModelButton.Update();
-	m_UndoButton.Update();
-	m_RedoButton.Update();
+
 	//check if we should close
 	m_CloseProgramButton.Update();
 	if (m_CloseProgramButton.IsClicked()) glfwSetWindowShouldClose(gfx::g_GFXEngine.GetWindow(), GL_TRUE);
@@ -164,6 +214,13 @@ void Game::Update(float dt){
 	{
 		m_BrushBlock = m_colorPicker.IsActive();
 	}
+
+	m_minimize.Update();
+
+	for (unsigned int i = 0; i < m_FakeButtons.size(); i++)
+	{
+		m_FakeButtons[i].Update();
+	}
 }
 
 void Game::Render( gfx::RenderQueue* rq )
@@ -220,8 +277,6 @@ void Game::Render( gfx::RenderQueue* rq )
 	rq->Enqueue(m_BrushGhost);
 
 	m_LoadModelButton.Draw(rq);
-	m_UndoButton.Draw(rq);
-	m_RedoButton.Draw(rq);
 	m_ColorPickerButton.Draw(rq);
 	m_ColorPickerButtonOverlay.SetColor(ColorPicker::m_color);
 	rq->Enqueue(m_ColorPickerButtonOverlay);
@@ -237,6 +292,12 @@ void Game::Render( gfx::RenderQueue* rq )
 		rq->Enqueue(m_FakeRelations);
 	}
 	
+	m_minimize.Draw(rq);
+
+	for (unsigned int i = 0; i < m_FakeButtons.size(); i++)
+	{
+		m_FakeButtons[i].Draw(rq);
+	}
 }
 
 void Game::Shutdown()
